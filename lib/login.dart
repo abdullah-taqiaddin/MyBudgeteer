@@ -56,9 +56,9 @@ class _loginPageState extends State<loginPage> {
               ),
               child: Column(
                 children: [
-                  SizedBox(height: 50,),
+                  SizedBox(height: 70,),
                   SignInWithGoogle(),
-                  SizedBox(height: 50,),
+                  SizedBox(height: 30,),
                   Row(
                       children: [
                         const Expanded(
