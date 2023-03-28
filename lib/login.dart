@@ -40,35 +40,38 @@ class _loginPageState extends State<loginPage> {
             child: Container(
               width: 300,
               height: 200,
-              color: Colors.grey,
+              child: Image.asset("assets/images/PlaceholderLogo.png"),
             )
           ),
-        SizedBox(height: 100,),
-          Container(
-            width: 500,
-            height: 267,
-            decoration: BoxDecoration(
+        Text("Hello!,Please Sign in!"),
+        SizedBox(height: 50,),
+          Expanded(
+            child: Container(
+              width: 500,
+              height: 267,
+              decoration: BoxDecoration(
 
-                border: Border.all(color: Colors.grey,),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(60),topRight: Radius.circular(60),)
-            ),
-            child: Column(
-              children: [
-                SizedBox(height: 50,),
-                SignInWithGoogle(),
-                SizedBox(height: 50,),
-                Row(
-                    children: [
-                      const Expanded(
-                          child: Divider(color: Colors.black,indent: 50,)
-                      ),
-                      TextButton(child: Text("Continue as a guest",style: TextStyle(color: Colors.black),),onPressed: (){},),
-                      const Expanded(
-                          child: Divider(color: Colors.black,endIndent: 50,)
-                      ),
-                    ]
-                )
-              ],
+                  border: Border.all(color: Colors.grey,),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(60),topRight: Radius.circular(60),)
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: 50,),
+                  SignInWithGoogle(),
+                  SizedBox(height: 50,),
+                  Row(
+                      children: [
+                        const Expanded(
+                            child: Divider(color: Colors.black,indent: 50,)
+                        ),
+                        TextButton(child: Text("Continue as a guest",style: TextStyle(color: Colors.black),),onPressed: (){},),
+                        const Expanded(
+                            child: Divider(color: Colors.black,endIndent: 50,)
+                        ),
+                      ]
+                  )
+                ],
+              ),
             ),
           )
         ],
