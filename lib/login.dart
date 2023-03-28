@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const Color FontColour = Color(0x666666);
 
+var style = GoogleFonts.poppins(textStyle: TextStyle(color: Colors.black));
 
 class loginPage extends StatefulWidget {
   const loginPage({Key? key}) : super(key: key);
@@ -12,6 +14,8 @@ class loginPage extends StatefulWidget {
 }
 
 class _loginPageState extends State<loginPage> {
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +47,7 @@ class _loginPageState extends State<loginPage> {
               child: Image.asset("assets/images/PlaceholderLogo.png"),
             )
           ),
-        Text("Hello!,Please Sign in!"),
+        Text("Hello!,Please Sign in!",style: style,),
         SizedBox(height: 50,),
           Expanded(
             child: Container(
@@ -64,7 +68,7 @@ class _loginPageState extends State<loginPage> {
                         const Expanded(
                             child: Divider(color: Colors.black,indent: 50,)
                         ),
-                        TextButton(child: Text("Continue as a guest",style: TextStyle(color: Colors.black),),onPressed: (){},),
+                        TextButton(child: Text("Continue as a guest",style: style,),onPressed: (){},),
                         const Expanded(
                             child: Divider(color: Colors.black,endIndent: 50,)
                         ),
@@ -104,7 +108,7 @@ class _loginPageState extends State<loginPage> {
             Container(
               child: Image.asset("assets/images/google.png",width: 30,height: 30,),
             ),SizedBox(width: 40,),
-            Text("Continue with Google",style: TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.w400),)
+            Text("Continue with Google",style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.black)),)
           ],
         ),
       )
