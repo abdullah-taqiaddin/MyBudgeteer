@@ -42,9 +42,9 @@ class _loginPageState extends State<loginPage> {
             //TODO: replace with logo
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              width: 300,
+              width: 150,
               height: 200,
-              child: Image.asset("assets/images/PlaceholderLogo.png"),
+              child: Image.asset("assets/images/DemoLogo.png"),
             )
           ),
         Text("Hello!,Please Sign in!",style: style,),
@@ -95,7 +95,7 @@ class _loginPageState extends State<loginPage> {
           shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))
         ),*/
         style: ElevatedButton.styleFrom(
-          primary: Colors.white,
+          backgroundColor: Colors.white,
           elevation: 0,
           side: BorderSide(color: Colors.grey.shade300),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
         ),
