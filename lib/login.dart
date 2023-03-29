@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 
 const Color FontColour = Color(0x666666);
 
@@ -14,7 +17,6 @@ class loginPage extends StatefulWidget {
 }
 
 class _loginPageState extends State<loginPage> {
-
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,8 @@ class _loginPageState extends State<loginPage> {
             child: Container(
               width: 150,
               height: 200,
-              child: Image.asset("assets/images/DemoLogo.png"),
+              //Please upload the image when committing :)
+              child: Image.asset("assets/images/PlaceholderLogo.png"),
             )
           ),
         Text("Hello!,Please Sign in!",style: style,),
@@ -61,7 +64,7 @@ class _loginPageState extends State<loginPage> {
               child: Column(
                 children: [
                   SizedBox(height: 70,),
-                  SignInWithGoogle(),
+                  SignInWithGoogleButton(),
                   SizedBox(height: 30,),
                   Row(
                       children: [
@@ -83,7 +86,7 @@ class _loginPageState extends State<loginPage> {
     );
   }
 
-  Widget SignInWithGoogle(){
+  Widget SignInWithGoogleButton(){
     return SizedBox(
       height: 50,
       width: 300, // set your desired width here
@@ -100,7 +103,7 @@ class _loginPageState extends State<loginPage> {
           side: BorderSide(color: Colors.grey.shade300),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
         ),
         //TODO:implement firebase auth
-        onPressed: (){},
+        onPressed: signInWithGoogle,
 
         child: Row(
           children: [
@@ -115,4 +118,20 @@ class _loginPageState extends State<loginPage> {
     );
   }
 
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
 }
