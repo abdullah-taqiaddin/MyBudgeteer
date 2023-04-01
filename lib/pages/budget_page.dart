@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:testapp/component/card_design.dart';
 import 'package:testapp/component/right_drawer.dart';
 
 class BudgetPage extends StatefulWidget {
@@ -144,7 +145,17 @@ class _BudgetPageState extends State<BudgetPage> {
               ),
             ),
 
-
+            SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: 10,
+                itemBuilder: (context, index) {
+                  return CardDesign();
+                },
+              ),
+            ),
 
           ]
           ),
