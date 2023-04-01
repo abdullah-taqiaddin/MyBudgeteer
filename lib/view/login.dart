@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:testapp/viewmodel/firebase_controller.dart';
 
 
 
@@ -104,7 +105,22 @@ class _loginPageState extends State<loginPage> {
           side: BorderSide(color: Colors.grey.shade300),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
         ),
         //TODO:implement firebase auth
-        onPressed: signInWithGoogle,
+        onPressed: () async {
+          try {
+            UserCredential userCredential = await FirebaseController().signInWithGoogle();
+            // handle successful sign-in
+            print(userCredential.user?.displayName);
+          } catch (e) {
+            // handle error
+            print('Error during sign-in: $e');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to sign in with Google. Please check your internet connection and try again.'),
+              ),
+            );
+          }
+        },
+
 
 
         child: Row(
@@ -120,21 +136,4 @@ class _loginPageState extends State<loginPage> {
     );
   }
 
-  Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-
-  }
 }
