@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../pages/budget_page.dart';
+
 class RightDrawer extends StatelessWidget {
   const RightDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.only(bottom: 5),
       child: ClipRRect(
         // give it your desired border radius
@@ -26,7 +28,10 @@ class RightDrawer extends StatelessWidget {
                   ListTile(
                     leading: Icon(Icons.home),
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => BudgetPage()),
+                      );
                     },
                   ),
                   SizedBox(height: 20),

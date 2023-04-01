@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 
+
 const Color FontColour = Color(0x666666);
 
 var style = GoogleFonts.poppins(textStyle: TextStyle(color: Colors.black));
@@ -104,6 +105,7 @@ class _loginPageState extends State<loginPage> {
         ),
         //TODO:implement firebase auth
         onPressed: signInWithGoogle,
+
 
         child: Row(
           children: [
