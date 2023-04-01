@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:testapp/component/bottom_container.dart';
 import 'package:testapp/component/card_design.dart';
 import 'package:testapp/component/right_drawer.dart';
 
@@ -148,6 +149,8 @@ class _BudgetPageState extends State<BudgetPage> {
             SizedBox(
               height: 20,
             ),
+
+            // Budget UI
             Expanded(
               child: ListView.builder(
                 itemCount: 10,
@@ -155,6 +158,12 @@ class _BudgetPageState extends State<BudgetPage> {
                   return CardDesign();
                 },
               ),
+            ),
+
+            // Container to add new Budget or Expense
+            //on tab user can Navigate between pages
+            Center(
+                child:BottomContainer(color:Colors.white,)
             ),
 
           ]
