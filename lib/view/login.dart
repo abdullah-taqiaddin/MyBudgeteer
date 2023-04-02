@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:testapp/viewmodel/firebase_controller.dart';
 
+import '../pages/budget_page.dart';
+
 
 
 const Color FontColour = Color(0x666666);
@@ -108,8 +110,10 @@ class _loginPageState extends State<loginPage> {
         onPressed: () async {
           try {
             UserCredential userCredential = await FirebaseController().signInWithGoogle();
-            // handle successful sign-in
+            // signin is a success
             print(userCredential.user?.displayName);
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BudgetPage()));
+
           } catch (e) {
             // handle error
             print('Error during sign-in: $e');
