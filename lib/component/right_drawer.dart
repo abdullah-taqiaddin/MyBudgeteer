@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:testapp/view/login.dart';
 
 import '../pages/budget_page.dart';
 
@@ -17,11 +18,11 @@ class RightDrawer extends StatelessWidget {
         ),
         // wrap with a sizedbox for a custom width [for more flexibility]
         child: SizedBox(
-          width: 70,
+          width: 60,
           height: 1000,
           child: Drawer(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 280),
+              padding: const EdgeInsets.symmetric(vertical: 240),
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
@@ -41,13 +42,25 @@ class RightDrawer extends StatelessWidget {
                       Navigator.pop(context);
                     },
                   ),
+
                   SizedBox(height: 20),
                   ListTile(
                     leading: Icon(Icons.settings),
                     onTap: () {
                       Navigator.pop(context);
                     },
-                  )
+                  ),
+                  Divider(color: Colors.grey,  indent: 15, endIndent: 15),
+                  ListTile(
+                    leading: Icon(Icons.logout),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => loginPage()),
+                      );
+                    },
+                  ),
+
                 ],
               ),
             ),

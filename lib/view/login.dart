@@ -75,7 +75,16 @@ class _loginPageState extends State<loginPage> {
                         const Expanded(
                             child: Divider(color: Colors.black,indent: 50,)
                         ),
-                        TextButton(child: Text("Continue as a guest",style: style,),onPressed: (){},),
+                        TextButton(
+                          child: Text("Continue as a guest",
+                                 style: style,),
+                                 onPressed: (){
+                                   Navigator.push(
+                                     context,
+                                     MaterialPageRoute(builder: (context) => BudgetPage()),
+                                   );
+                            },
+                        ),
                         const Expanded(
                             child: Divider(color: Colors.black,endIndent: 50,)
                         ),

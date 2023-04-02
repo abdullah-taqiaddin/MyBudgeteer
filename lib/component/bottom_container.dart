@@ -70,8 +70,6 @@ class _BottomContainerState extends State<BottomContainer> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => BudgetPage()),
-
-
                       );
                     },
                   ),
