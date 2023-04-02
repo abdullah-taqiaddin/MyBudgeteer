@@ -118,7 +118,7 @@ class _loginPageState extends State<loginPage> {
         //TODO:implement firebase auth
         onPressed:  () async {
           try {
-            UserCredential userCredential = await FirebaseController().signInWithGoogle();
+            UserCredential userCredential = await FirebaseController().signInWithGoogle(context);
             // signin is a success
             print(userCredential.user?.displayName);
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BudgetPage()));
@@ -148,23 +148,5 @@ class _loginPageState extends State<loginPage> {
       )
     );
   }
-  Future<UserCredential> signInWithGoogle() async {
-    //TODO:check token expiration!!!
 
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-
-  }
 }

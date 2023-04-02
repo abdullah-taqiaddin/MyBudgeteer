@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:testapp/component/bottom_container.dart';
 import 'package:testapp/component/card_design.dart';
 import 'package:testapp/component/right_drawer.dart';
+
+import '../viewmodel/auth_provider.dart';
 
 class BudgetPage extends StatefulWidget {
   const BudgetPage({Key? key}) : super(key: key);
@@ -32,6 +35,7 @@ int selectedMonthIndex=0;
 class _BudgetPageState extends State<BudgetPage> {
   @override
   Widget build(BuildContext context) {
+    final userCredential = Provider.of<AuthProvider>(context).userCredential;
     return Scaffold(
       body: SafeArea(
         child: Scaffold(
@@ -44,7 +48,7 @@ class _BudgetPageState extends State<BudgetPage> {
         title: Padding(
           padding: const EdgeInsets.symmetric(horizontal:2.0),
           child: Text(
-            "hello,UserName",
+            "hello,${userCredential?.user?.displayName}",
             style: TextStyle(
                 color: Color.fromRGBO(102, 102, 102, 1),
                 fontSize: 18,

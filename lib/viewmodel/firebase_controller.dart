@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
+import 'package:testapp/viewmodel/auth_provider.dart';
 
 final firebaseAuth = FirebaseAuth.instance;
 
@@ -11,15 +14,11 @@ class FirebaseController{
   * 3. differentiate new users from old ones
   * */
 
-
-
-
   bool isTokenExpired() {
     return false;
   }
 
-  Future<UserCredential> signInWithGoogle() async {
-      //TODO:check token expiration!!!
+  Future<UserCredential> signInWithGoogle(BuildContext context) async {
 
       // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -33,8 +32,18 @@ class FirebaseController{
         idToken: googleAuth?.idToken,
       );
 
-      // Once signed in, return the UserCredential
-      return await FirebaseAuth.instance.signInWithCredential(credential);
+
+      try {
+        // Once signed in, return the UserCredential
+        final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+        Provider.of<AuthProvider>(context, listen: false).setUserCredentials(userCredential);
+        return userCredential;
+
+      } catch (e) {
+        // Sign the user out and try again
+        await GoogleSignIn().signOut();
+        return signInWithGoogle(context);
+      }
 
   }
 
