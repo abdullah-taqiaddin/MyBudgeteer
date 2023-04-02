@@ -54,9 +54,9 @@ class _CardDesignState extends State<CardDesign> {
                   Expanded(
                     child: Column(
                       children: [
-                        Text("Spent"),
+                        FittedBox(child: Text("Spent")),
                         SizedBox(height: 4),
-                        Text("200")
+                        FittedBox(child: Text("200"))
                       ],
                     ),
                   ),
@@ -78,11 +78,13 @@ class _CardDesignState extends State<CardDesign> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("total"),
+                        FittedBox(child: Text("total")),
                         SizedBox(height: 4),
-                        Text(
-                          "300",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        FittedBox(
+                          child: Text(
+                            "300",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         )
                       ],
                     ),
