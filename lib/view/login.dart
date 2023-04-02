@@ -116,7 +116,7 @@ class _loginPageState extends State<loginPage> {
           side: BorderSide(color: Colors.grey.shade300),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
         ),
         //TODO:implement firebase auth
-        onPressed: () async {
+        onPressed:  () async {
           try {
             UserCredential userCredential = await FirebaseController().signInWithGoogle();
             // signin is a success
@@ -128,7 +128,7 @@ class _loginPageState extends State<loginPage> {
             print('Error during sign-in: $e');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Failed to sign in with Google. Please check your internet connection and try again.'),
+                content: Text(e.toString()),
               ),
             );
           }
@@ -148,5 +148,23 @@ class _loginPageState extends State<loginPage> {
       )
     );
   }
+  Future<UserCredential> signInWithGoogle() async {
+    //TODO:check token expiration!!!
 
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+
+  }
 }
