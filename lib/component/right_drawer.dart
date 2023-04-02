@@ -1,6 +1,6 @@
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
-import 'package:testapp/view/login.dart';
+
 import 'package:testapp/viewmodel/firebase_controller.dart';
 
 import '../pages/budget_page.dart';
@@ -23,8 +23,9 @@ class RightDrawer extends StatelessWidget {
           width: 60,
           height: 1000,
           child: Drawer(
+            backgroundColor: Colors.blueGrey[100],
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 240),
+              padding: const EdgeInsets.symmetric(vertical: 150),
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [

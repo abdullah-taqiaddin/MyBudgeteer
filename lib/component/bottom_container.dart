@@ -92,12 +92,38 @@ class _BottomContainerState extends State<BottomContainer> {
                       shape: BoxShape.circle,
                       color: Color.fromARGB(255, 101, 129, 168)),
                   child: Center(
-                    child: Text(
-                      "+",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 35,
-                          fontWeight: FontWeight.w400),
+                    child: IconButton(
+                      icon: Icon(Icons.add),
+                      iconSize: 40.0,
+                      color: Colors.white,
+                      onPressed: () {
+                        showModalBottomSheet(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(40.0),
+                              topRight: Radius.circular(40.0),
+                            ),
+                          ),
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Container(
+                              width: 40,
+                              height: 200.0,
+                              child: Center(
+                                child: Text(
+                                  'Add new Budget/Expense',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                  ),
+                                ),
+                              ),
+
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                 )),

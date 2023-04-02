@@ -65,7 +65,7 @@ class _BudgetPageState extends State<BudgetPage> {
             body: Column(children: [
               Container(
                 width: 500,
-                height: 160,
+                height: 110,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(

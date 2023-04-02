@@ -62,7 +62,7 @@ class _CardDesignState extends State<CardDesign> {
                   ),
                   Center(
                     child: LinearPercentIndicator(
-                      width: 250.0,
+                      width: 260.0,
                       lineHeight: 20.0,
                       barRadius: Radius.circular(40),
                       percent: 0.7,
