@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:testapp/viewmodel/firebase_controller.dart';
 
 import '../pages/budget_page.dart';
+import '../view/login.dart';
 
 class RightDrawer extends StatelessWidget {
   const RightDrawer({Key? key}) : super(key: key);
@@ -57,7 +58,14 @@ class RightDrawer extends StatelessWidget {
                   ListTile(
                     leading: Icon(Icons.logout),
                     //TODO:Continue the provider and route to login-page
-                    onTap: FirebaseController().signOutUser(),
+                    onTap: () {
+                      FirebaseController().signOutUser(context);
+                      Navigator.of(context).pushAndRemoveUntil(
+                          new MaterialPageRoute(
+                              builder: (context) =>
+                                  loginPage()),
+                              (route) => false);
+                    },
                   ),
                 ],
               ),

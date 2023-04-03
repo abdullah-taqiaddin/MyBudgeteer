@@ -54,12 +54,12 @@ class _loginPageState extends State<loginPage> {
               child: Image.asset("assets/images/PlaceholderLogo.png"),
             )
           ),
-        Text("Hello!,Please Sign in!",style: style,),
-        SizedBox(height: 50,),
+        Text("Money talks, \n"
+            "but budgeting screams success!\n",style: TextStyle(fontSize: 20,color: Colors.black,fontFamily: 'K2D'),),
+        SizedBox(height: 25,),
           Expanded(
             child: Container(
               width: 500,
-              height: 267,
               decoration: BoxDecoration(
 
                   border: Border.all(color: Colors.grey,),
@@ -77,7 +77,7 @@ class _loginPageState extends State<loginPage> {
                         ),
                         TextButton(
                           child: Text("Continue as a guest",
-                                 style: style,),
+                                 style:TextStyle(fontSize: 15,color: Colors.black,fontFamily: 'K2D'),),
                                  onPressed: (){
                                    Navigator.push(
                                      context,
@@ -102,20 +102,14 @@ class _loginPageState extends State<loginPage> {
   Widget SignInWithGoogleButton(){
     return SizedBox(
       height: 50,
-      width: 300, // set your desired width here
+      width: 300,
       child: ElevatedButton(
 
-        /*style: ButtonStyle(
-
-          backgroundColor: MaterialStateProperty.all(Colors.white),
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))
-        ),*/
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           elevation: 0,
           side: BorderSide(color: Colors.grey.shade300),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
         ),
-        //TODO:implement firebase auth
         onPressed:  () async {
           try {
             UserCredential userCredential = await FirebaseController().signInWithGoogle(context);
@@ -142,7 +136,7 @@ class _loginPageState extends State<loginPage> {
             Container(
               child: Image.asset("assets/images/google.png",width: 30,height: 30,),
             ),SizedBox(width: 40,),
-            Text("Continue with Google",style: GoogleFonts.poppins(textStyle: TextStyle(color: Colors.black)),)
+            Text("Continue with Google",style: TextStyle(fontSize: 15,color: Colors.black,fontFamily: 'K2D'),)
           ],
         ),
       )

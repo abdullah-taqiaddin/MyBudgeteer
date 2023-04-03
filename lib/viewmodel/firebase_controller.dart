@@ -36,6 +36,7 @@ class FirebaseController{
       try {
         // Once signed in, return the UserCredential
         final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
         Provider.of<AuthProvider>(context, listen: false).setUserCredentials(userCredential);
         return userCredential;
 
@@ -47,7 +48,13 @@ class FirebaseController{
 
   }
 
-  signOutUser() {
-    firebaseAuth.signOut();
+  signOutUser(BuildContext context) {
+    try {
+      firebaseAuth.signOut();
+      Provider.of<AuthProvider>(context, listen: false).removeUserCredentials();
+    }
+    catch(e){
+      print(e);
+    }
   }
 }
