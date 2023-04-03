@@ -8,7 +8,6 @@ import 'package:testapp/viewmodel/firebase_controller.dart';
 import '../pages/budget_page.dart';
 
 
-
 const Color FontColour = Color(0x666666);
 
 var style = GoogleFonts.poppins(textStyle: TextStyle(color: Colors.black));
@@ -37,31 +36,41 @@ class _loginPageState extends State<loginPage> {
 
     return Container(
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: Color(0xD2D2D2),
+      decoration: const BoxDecoration(
+        image: DecorationImage(image: AssetImage("assets/images/background.jpg"),fit: BoxFit.cover)
+        // gradient: LinearGradient(
+        //   colors: [
+        //     Color(0xFF3FCFA4), // left color
+        //     Color(0xFF20A2A2), // right color
+        //   ],
+        //   begin: Alignment.centerLeft,
+        //   end: Alignment.centerRight,
+        // )
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 100,),
+          SizedBox(height: 150,),
           Padding(
             //TODO: replace with logo
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              width: 150,
-              height: 200,
+              alignment: Alignment.center,
+              width: 500,
+              height: 100,
               //Please upload the image when committing :)
-              child: Image.asset("assets/images/PlaceholderLogo.png"),
+              // child: Image.asset("assets/images/PlaceholderLogo.png"),
+              child: Text("My Budgeteer",style: TextStyle(fontSize: 45,color: Colors.black,fontFamily: 'K2D',fontWeight: FontWeight.bold),),
             )
           ),
         Text("Money talks, \n"
             "but budgeting screams success!\n",style: TextStyle(fontSize: 20,color: Colors.black,fontFamily: 'K2D'),),
-        SizedBox(height: 25,),
+        SizedBox(height: 70,),
           Expanded(
             child: Container(
               width: 500,
               decoration: BoxDecoration(
-
+                  color: Colors.white,
                   border: Border.all(color: Colors.grey,),
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(60),topRight: Radius.circular(60),)
               ),
