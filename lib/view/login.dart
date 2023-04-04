@@ -29,10 +29,6 @@ class _loginPageState extends State<loginPage> {
   }
 
   Widget loginPageWidget() {
-    //icon
-    //at the end
-    //continue with google button
-    //continue as guest button
 
     return Container(
       alignment: Alignment.center,

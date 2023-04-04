@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:testapp/view/settings.dart';
 
 import 'package:testapp/viewmodel/firebase_controller.dart';
 
@@ -51,7 +52,9 @@ class RightDrawer extends StatelessWidget {
                   ListTile(
                     leading: Icon(Icons.settings),
                     onTap: () {
+                      //close the drawer
                       Navigator.pop(context);
+                      Navigator.push(context, new MaterialPageRoute(builder: (context)=>settingspage()));
                     },
                   ),
                   Divider(color: Colors.grey,  indent: 15, endIndent: 15),
