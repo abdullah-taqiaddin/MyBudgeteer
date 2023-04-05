@@ -25,7 +25,7 @@ class RightDrawer extends StatelessWidget {
           width: 60,
           height: 1000,
           child: Drawer(
-            backgroundColor: Colors.blueGrey[100],
+            backgroundColor: Colors.white,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 150),
               child: ListView(
