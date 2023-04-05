@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:testapp/view/settings.dart';
 
@@ -6,8 +5,6 @@ import 'package:testapp/viewmodel/firebase_controller.dart';
 
 import '../pages/budget_page.dart';
 import '../view/login.dart';
-
-
 
 class RightDrawer extends StatelessWidget {
   final int selectedIndex;
@@ -41,17 +38,13 @@ class RightDrawer extends StatelessWidget {
                       color: selectedIndex == 0 ? Colors.green : null,
                     ),
                     onTap: () {
-                      onItemTapped(0);
-                      //TODO:FIX ROUTE TO HOME PAGE!
-                      if(Navigator.canPop(context)) {
-                        print("can pop");
-                        Navigator.pop(context);
+                      if (onItemTapped != 0) {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => BudgetPage()),
+                                (route) => false);
                       } else {
-                        print("Can push");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => BudgetPage()),
-                        );
+                        Navigator.pop(context);
                       }
                     },
                   ),
