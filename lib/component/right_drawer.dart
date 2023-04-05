@@ -53,7 +53,8 @@ class RightDrawer extends StatelessWidget {
                     ),
                     onTap: () {
                       onItemTapped(1);
-                      Navigator.pop(context);
+                      //TODO:Route to Statistics page
+                      //Navigator.pop(context);
                     },
                   ),
 
@@ -64,8 +65,6 @@ class RightDrawer extends StatelessWidget {
                     ),
                     onTap: () {
                       onItemTapped(2);
-                      //close the drawer
-                      Navigator.pop(context);
                       Navigator.push(context, new MaterialPageRoute(builder: (context)=>settingspage()));
                     },
                   ),
