@@ -10,6 +10,8 @@ class ExpensePage extends StatefulWidget {
 }
 
 class _ExpensePageState extends State<ExpensePage> {
+  int _selectedIndex = 1;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -27,7 +29,14 @@ class _ExpensePageState extends State<ExpensePage> {
                     fontWeight: FontWeight.bold),
               ),
             ),
-            endDrawer: RightDrawer(),
+            endDrawer: RightDrawer(
+              selectedIndex: _selectedIndex,
+              onItemTapped: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+            ),
             backgroundColor: Colors.grey[100],
             body: Column(children: [
               Container(

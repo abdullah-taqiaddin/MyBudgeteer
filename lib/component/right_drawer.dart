@@ -8,7 +8,10 @@ import '../pages/budget_page.dart';
 import '../view/login.dart';
 
 class RightDrawer extends StatelessWidget {
-  const RightDrawer({Key? key}) : super(key: key);
+  final int selectedIndex;
+  final Function(int) onItemTapped;
+
+  RightDrawer({required this.selectedIndex, required this.onItemTapped});
 
   @override
   Widget build(BuildContext context) {
@@ -25,15 +28,18 @@ class RightDrawer extends StatelessWidget {
           width: 60,
           height: 1000,
           child: Drawer(
-            backgroundColor: Colors.blueGrey[100],
+            backgroundColor: Colors.white,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 150),
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
                   ListTile(
-                    leading: Icon(Icons.home),
+                    leading: Icon(Icons.home,
+                      color: selectedIndex == 0 ? Colors.green : null,
+                    ),
                     onTap: () {
+                      onItemTapped(0);
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => BudgetPage()),
@@ -42,16 +48,22 @@ class RightDrawer extends StatelessWidget {
                   ),
                   SizedBox(height: 20),
                   ListTile(
-                    leading: Icon(Icons.bar_chart),
+                    leading: Icon(Icons.bar_chart,
+                      color: selectedIndex == 1 ? Colors.green : null,
+                    ),
                     onTap: () {
+                      onItemTapped(1);
                       Navigator.pop(context);
                     },
                   ),
 
                   SizedBox(height: 20),
                   ListTile(
-                    leading: Icon(Icons.settings),
+                    leading: Icon(Icons.settings,
+                      color: selectedIndex == 2 ? Colors.green : null,
+                    ),
                     onTap: () {
+                      onItemTapped(2);
                       //close the drawer
                       Navigator.pop(context);
                       Navigator.push(context, new MaterialPageRoute(builder: (context)=>settingspage()));

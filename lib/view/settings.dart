@@ -8,6 +8,9 @@ class settingspage extends StatefulWidget {
 }
 
 class _settingspageState extends State<settingspage> {
+  // this is added for the drawer later on
+  int _selectedIndex = 2;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
