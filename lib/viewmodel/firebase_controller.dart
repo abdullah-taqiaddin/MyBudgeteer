@@ -50,10 +50,11 @@ class FirebaseController{
 
   signOutUser(BuildContext context) {
     try {
-      firebaseAuth.signOut();
       Provider.of<AuthProvider>(context, listen: false).removeUserCredentials();
+      firebaseAuth.signOut();
     }
     catch(e){
+      //TODO:Make a snackbar if any errors occure
       print(e);
     }
   }
