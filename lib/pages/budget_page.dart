@@ -33,6 +33,8 @@ List<String> months = [
 int selectedMonthIndex=0;
 
 class _BudgetPageState extends State<BudgetPage> {
+  int _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     final userCredential = Provider.of<AuthProvider>(context).userCredential;
@@ -58,7 +60,15 @@ class _BudgetPageState extends State<BudgetPage> {
       ),
 
           //to add drawer on the right use (endDrawer)
-          endDrawer: RightDrawer(),
+          endDrawer: RightDrawer(
+            selectedIndex: _selectedIndex,
+            onItemTapped: (index) {
+              setState(() {
+                _selectedIndex = index;
+                Navigator.pop(context);
+              });
+            },
+          ),
 
 
           //Container
