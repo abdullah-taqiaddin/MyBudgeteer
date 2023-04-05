@@ -42,10 +42,17 @@ class RightDrawer extends StatelessWidget {
                     ),
                     onTap: () {
                       onItemTapped(0);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => BudgetPage()),
-                      );
+                      //TODO:FIX ROUTE TO HOME PAGE!
+                      if(Navigator.canPop(context)) {
+                        print("can pop");
+                        Navigator.pop(context);
+                      } else {
+                        print("Can push");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => BudgetPage()),
+                        );
+                      }
                     },
                   ),
                   SizedBox(height: 20),
