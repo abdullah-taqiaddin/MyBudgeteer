@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/component/bottom_container.dart';
@@ -30,164 +31,385 @@ List<String> months = [
   'December'
 ];
 
-int selectedMonthIndex=0;
+int selectedMonthIndex = 0;
 
-class _BudgetPageState extends State<BudgetPage> {
+int TextPrimary = 0XFF145756;
+
+class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final userCredential = Provider.of<AuthProvider>(context).userCredential;
+    TabController _tabController = TabController(length: 2, vsync: this);
+
     return Scaffold(
-      body: SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.blueGrey[100],
-        appBar: AppBar(
-        automaticallyImplyLeading: false,
-        iconTheme: IconThemeData(color: Colors.blueGrey, size: 40),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal:2.0),
-          child: Text(
-            "hello,${userCredential?.user?.displayName}",
-            style: TextStyle(
-                color: Color.fromRGBO(102, 102, 102, 1),
-                fontSize: 18,
-                fontWeight: FontWeight.bold),
+        extendBody: true,
+        bottomNavigationBar: BottomAppBar(
+          shape: AutomaticNotchedShape(RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(50), topLeft: Radius.circular(50)),
+          )),
+          color: Color(0XFF2DB79E),
+          elevation: 0,
+          child: Container(
+            height: 60,
           ),
         ),
-      ),
-
-          //to add drawer on the right use (endDrawer)
-          endDrawer: RightDrawer(
-            selectedIndex: _selectedIndex,
-            onItemTapped: (index) {
-              setState(() {
-                _selectedIndex = index;
-                Navigator.pop(context);
-              });
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: FloatingActionButton.large(
+            onPressed: () {
+              // Add your functionality here
             },
+            child: Icon(Icons.add),
+            backgroundColor: Color(0XFFFF6B35),
           ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        endDrawer: RightDrawer(
+          selectedIndex: _selectedIndex,
+          onItemTapped: (index) {
+            setState(() {
+              _selectedIndex = index;
+              Navigator.pop(context);
+            });
+          },
+        ),
+        body: MainBody(_tabController, userCredential));
+  }
 
+  /*
+  /Main body widget takes two params, tabcontroller, user creds
+   */
 
-          //Container
-            body: Column(children: [
-              Container(
-                width: 500,
-                height: 110,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(50),
-                    bottomRight: Radius.circular(50),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // changes position of shadow
+  Widget MainBody(TabController controller, UserCredential? userCredential) {
+    return Container(
+      alignment: Alignment.centerLeft,
+      decoration: BoxDecoration(color: Color(0XFF2DB79E)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 20,
+          ),
+          AppBar(
+            actions: [
+              Builder(
+                builder: (context) => Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.menu,
                     ),
-                  ],
+                    onPressed: () => Scaffold.of(context).openEndDrawer(),
+                    tooltip:
+                        MaterialLocalizations.of(context).openAppDrawerTooltip,
+                  ),
                 ),
+              ),
+            ],
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            title: Padding(
+              padding: const EdgeInsets.all(25.0),
+              child: Text(
+                "Hello,${userCredential?.user?.displayName}",
+                style: TextStyle(fontFamily: "K2D"),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Container(
+                width: double.maxFinite,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image:
+                            AssetImage("assets/images/background-cropped.jpg"),
+                        fit: BoxFit.fill,
+                        opacity: 0.5),
+                    border: Border.all(
+                      color: Colors.grey,
+                    ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(50),
+                      topRight: Radius.circular(50),
+                    )),
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      child: Row(
-                        children: [
-                          Text(
-                            " 1000 JD ",
-                            style: TextStyle(
-                                color: Color.fromRGBO(102, 102, 102, 1),
-
-                                fontSize: 40,
-                                fontWeight: FontWeight.bold),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom:
+                                  BorderSide(color: Colors.grey, width: 0.8))),
+                      child: TabBar(
+                        labelColor: Color(TextPrimary),
+                        unselectedLabelColor: Colors.grey,
+                        indicator: UnderlineTabIndicator(
+                          borderSide:
+                              BorderSide(width: 2.0, color: Color(0XFF145756)),
+                          insets: EdgeInsets.symmetric(horizontal: 30.0),
+                        ),
+                        controller: controller,
+                        tabs: [
+                          Tab(
+                            child: Text(
+                              "Budget",
+                              style: TextStyle(
+                                  fontFamily: "K2D",
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Tab(
+                            child: Text(
+                              "Expense",
+                              style: TextStyle(
+                                  fontFamily: "K2D",
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    Center(
-                      child: Container(
-                        height: 40,
-                        width: 190,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            color: Color.fromRGBO(92, 102, 114, 1)),
-
-                        child:
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  selectedMonthIndex = selectedMonthIndex == 0 ? 0 : selectedMonthIndex - 1;
-                                });
-                              },
-                              icon: Icon(
-                                Icons.chevron_left,
-                                color: Colors.white,
-                                size: 30,
-                              ),
+                    Container(
+                      width: double.maxFinite,
+                      height: 300,
+                      child: TabBarView(
+                        controller: controller,
+                        children: [
+                          Tab(
+                            child: Text(
+                              "Budget",
+                              style: TextStyle(
+                                  fontFamily: "K2D",
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            Center(
-                              child: Text(
-                                '${months[selectedMonthIndex]}',
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
+                          ),
+                          Tab(
+                            child: Text(
+                              "Expense",
+                              style: TextStyle(
+                                  fontFamily: "K2D",
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  selectedMonthIndex = selectedMonthIndex == 11 ? 11 : selectedMonthIndex + 1;
-                                });
-                              },
-                              icon: Icon(
-                                Icons.chevron_right,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-
                     ),
                   ],
-                ),
-              ),
-
-              SizedBox(
-                height: 20,
-              ),
-
-              // Budget UI
-              
-              Expanded(
-                child: ListView.builder(
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    return CardDesign();
-                  },
-                ),
-              ),
-
-              // Container to add new Budget or Expense
-              //on tab user can Navigate between pages
-              Center(
-                  child:BottomContainer(color:Colors.white,)
-              ),
-
-            ]
-            ),
-        ),
+                )),
+          )
+        ],
       ),
     );
   }
 }
+
+// // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+//
+// import 'package:flutter/material.dart';
+// import 'package:provider/provider.dart';
+// import 'package:testapp/component/bottom_container.dart';
+// import 'package:testapp/component/card_design.dart';
+// import 'package:testapp/component/right_drawer.dart';
+//
+// import '../viewmodel/auth_provider.dart';
+//
+// class BudgetPage extends StatefulWidget {
+//   const BudgetPage({Key? key}) : super(key: key);
+//
+//   @override
+//   State<BudgetPage> createState() => _BudgetPageState();
+// }
+//
+// List<String> months = [
+//   'January',
+//   'February',
+//   'March',
+//   'April',
+//   'May',
+//   'June',
+//   'July',
+//   'August',
+//   'September',
+//   'October',
+//   'November',
+//   'December'
+// ];
+//
+// int selectedMonthIndex=0;
+//
+// class _BudgetPageState extends State<BudgetPage> {
+//   int _selectedIndex = 0;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final userCredential = Provider.of<AuthProvider>(context).userCredential;
+//     return Scaffold(
+//       body: SafeArea(
+//         child: Scaffold(
+//           backgroundColor: Colors.blueGrey[100],
+//         appBar: AppBar(
+//         automaticallyImplyLeading: false,
+//         iconTheme: IconThemeData(color: Colors.blueGrey, size: 40),
+//         backgroundColor: Colors.white,
+//         elevation: 0,
+//         title: Padding(
+//           padding: const EdgeInsets.symmetric(horizontal:2.0),
+//           child: Text(
+//             "hello,${userCredential?.user?.displayName}",
+//             style: TextStyle(
+//                 color: Color.fromRGBO(102, 102, 102, 1),
+//                 fontSize: 18,
+//                 fontWeight: FontWeight.bold),
+//           ),
+//         ),
+//       ),
+//
+//           //to add drawer on the right use (endDrawer)
+//           endDrawer: RightDrawer(
+//             selectedIndex: _selectedIndex,
+//             onItemTapped: (index) {
+//               setState(() {
+//                 _selectedIndex = index;
+//                 Navigator.pop(context);
+//               });
+//             },
+//           ),
+//
+//
+//           //Container
+//             body: Column(children: [
+//               Container(
+//                 width: 500,
+//                 height: 110,
+//                 decoration: BoxDecoration(
+//                   color: Colors.white,
+//                   borderRadius: BorderRadius.only(
+//                     bottomLeft: Radius.circular(50),
+//                     bottomRight: Radius.circular(50),
+//                   ),
+//                   boxShadow: [
+//                     BoxShadow(
+//                       color: Colors.grey.withOpacity(0.5),
+//                       spreadRadius: 2,
+//                       blurRadius: 5,
+//                       offset: Offset(0, 3), // changes position of shadow
+//                     ),
+//                   ],
+//                 ),
+//                 child: Column(
+//                   children: [
+//                     Padding(
+//                       padding: const EdgeInsets.symmetric(
+//                           horizontal: 20, vertical: 10),
+//                       child: Row(
+//                         children: [
+//                           Text(
+//                             " 1000 JD ",
+//                             style: TextStyle(
+//                                 color: Color.fromRGBO(102, 102, 102, 1),
+//
+//                                 fontSize: 40,
+//                                 fontWeight: FontWeight.bold),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                     Center(
+//                       child: Container(
+//                         height: 40,
+//                         width: 190,
+//                         decoration: BoxDecoration(
+//                             borderRadius: BorderRadius.circular(16),
+//                             color: Color.fromRGBO(92, 102, 114, 1)),
+//
+//                         child:
+//                         Row(
+//                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                           children: [
+//                             IconButton(
+//                               onPressed: () {
+//                                 setState(() {
+//                                   selectedMonthIndex = selectedMonthIndex == 0 ? 0 : selectedMonthIndex - 1;
+//                                 });
+//                               },
+//                               icon: Icon(
+//                                 Icons.chevron_left,
+//                                 color: Colors.white,
+//                                 size: 30,
+//                               ),
+//                             ),
+//                             Center(
+//                               child: Text(
+//                                 '${months[selectedMonthIndex]}',
+//                                 style: TextStyle(
+//                                     fontSize: 18,
+//                                     fontWeight: FontWeight.bold,
+//                                     color: Colors.white),
+//                               ),
+//                             ),
+//                             IconButton(
+//                               onPressed: () {
+//                                 setState(() {
+//                                   selectedMonthIndex = selectedMonthIndex == 11 ? 11 : selectedMonthIndex + 1;
+//                                 });
+//                               },
+//                               icon: Icon(
+//                                 Icons.chevron_right,
+//                                 color: Colors.white,
+//                                 size: 30,
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//
+//               SizedBox(
+//                 height: 20,
+//               ),
+//
+//               // Budget UI
+//
+//               Expanded(
+//                 child: ListView.builder(
+//                   itemCount: 10,
+//                   itemBuilder: (context, index) {
+//                     return CardDesign();
+//                   },
+//                 ),
+//               ),
+//
+//               // Container to add new Budget or Expense
+//               //on tab user can Navigate between pages
+//               Center(
+//                   child:BottomContainer(color:Colors.white,)
+//               ),
+//
+//             ]
+//             ),
+//         ),
+//       ),
+//     );
+//   }
+// }
