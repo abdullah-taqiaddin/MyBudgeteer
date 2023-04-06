@@ -37,7 +37,7 @@ class RightDrawer extends StatelessWidget {
                 children: [
                   ListTile(
                     leading: Icon(Icons.home,
-                      color: selectedIndex == 0 ? Colors.green : null,
+                      color: selectedIndex == 0 ? Color(0XFF2DB79E) : null,
                     ),
                     onTap: () {
                       if (onItemTapped != 0) {
@@ -53,7 +53,7 @@ class RightDrawer extends StatelessWidget {
                   SizedBox(height: 20),
                   ListTile(
                     leading: Icon(Icons.bar_chart,
-                      color: selectedIndex == 1 ? Colors.green : null,
+                      color: selectedIndex == 1 ? Color(0XFF2DB79E) : null,
                     ),
                     onTap: () {
                       onItemTapped(1);
@@ -66,7 +66,7 @@ class RightDrawer extends StatelessWidget {
                   SizedBox(height: 20),
                   ListTile(
                     leading: Icon(Icons.settings,
-                      color: selectedIndex == 2 ? Colors.green : null,
+                      color: selectedIndex == 2 ? Color(0XFF2DB79E) : null,
                     ),
                     onTap: () {
                       onItemTapped(2);
