@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:testapp/component/right_drawer.dart';
+import 'package:testapp/pages/budget_page.dart';
 
 class settingspage extends StatefulWidget {
   const settingspage({Key? key}) : super(key: key);
@@ -53,7 +55,9 @@ class _settingspageState extends State<settingspage> {
           Padding(
             padding: const EdgeInsets.only(top: 50, left: 20),
             child: IconButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                      Navigator.pop(context);
+                },
                 icon: Icon(
                   Icons.arrow_back,
                   size: 40,

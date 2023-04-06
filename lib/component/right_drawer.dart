@@ -10,6 +10,7 @@ class RightDrawer extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
+
   RightDrawer({required this.selectedIndex, required this.onItemTapped});
 
   @override
@@ -91,4 +92,6 @@ class RightDrawer extends StatelessWidget {
       ),
     );
   }
+
+
 }
