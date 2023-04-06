@@ -59,10 +59,9 @@ class RightDrawer extends StatelessWidget {
                       onItemTapped(1);
                       //TODO:Route to Statistics page
                       Navigator.push(context, new MaterialPageRoute(builder: (context) => StatisticsPage()));
-
+// comment delete
                     },
                   ),
-
                   SizedBox(height: 20),
                   ListTile(
                     leading: Icon(Icons.settings,
