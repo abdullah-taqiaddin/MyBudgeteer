@@ -117,6 +117,7 @@
             padding: const EdgeInsets.all(20.0),
             child: FloatingActionButton.large(
                 onPressed: () {
+                  //TODO:OPEN A DIALOG BOX
                   Map<String, String> newBudget = {
                     'type': 'budgetType',
                     'spent': 'amountSpent',
@@ -330,6 +331,8 @@
 
     Widget budgetTab(){
       Color lastColor = Color(0xFF34cfb3);
+
+      Color firstColor = Color(0xFF34cfb3);
       Color secondColor = Color(0xFF4B9EB8);
       return Column(
         children: [
@@ -350,18 +353,20 @@
                 * next time it checks last color if its the secondCardColor,it switches, and so on
                 * */
                 //TODO:LOOK FOR A WAY TO KEEP COLORS CONTSTANT,FLUTTER KEEPS CHANING COLORS CUZ IT BUILDS THE LIST DYNAMICALLY
+
                 Color firstCardColor, secondCardColor;
 
                 if (index == 0) {
+                  //start off the coloring
                   firstCardColor = secondColor;
-                  secondCardColor = Color(0xFF34cfb3);
+                  secondCardColor = firstColor;
                 } else {
-                  if (lastColor == Color(0xFF34cfb3)) {
-                    firstCardColor = Color(0xFF34cfb3);
+                  if (lastColor == firstColor) {
+                    firstCardColor = firstColor;
                     secondCardColor = secondColor;
                   } else {
                     firstCardColor = secondColor;
-                    secondCardColor = Color(0xFF34cfb3);
+                    secondCardColor = firstColor;
                   }
                 }
 
