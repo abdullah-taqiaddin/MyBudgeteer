@@ -16,21 +16,6 @@
     State<BudgetPage> createState() => _BudgetPageState();
   }
 
-  List<String> months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ];
-
   final List<Map<String, String>> cardData = [
     {
       'type': 'Food',
@@ -131,9 +116,19 @@
           floatingActionButton: Padding(
             padding: const EdgeInsets.all(20.0),
             child: FloatingActionButton.large(
-              onPressed: () {
-                // Add your functionality here
-              },
+                onPressed: () {
+                  Map<String, String> newBudget = {
+                    'type': 'budgetType',
+                    'spent': 'amountSpent',
+                    'total': 'totalBudget',
+                  };
+
+
+                  setState(() {
+                    cardData.add(newBudget);
+                  });
+                }
+              ,
               child: Icon(Icons.add),
               backgroundColor: Color(0XFFFF6B35),
             ),
@@ -407,7 +402,65 @@
       );
     }
 
+    void _showAddBudgetDialog(BuildContext context) {
+      TextEditingController typeController = TextEditingController();
+      TextEditingController spentController = TextEditingController();
+      TextEditingController totalController = TextEditingController();
 
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Add New Budget'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: typeController,
+                    decoration: InputDecoration(hintText: 'Budget Type'),
+                  ),
+                  TextField(
+                    controller: spentController,
+                    decoration: InputDecoration(hintText: 'Amount Spent'),
+                    keyboardType: TextInputType.number,
+                  ),
+                  TextField(
+                    controller: totalController,
+                    decoration: InputDecoration(hintText: 'Total Budget'),
+                    keyboardType: TextInputType.number,
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: Text('Add'),
+                  onPressed: () {
+                    String budgetType = typeController.text;
+                    double amountSpent = double.parse(spentController.text);
+                    double totalBudget = double.parse(totalController.text);
+                    Map<String, String> newBudget = {
+                      'type': budgetType,
+                      'spent': amountSpent.toString(),
+                      'total': totalBudget.toString(),
+                    };
+
+
+                    setState(() {
+                      cardData.add(newBudget);
+                    });
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          });
+    }
 
   }
 
