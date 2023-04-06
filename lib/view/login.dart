@@ -9,7 +9,7 @@ import '../pages/budget_page.dart';
 
 
 const Color FontColour = Color(0x666666);
-
+final FirebaseController _auth = FirebaseController();
 var style = GoogleFonts.poppins(textStyle: TextStyle(color: Colors.black));
 
 class loginPage extends StatefulWidget {
@@ -83,11 +83,17 @@ class _loginPageState extends State<loginPage> {
                         TextButton(
                           child: Text("Continue as a guest",
                                  style:TextStyle(fontSize: 15,color: Colors.black,fontFamily: 'K2D'),),
-                                 onPressed: (){
-                                   Navigator.push(
-                                     context,
-                                     MaterialPageRoute(builder: (context) => BudgetPage()),
-                                   );
+                                 onPressed: () async {
+                                   dynamic results = await _auth.signInAnon();
+                                   if(results == null)
+                                     print('Error Signing-In');
+                                   else
+                                     {
+                                       print('Signed-In as user: ${results.uid}');
+                                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BudgetPage()));
+                                     }
+
+
                             },
                         ),
                         const Expanded(

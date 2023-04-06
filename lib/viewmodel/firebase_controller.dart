@@ -3,10 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/viewmodel/auth_provider.dart';
+import 'package:testapp/model/user_model.dart';
 
 final firebaseAuth = FirebaseAuth.instance;
 
 class FirebaseController{
+
+  UserModel? userFromFirebase(User? user){
+    return user != null ? UserModel(uid: user.uid): null;
+  }
+  Future signInAnon() async {
+    try
+    {
+      UserCredential results = await firebaseAuth.signInAnonymously();
+      User? user = results.user;
+      return userFromFirebase(user);
+    }
+    catch(e)
+    {
+      print(e.toString());
+      return null;
+    }
+
+  }
+
+
 
   /*TODO:
   * 1. Link with provider
