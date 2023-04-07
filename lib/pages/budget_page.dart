@@ -49,10 +49,11 @@ final gradient2 = LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
   colors: [
-    Color.fromRGBO(0, 78, 137, 1),
-    Color.fromRGBO(26, 101, 158, 1),
+   // Color.fromRGBO(0, 78, 137, 1),
+    //Color.fromRGBO(26, 101, 158, 1),
+    Color.fromRGBO(75, 158, 184, 1),
     Color.fromRGBO(101, 129, 168, 1),
-    // Color.fromRGBO(180, 210, 237, 1),
+    //Color.fromRGBO(180, 210, 237, 1),
   ],
 );
 
@@ -222,7 +223,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                   child: IconButton(
                     icon: Icon(
                       Icons.menu,
-                      size: 30,
+                      size: 35,
                     ),
                     onPressed: () => Scaffold.of(context).openEndDrawer(),
                     tooltip:
@@ -361,7 +362,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
   Widget MainBudgetInfo(String remaining, String spent, String total) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(15.0),
       child: Container(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -387,7 +388,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                 ),
               ],
             ),
-            SizedBox(width: 20,),
+            SizedBox(width: 30),
             Column(
               children: [
                 Text(
@@ -437,7 +438,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
       children: [
         MainBudgetInfo("2100", "100", "4000"),
         SizedBox(
-          height: 10,
+          height: 1,
         ),
         Container(
           width: 330,
@@ -578,14 +579,16 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         gradient: gradient,
         borderRadius: BorderRadius.circular(20),
       ),
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //date
           Container(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(40), color: Colors.white),
+                borderRadius: BorderRadius.circular(40),
+                gradient:gradient
+            ),
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: Text(
@@ -594,7 +597,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                     fontFamily: "K2D",
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.indigo),
+                    color: Colors.white),
               ),
             ),
           ),
@@ -727,7 +730,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         ],
       ),
       SizedBox(
-        height: 1,
+        height: 0.2,
       ),
       Container(
           width: 344,
