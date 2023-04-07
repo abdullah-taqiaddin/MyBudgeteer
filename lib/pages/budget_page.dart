@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 //import 'package:testapp/component/bottom_container.dart';
 //import 'package:testapp/component/card_design.dart';
 import 'package:testapp/component/right_drawer.dart';
@@ -274,7 +275,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                         indicator: UnderlineTabIndicator(
                           borderSide:
                               BorderSide(width: 2.0, color: Color(0XFF145756)),
-                          insets: EdgeInsets.symmetric(horizontal: 30.0),
+                          insets: EdgeInsets.symmetric(horizontal: 50.0),
                         ),
                         controller: controller,
                         tabs: [
@@ -316,6 +317,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
+  //Budget
+
   Widget buildCard(Color color, String type, String spent, String total) {
     return Container(
       width: 150,
@@ -356,7 +359,74 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
-  //Budget
+  Widget MainBudgetInfo(String remaining, String spent, String total) {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "remaining",
+                  style: TextStyle(
+                      fontFamily: "K2D",
+                      fontSize: 22,
+                      color: Color(0XFF145756),
+                      fontWeight: FontWeight.bold),
+                ),
+                Text("$remaining \$",
+                  style: TextStyle(
+                      fontFamily: "K2D",
+                      fontSize: 50,
+                      color: Color(0XFF145756),
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            SizedBox(width: 20,),
+            Column(
+              children: [
+                Text(
+                  "Spent",
+                  style: TextStyle(
+                      fontFamily: "K2D",
+                      fontSize: 18,
+                      color: Color(0XFF145756),
+                      fontWeight: FontWeight.bold),
+                ),
+                Text("\-$spent \$",
+                  style: TextStyle(
+                      fontFamily: "K2D",
+                      fontSize: 16,
+                      color: Color(0XFF145756),
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10,),
+                Text("Total",
+                  style: TextStyle(
+                      fontFamily: "K2D",
+                      fontSize: 18,
+                      color: Color(0XFF145756),
+                      fontWeight: FontWeight.bold),
+                ),
+                Text("\+$total \$",
+                  style: TextStyle(
+                      fontFamily: "K2D",
+                      fontSize: 16,
+                      color: Color(0XFF145756),
+                      fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget budgetTab() {
     Color lastColor = Color(0xFF34cfb3);
@@ -365,12 +435,13 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     Color secondColor = Color(0xFF4B9EB8);
     return Column(
       children: [
+        MainBudgetInfo("2100", "100", "4000"),
         SizedBox(
-          height: 20,
+          height: 10,
         ),
         Container(
           width: 330,
-          height: 365,
+          height: 380,
           child: ListView.builder(
             scrollDirection: Axis.vertical,
             //cardData is for testing purposes only, itll be a firebase request and mapping from JSON
@@ -438,11 +509,71 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
+  void _showAddBudgetDialog(BuildContext context) {
+    TextEditingController typeController = TextEditingController();
+    TextEditingController spentController = TextEditingController();
+    TextEditingController totalController = TextEditingController();
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Add New Budget'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: typeController,
+                  decoration: InputDecoration(hintText: 'Budget Type'),
+                ),
+                TextField(
+                  controller: spentController,
+                  decoration: InputDecoration(hintText: 'Amount Spent'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: totalController,
+                  decoration: InputDecoration(hintText: 'Total Budget'),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text('Add'),
+                onPressed: () {
+                  String budgetType = typeController.text;
+                  double amountSpent = double.parse(spentController.text);
+                  double totalBudget = double.parse(totalController.text);
+                  Map<String, String> newBudget = {
+                    'type': budgetType,
+                    'spent': amountSpent.toString(),
+                    'total': totalBudget.toString(),
+                  };
+
+                  setState(() {
+                    cardData.add(newBudget);
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  //Expense
   Widget buildExpenseCard(Gradient gradient, DateTime dateTime,
       String budgetCategory, String total, String description) {
     return Container(
       width: 300,
-      height: 160,
+      height: 140,
       decoration: BoxDecoration(
         gradient: gradient,
         borderRadius: BorderRadius.circular(20),
@@ -501,14 +632,10 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
-  //Expense
-
   Widget expenseTab() {
-
-
     return Column(children: [
       Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           //Months
           Row(
@@ -564,7 +691,9 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
               ),
             ],
           ),
-
+          SizedBox(
+            width: 5,
+          ),
           //Years
           Row(
             children: [
@@ -575,7 +704,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                   width: 90,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    color: Colors.orange[200],
+                    color: Color.fromRGBO(123, 203, 201, 1),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -598,14 +727,14 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         ],
       ),
       SizedBox(
-        height: 20,
+        height: 1,
       ),
       Container(
           width: 344,
-          height: 380,
+          height: 485,
           child: ListView.builder(
             scrollDirection: Axis.vertical,
-//cardData is for testing purposes only, itll be a firebase request and mapping from JSON
+            //cardData is for testing purposes only, itll be a firebase request and mapping from JSON
             itemBuilder: (BuildContext context, int index) {
               //final int firstCardIndex = index ;
               //final int secondCardIndex = index * 2 + 1;
@@ -630,65 +759,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             },
           )),
     ]);
-  }
-
-  void _showAddBudgetDialog(BuildContext context) {
-    TextEditingController typeController = TextEditingController();
-    TextEditingController spentController = TextEditingController();
-    TextEditingController totalController = TextEditingController();
-
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Add New Budget'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: typeController,
-                  decoration: InputDecoration(hintText: 'Budget Type'),
-                ),
-                TextField(
-                  controller: spentController,
-                  decoration: InputDecoration(hintText: 'Amount Spent'),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: totalController,
-                  decoration: InputDecoration(hintText: 'Total Budget'),
-                  keyboardType: TextInputType.number,
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: Text('Add'),
-                onPressed: () {
-                  String budgetType = typeController.text;
-                  double amountSpent = double.parse(spentController.text);
-                  double totalBudget = double.parse(totalController.text);
-                  Map<String, String> newBudget = {
-                    'type': budgetType,
-                    'spent': amountSpent.toString(),
-                    'total': totalBudget.toString(),
-                  };
-
-                  setState(() {
-                    cardData.add(newBudget);
-                  });
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        });
   }
 }
 
