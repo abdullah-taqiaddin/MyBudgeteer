@@ -14,24 +14,33 @@ class _settingspageState extends State<settingspage> {
   int _selectedIndex = 2;
 
   // list of currenvies
-  String _selectedCurrency = "\$ (USD)";
+  String _selectedCurrency = "JD (JOD)";
   List<String> _currencies = [
+    'JD (JOD) - Jordanian Dinar',
     '\$ (USD) - US Dollar',
     '€ (EUR) - Euro',
     '£ (GBP) - British Pound',
     '¥ (JPY) - Japanese Yen',
     '\$ (CAD) - Canadian Dollar',
-    '\$ (AUD) - Australian Dollar',
     'Fr (CHF) - Swiss Franc',
+    '\$ (AUD) - Australian Dollar',
     '¥ (CNY) - Chinese Yuan Renminbi',
-    'лв (BGN) - Bulgarian Lev',
+    '\$ (NZD) - New Zealand Dollar',
+    '\$ (HKD) - Hong Kong Dollar',
+    'R (ZAR) - South African Rand',
+    'kr (SEK) - Swedish Krona',
+    '₩ (KRW) - South Korean Won',
+    '\$ (SGD) - Singapore Dollar',
+    '₹ (INR) - Indian Rupee',
+    '\$ (MXN) - Mexican Peso',
+    'BD (BHD) - Bahraini Dinar',
+    '₽ (RUB) - Russian Ruble',
+    'DH (AED) - United Arab Emirates Dirham',
     'R\$ (BRL) - Brazilian Real',
     'Kč (CZK) - Czech Koruna',
     'kr (DKK) - Danish Krone',
-    '\$ (HKD) - Hong Kong Dollar',
     'kn (HRK) - Croatian Kuna',
     'Ft (HUF) - Hungarian Forint',
-    '₹ (INR) - Indian Rupee',
   ];
 
   @override
