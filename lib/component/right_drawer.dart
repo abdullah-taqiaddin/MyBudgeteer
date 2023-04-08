@@ -11,7 +11,6 @@ class RightDrawer extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
-
   RightDrawer({required this.selectedIndex, required this.onItemTapped});
 
   @override
@@ -36,15 +35,17 @@ class RightDrawer extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 children: [
                   ListTile(
-                    leading: Icon(Icons.home,
+                    leading: Icon(
+                      Icons.home,
                       color: selectedIndex == 0 ? Color(0XFF2DB79E) : null,
                     ),
                     onTap: () {
                       if (onItemTapped != 0) {
                         Navigator.pushAndRemoveUntil(
                             context,
-                            MaterialPageRoute(builder: (context) => BudgetPage()),
-                                (route) => false);
+                            MaterialPageRoute(
+                                builder: (context) => BudgetPage()),
+                            (route) => false);
                       } else {
                         Navigator.pop(context);
                       }
@@ -52,37 +53,94 @@ class RightDrawer extends StatelessWidget {
                   ),
                   SizedBox(height: 20),
                   ListTile(
-                    leading: Icon(Icons.bar_chart,
+                    leading: Icon(
+                      Icons.bar_chart,
                       color: selectedIndex == 1 ? Color(0XFF2DB79E) : null,
                     ),
                     onTap: () {
                       onItemTapped(1);
                       //TODO:Route to Statistics page
-                      Navigator.push(context, new MaterialPageRoute(builder: (context) => StatisticsPage()));
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => StatisticsPage()));
 // comment delete
                     },
                   ),
                   SizedBox(height: 20),
                   ListTile(
-                    leading: Icon(Icons.settings,
+                    leading: Icon(
+                      Icons.settings,
                       color: selectedIndex == 2 ? Color(0XFF2DB79E) : null,
                     ),
                     onTap: () {
                       onItemTapped(2);
-                      Navigator.push(context, new MaterialPageRoute(builder: (context)=>settingspage()));
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => settingspage()));
                     },
                   ),
-                  Divider(color: Colors.grey,  indent: 15, endIndent: 15),
+                  Divider(color: Colors.grey, indent: 15, endIndent: 15),
                   ListTile(
                     leading: Icon(Icons.logout),
-                    //TODO:Continue the provider and route to login-page
                     onTap: () {
-                      FirebaseController().signOutUser(context);
-                      Navigator.of(context).pushAndRemoveUntil(
-                          new MaterialPageRoute(
-                              builder: (context) =>
-                                  loginPage()),
-                              (route) => false);
+                     onItemTapped(3);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            elevation: 250,
+                            backgroundColor: Colors.white,
+                            title: Text('Sign Out',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(255, 107, 53, 1),
+                                  fontFamily: "K2D",
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            content: Text('Are you sure you want to sign out?',
+                              style: TextStyle(
+                                  color: Color(0XFF145756),
+                                  fontFamily: "K2D",
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            actions: [
+                              TextButton(
+                                child: Text('Yes',
+                                  style: TextStyle(
+                                      color: Color(0XFF145756),
+                                      fontFamily: "K2D",
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: () {
+                                  FirebaseController().signOutUser(context);
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) => loginPage()),
+                                    (route) => false,
+                                  );
+                                },
+                              ),
+                              TextButton(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      color: Color(0XFF145756),
+                                      fontFamily: "K2D",
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     },
                   ),
                 ],
@@ -93,6 +151,4 @@ class RightDrawer extends StatelessWidget {
       ),
     );
   }
-
-
 }
