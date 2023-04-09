@@ -3,7 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:intl/intl.dart';
 //import 'package:testapp/component/bottom_container.dart';
 //import 'package:testapp/component/card_design.dart';
 import 'package:testapp/component/right_drawer.dart';
@@ -49,7 +49,7 @@ final gradient2 = LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
   colors: [
-   // Color.fromRGBO(0, 78, 137, 1),
+    // Color.fromRGBO(0, 78, 137, 1),
     //Color.fromRGBO(26, 101, 158, 1),
     Color.fromRGBO(75, 158, 184, 1),
     Color.fromRGBO(101, 129, 168, 1),
@@ -123,6 +123,17 @@ final List<Map<String, String>> cardData = [
 int TextPrimary = 0XFF145756;
 
 class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
+  ///form validation key and values
+  ///
+  ///
+  final _formKey = GlobalKey<FormState>();
+  final _budgetName = TextEditingController();
+  final _amountBeforeDecimal = TextEditingController();
+  final _amountAfterDecimal = TextEditingController();
+  final _month = TextEditingController();
+
+  ///
+
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -172,16 +183,19 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         padding: const EdgeInsets.all(20.0),
         child: FloatingActionButton.large(
           onPressed: () {
-            //TODO:OPEN A DIALOG BOX
-            Map<String, String> newBudget = {
-              'type': 'budgetType',
-              'spent': 'amountSpent',
-              'total': 'totalBudget',
-            };
-
-            setState(() {
-              cardData.add(newBudget);
-            });
+            showModalBottomSheet(
+              isScrollControlled: true,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(30),
+                ),
+              ),
+              context: context,
+              builder: (BuildContext context) => Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: AddBudgetForm(),
+              ),
+            );
           },
           child: Icon(Icons.add),
           backgroundColor: Color(0XFFFF6B35),
@@ -379,7 +393,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                       color: Color(0XFF145756),
                       fontWeight: FontWeight.bold),
                 ),
-                Text("$remaining \$",
+                Text(
+                  "$remaining \$",
                   style: TextStyle(
                       fontFamily: "K2D",
                       fontSize: 50,
@@ -399,22 +414,27 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                       color: Color(0XFF145756),
                       fontWeight: FontWeight.bold),
                 ),
-                Text("\-$spent \$",
+                Text(
+                  "\-$spent \$",
                   style: TextStyle(
                       fontFamily: "K2D",
                       fontSize: 16,
                       color: Color(0XFF145756),
                       fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10,),
-                Text("Total",
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Total",
                   style: TextStyle(
                       fontFamily: "K2D",
                       fontSize: 18,
                       color: Color(0XFF145756),
                       fontWeight: FontWeight.bold),
                 ),
-                Text("\+$total \$",
+                Text(
+                  "\+$total \$",
                   style: TextStyle(
                       fontFamily: "K2D",
                       fontSize: 16,
@@ -510,65 +530,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
-  void _showAddBudgetDialog(BuildContext context) {
-    TextEditingController typeController = TextEditingController();
-    TextEditingController spentController = TextEditingController();
-    TextEditingController totalController = TextEditingController();
-
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Add New Budget'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: typeController,
-                  decoration: InputDecoration(hintText: 'Budget Type'),
-                ),
-                TextField(
-                  controller: spentController,
-                  decoration: InputDecoration(hintText: 'Amount Spent'),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: totalController,
-                  decoration: InputDecoration(hintText: 'Total Budget'),
-                  keyboardType: TextInputType.number,
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: Text('Add'),
-                onPressed: () {
-                  String budgetType = typeController.text;
-                  double amountSpent = double.parse(spentController.text);
-                  double totalBudget = double.parse(totalController.text);
-                  Map<String, String> newBudget = {
-                    'type': budgetType,
-                    'spent': amountSpent.toString(),
-                    'total': totalBudget.toString(),
-                  };
-
-                  setState(() {
-                    cardData.add(newBudget);
-                  });
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        });
-  }
-
   //Expense
   Widget buildExpenseCard(Gradient gradient, DateTime dateTime,
       String budgetCategory, String total, String description) {
@@ -586,9 +547,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           //date
           Container(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(40),
-                gradient:gradient
-            ),
+                borderRadius: BorderRadius.circular(40), gradient: gradient),
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: Text(
@@ -746,7 +705,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                 * when index is 0, set the colors as is and set lastcolor to secondCardColor for comparison,
                 * next time it checks last color if its the secondCardColor,it switches, and so on
                 * */
-//TODO:LOOK FOR A WAY TO KEEP COLORS CONTSTANT,FLUTTER KEEPS CHANING COLORS CUZ IT BUILDS THE LIST DYNAMICALLY
+              //TODO:LOOK FOR A WAY TO KEEP COLORS CONTSTANT,FLUTTER KEEPS CHANING COLORS CUZ IT BUILDS THE LIST DYNAMICALLY
 
               final Widget ExpenseCard1 = buildExpenseCard(
                   gradient1, DateTime(2023), "Food", "100", "KFC");
@@ -763,202 +722,160 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           )),
     ]);
   }
+
+  //TODO:move to components
+  Widget AddBudgetForm() {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.55,
+      width: 500,
+      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(50),
+          topLeft: Radius.circular(50),
+        ),
+      ),
+      child: Positioned(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Period",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "K2D"),
+              ),
+              SizedBox(height: 10,),
+              TextFormField(
+                //READ ONLY AND WILL GET DATA FROM DATETIME
+                style: TextStyle(color: Colors.white, fontFamily: "K2D"),
+                enabled: false,
+                initialValue: DateFormat.MMMM().format(DateTime.now()).toString(),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[500],
+                  labelStyle: TextStyle(color: Colors.white),
+                ),
+                readOnly: true,
+              ),
+              SizedBox(height: 10),
+              Text(
+
+                "Budget Name",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "K2D"),
+              ),
+              SizedBox(height: 10,),
+              TextFormField(
+                cursorColor: Colors.black,
+                cursorHeight: 20,
+                controller: _budgetName,
+                style: TextStyle(color: Colors.black, fontFamily: "K2D"),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                      width: 2.0,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                      width: 2.0,
+                    ),
+                  ),
+                  labelStyle: TextStyle(color: Colors.black),
+                  hintText: "Enter a budget Name",
+                  hintStyle: TextStyle(color: Colors.grey),
+                ),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Please enter a budget name";
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 10),
+              Text(
+                "Amount",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "K2D"),
+              ),
+              SizedBox(height: 10,),
+              TextFormField(
+                style: TextStyle(color: Colors.black, fontFamily: "K2D"),
+                cursorColor: Colors.black,
+                cursorHeight: 20,
+                controller: _amountBeforeDecimal,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                      width: 2.0,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                      width: 2.0,
+                    ),
+                  ),
+                  hintText: "Amount",
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Please enter an amount";
+                  }
+                  if (!RegExp(r'^\d*\.?\d*$').hasMatch(value)) {
+                    return "Please enter only numbers";
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 30),
+              Center(
+                child: MaterialButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)
+                  ),
+                  minWidth: 120,
+                  color: Color(0XFFFF6B35),
+                  elevation: 0,
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Submit the form data
+                      print("Budget Name: $_budgetName");
+                      print(
+                          "Amount: $_amountBeforeDecimal.$_amountAfterDecimal");
+                    }
+                  },
+                  child: Text("Add",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontFamily: "K2D")),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
-
-/*
-  COMMENTED CODE
-   */
-
-// // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-//
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import 'package:testapp/component/bottom_container.dart';
-// import 'package:testapp/component/card_design.dart';
-// import 'package:testapp/component/right_drawer.dart';
-//
-// import '../viewmodel/auth_provider.dart';
-//
-// class BudgetPage extends StatefulWidget {
-//   const BudgetPage({Key? key}) : super(key: key);
-//
-//   @override
-//   State<BudgetPage> createState() => _BudgetPageState();
-// }
-//
-// List<String> months = [
-//   'January',
-//   'February',
-//   'March',
-//   'April',
-//   'May',
-//   'June',
-//   'July',
-//   'August',
-//   'September',
-//   'October',
-//   'November',
-//   'December'
-// ];
-//
-// int selectedMonthIndex=0;
-//
-// class _BudgetPageState extends State<BudgetPage> {
-//   int _selectedIndex = 0;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final userCredential = Provider.of<AuthProvider>(context).userCredential;
-//     return Scaffold(
-//       body: SafeArea(
-//         child: Scaffold(
-//           backgroundColor: Colors.blueGrey[100],
-//         appBar: AppBar(
-//         automaticallyImplyLeading: false,
-//         iconTheme: IconThemeData(color: Colors.blueGrey, size: 40),
-//         backgroundColor: Colors.white,
-//         elevation: 0,
-//         title: Padding(
-//           padding: const EdgeInsets.symmetric(horizontal:2.0),
-//           child: Text(
-//             "hello,${userCredential?.user?.displayName}",
-//             style: TextStyle(
-//                 color: Color.fromRGBO(102, 102, 102, 1),
-//                 fontSize: 18,
-//                 fontWeight: FontWeight.bold),
-//           ),
-//         ),
-//       ),
-//
-//           //to add drawer on the right use (endDrawer)
-//           endDrawer: RightDrawer(
-//             selectedIndex: _selectedIndex,
-//             onItemTapped: (index) {
-//               setState(() {
-//                 _selectedIndex = index;
-//                 Navigator.pop(context);
-//               });
-//             },
-//           ),
-//
-//
-//           //Container
-//             body: Column(children: [
-//               Container(
-//                 width: 500,
-//                 height: 110,
-//                 decoration: BoxDecoration(
-//                   color: Colors.white,
-//                   borderRadius: BorderRadius.only(
-//                     bottomLeft: Radius.circular(50),
-//                     bottomRight: Radius.circular(50),
-//                   ),
-//                   boxShadow: [
-//                     BoxShadow(
-//                       color: Colors.grey.withOpacity(0.5),
-//                       spreadRadius: 2,
-//                       blurRadius: 5,
-//                       offset: Offset(0, 3), // changes position of shadow
-//                     ),
-//                   ],
-//                 ),
-//                 child: Column(
-//                   children: [
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(
-//                           horizontal: 20, vertical: 10),
-//                       child: Row(
-//                         children: [
-//                           Text(
-//                             " 1000 JD ",
-//                             style: TextStyle(
-//                                 color: Color.fromRGBO(102, 102, 102, 1),
-//
-//                                 fontSize: 40,
-//                                 fontWeight: FontWeight.bold),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                     Center(
-//                       child: Container(
-//                         height: 40,
-//                         width: 190,
-//                         decoration: BoxDecoration(
-//                             borderRadius: BorderRadius.circular(16),
-//                             color: Color.fromRGBO(92, 102, 114, 1)),
-//
-//                         child:
-//                         Row(
-//                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                           children: [
-//                             IconButton(
-//                               onPressed: () {
-//                                 setState(() {
-//                                   selectedMonthIndex = selectedMonthIndex == 0 ? 0 : selectedMonthIndex - 1;
-//                                 });
-//                               },
-//                               icon: Icon(
-//                                 Icons.chevron_left,
-//                                 color: Colors.white,
-//                                 size: 30,
-//                               ),
-//                             ),
-//                             Center(
-//                               child: Text(
-//                                 '${months[selectedMonthIndex]}',
-//                                 style: TextStyle(
-//                                     fontSize: 18,
-//                                     fontWeight: FontWeight.bold,
-//                                     color: Colors.white),
-//                               ),
-//                             ),
-//                             IconButton(
-//                               onPressed: () {
-//                                 setState(() {
-//                                   selectedMonthIndex = selectedMonthIndex == 11 ? 11 : selectedMonthIndex + 1;
-//                                 });
-//                               },
-//                               icon: Icon(
-//                                 Icons.chevron_right,
-//                                 color: Colors.white,
-//                                 size: 30,
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//
-//               SizedBox(
-//                 height: 20,
-//               ),
-//
-//               // Budget UI
-//
-//               Expanded(
-//                 child: ListView.builder(
-//                   itemCount: 10,
-//                   itemBuilder: (context, index) {
-//                     return CardDesign();
-//                   },
-//                 ),
-//               ),
-//
-//               // Container to add new Budget or Expense
-//               //on tab user can Navigate between pages
-//               Center(
-//                   child:BottomContainer(color:Colors.white,)
-//               ),
-//
-//             ]
-//             ),
-//         ),
-//       ),
-//     );
-//   }
-// }

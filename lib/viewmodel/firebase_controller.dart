@@ -12,17 +12,22 @@ class FirebaseController{
   UserModel? userFromFirebase(User? user){
     return user != null ? UserModel(uid: user.uid): null;
   }
-  Future signInAnon() async {
+
+
+  Future signInAnonymously(BuildContext context) async {
     try
     {
-      UserCredential results = await firebaseAuth.signInAnonymously();
-      User? user = results.user;
+      final UserCredential userCredential = await firebaseAuth.signInAnonymously();
+      User? user = userCredential.user;
+
+      Provider.of<AuthProvider>(context, listen: false).setUserCredentials(userCredential);
       return userFromFirebase(user);
     }
     catch(e)
     {
       print(e.toString());
-      return null;
+      //retry sign in if failed
+      return signInAnonymously(context);
     }
 
   }

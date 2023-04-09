@@ -84,7 +84,7 @@ class _loginPageState extends State<loginPage> {
                           child: Text("Continue as a guest",
                                  style:TextStyle(fontSize: 15,color: Colors.black,fontFamily: 'K2D'),),
                                  onPressed: () async {
-                                   dynamic results = await _auth.signInAnon();
+                                   dynamic results = await _auth.signInAnonymously(context);
                                    if(results == null)
                                      print('Error Signing-In');
                                    else
@@ -92,8 +92,6 @@ class _loginPageState extends State<loginPage> {
                                        print('Signed-In as user: ${results.uid}');
                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BudgetPage()));
                                      }
-
-
                             },
                         ),
                         const Expanded(

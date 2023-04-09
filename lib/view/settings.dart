@@ -127,7 +127,6 @@ class _settingspageState extends State<settingspage> {
 
                             // here when tapped on arrow currency dropsheet pops up
                             onTap: () {
-                              // TODO: Navigate to the currency selection page.
                               showModalBottomSheet(
                                 context: context,
                                 shape: RoundedRectangleBorder(
