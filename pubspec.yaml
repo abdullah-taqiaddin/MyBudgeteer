@@ -76,8 +76,8 @@ flutter:
     - assets/images/google.png
     #- assets/images/DemoLogo.png
     - assets/images/PlaceholderLogo.png
-    - assets/images/background.jpg
     - assets/images/background-cropped.jpg
+    - assets/images/background-cropped-2.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

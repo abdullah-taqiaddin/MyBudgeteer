@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:testapp/pages/statistics_page.dart';
+import 'package:testapp/view/statistics_page.dart';
 import 'package:testapp/view/settings.dart';
 
 import 'package:testapp/viewmodel/firebase_controller.dart';
 
-import '../pages/budget_page.dart';
+import '../view/budget_page.dart';
 import '../view/login.dart';
 
 class RightDrawer extends StatelessWidget {

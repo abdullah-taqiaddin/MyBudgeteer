@@ -7,8 +7,12 @@ import 'package:intl/intl.dart';
 //import 'package:testapp/component/bottom_container.dart';
 //import 'package:testapp/component/card_design.dart';
 import 'package:testapp/component/right_drawer.dart';
-
+import '../component/forms/budget_form.dart';
 import '../viewmodel/auth_provider.dart';
+
+
+
+
 
 class BudgetPage extends StatefulWidget {
   const BudgetPage({Key? key}) : super(key: key);
@@ -31,31 +35,6 @@ List<String> months = [
   'November',
   'December'
 ];
-
-int selectedMonthIndex = 0;
-int MonthIndex = 0;
-
-// Expenses Colors Cards
-final gradient1 = LinearGradient(
-  begin: Alignment.topLeft,
-  end: Alignment.bottomRight,
-  colors: [
-    Color.fromRGBO(32, 162, 162, 1),
-    Color.fromRGBO(34, 165, 162, 1),
-    Color.fromRGBO(50, 210, 163, 1),
-  ],
-);
-final gradient2 = LinearGradient(
-  begin: Alignment.topLeft,
-  end: Alignment.bottomRight,
-  colors: [
-    // Color.fromRGBO(0, 78, 137, 1),
-    //Color.fromRGBO(26, 101, 158, 1),
-    Color.fromRGBO(75, 158, 184, 1),
-    Color.fromRGBO(101, 129, 168, 1),
-    //Color.fromRGBO(180, 210, 237, 1),
-  ],
-);
 
 final List<Map<String, String>> cardData = [
   {
@@ -119,21 +98,35 @@ final List<Map<String, String>> cardData = [
     'total': '\$50.00',
   },
 ];
+int selectedMonthIndex = 0;
+int MonthIndex = 0;
+
+// Expenses Colors Cards
+final gradient1 = LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [
+    Color.fromRGBO(32, 162, 162, 1),
+    Color.fromRGBO(34, 165, 162, 1),
+    Color.fromRGBO(50, 210, 163, 1),
+  ],
+);
+final gradient2 = LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [
+    // Color.fromRGBO(0, 78, 137, 1),
+    //Color.fromRGBO(26, 101, 158, 1),
+    Color.fromRGBO(75, 158, 184, 1),
+    Color.fromRGBO(101, 129, 168, 1),
+    //Color.fromRGBO(180, 210, 237, 1),
+  ],
+);
+
 
 int TextPrimary = 0XFF145756;
 
 class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
-  ///form validation key and values
-  ///
-  ///
-  final _formKey = GlobalKey<FormState>();
-  final _budgetName = TextEditingController();
-  final _amountBeforeDecimal = TextEditingController();
-  final _amountAfterDecimal = TextEditingController();
-  final _month = TextEditingController();
-
-  ///
-
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -182,18 +175,20 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(20.0),
         child: FloatingActionButton.large(
+          elevation: 0,
           onPressed: () {
             showModalBottomSheet(
               isScrollControlled: true,
+
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(30),
+                  top: Radius.circular(40),
                 ),
               ),
               context: context,
               builder: (BuildContext context) => Padding(
                 padding: MediaQuery.of(context).viewInsets,
-                child: AddBudgetForm(),
+                child: BudgetForm(),
               ),
             );
           },
@@ -251,7 +246,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             title: Padding(
               padding: const EdgeInsets.all(25.0),
               child: Text(
-                "Hello, ${userCredential?.user?.displayName}",
+                "Hello, ${(userCredential?.user?.displayName)==null?"guest!":userCredential?.user?.displayName}",
                 style: TextStyle(fontFamily: "K2D", fontSize: 23),
               ),
             ),
@@ -263,9 +258,9 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image:
-                            AssetImage("assets/images/background-cropped.jpg"),
+                            AssetImage("assets/images/background-cropped-2.jpg"),
                         fit: BoxFit.fill,
-                        opacity: 0.5),
+                        opacity: 0.3),
                     border: Border.all(
                       color: Colors.grey,
                     ),
@@ -337,12 +332,12 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   Widget buildCard(Color color, String type, String spent, String total) {
     return Container(
       width: 150,
-      height: 160,
+      height: 170,
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(20),
       ),
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -724,158 +719,5 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   }
 
   //TODO:move to components
-  Widget AddBudgetForm() {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.55,
-      width: 500,
-      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(50),
-          topLeft: Radius.circular(50),
-        ),
-      ),
-      child: Positioned(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Period",
-                style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "K2D"),
-              ),
-              SizedBox(height: 10,),
-              TextFormField(
-                //READ ONLY AND WILL GET DATA FROM DATETIME
-                style: TextStyle(color: Colors.white, fontFamily: "K2D"),
-                enabled: false,
-                initialValue: DateFormat.MMMM().format(DateTime.now()).toString(),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
 
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[500],
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-                readOnly: true,
-              ),
-              SizedBox(height: 10),
-              Text(
-
-                "Budget Name",
-                style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "K2D"),
-              ),
-              SizedBox(height: 10,),
-              TextFormField(
-                cursorColor: Colors.black,
-                cursorHeight: 20,
-                controller: _budgetName,
-                style: TextStyle(color: Colors.black, fontFamily: "K2D"),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                      width: 2.0,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                      width: 2.0,
-                    ),
-                  ),
-                  labelStyle: TextStyle(color: Colors.black),
-                  hintText: "Enter a budget Name",
-                  hintStyle: TextStyle(color: Colors.grey),
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Please enter a budget name";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 10),
-              Text(
-                "Amount",
-                style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "K2D"),
-              ),
-              SizedBox(height: 10,),
-              TextFormField(
-                style: TextStyle(color: Colors.black, fontFamily: "K2D"),
-                cursorColor: Colors.black,
-                cursorHeight: 20,
-                controller: _amountBeforeDecimal,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                      width: 2.0,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                      width: 2.0,
-                    ),
-                  ),
-                  hintText: "Amount",
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Please enter an amount";
-                  }
-                  if (!RegExp(r'^\d*\.?\d*$').hasMatch(value)) {
-                    return "Please enter only numbers";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 30),
-              Center(
-                child: MaterialButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)
-                  ),
-                  minWidth: 120,
-                  color: Color(0XFFFF6B35),
-                  elevation: 0,
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Submit the form data
-                      print("Budget Name: $_budgetName");
-                      print(
-                          "Amount: $_amountBeforeDecimal.$_amountAfterDecimal");
-                    }
-                  },
-                  child: Text("Add",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontFamily: "K2D")),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }

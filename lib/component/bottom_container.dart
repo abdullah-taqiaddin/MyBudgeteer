@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:indexed/indexed.dart';
-import 'package:testapp/pages/budget_page.dart';
-import 'package:testapp/pages/expense_page.dart';
+import 'package:testapp/view/budget_page.dart';
+import 'package:testapp/view/expense_page.dart';
 
 
 class BottomContainer extends StatefulWidget {

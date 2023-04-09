@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:testapp/viewmodel/firebase_controller.dart';
 
-import '../pages/budget_page.dart';
+import 'budget_page.dart';
 
 
 const Color FontColour = Color(0x666666);
