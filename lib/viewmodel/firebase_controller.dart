@@ -10,7 +10,7 @@ final firebaseAuth = FirebaseAuth.instance;
 class FirebaseController{
 
   UserModel? userFromFirebase(User? user){
-    return user != null ? UserModel(uid: user.uid, displayName: user.displayName!): null;
+    return user != null ? UserModel(uid: user.uid): null;
   }
 
 
