@@ -143,6 +143,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    int tabindex = 0;
+
     final userCredential = Provider.of<AuthProvider>(context).userCredential;
     TabController _tabController = TabController(length: 2, vsync: this);
 
@@ -177,6 +179,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         child: FloatingActionButton.large(
           elevation: 0,
           onPressed: () {
+
             showModalBottomSheet(
               isScrollControlled: true,
 
@@ -188,7 +191,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
               context: context,
               builder: (BuildContext context) => Padding(
                 padding: MediaQuery.of(context).viewInsets,
-                child: BudgetForm(),
+                child:
+                evalTabForm(_tabController),
               ),
             );
           },
@@ -329,7 +333,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
   //Budget
 
-  Widget buildCard(Color color, String type, String spent, String total) {
+  Widget buildBudgetCard(Color color, String type, String spent, String total) {
     return Container(
       width: 150,
       height: 170,
@@ -446,7 +450,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
   Widget budgetTab() {
     Color lastColor = Color(0xFF34cfb3);
-
     Color firstColor = Color(0xFF34cfb3);
     Color secondColor = Color(0xFF4B9EB8);
     return Column(
@@ -491,7 +494,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
               lastColor = secondCardColor;
 
               final Widget firstCard = (firstCardIndex < cardData.length)
-                  ? buildCard(
+                  ? buildBudgetCard(
                       firstCardColor,
                       cardData[firstCardIndex]['type']!,
                       cardData[firstCardIndex]['spent']!,
@@ -500,7 +503,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                   : SizedBox();
 
               final Widget secondCard = (secondCardIndex < cardData.length)
-                  ? buildCard(
+                  ? buildBudgetCard(
                       secondCardColor,
                       cardData[secondCardIndex]['type']!,
                       cardData[secondCardIndex]['spent']!,
@@ -719,5 +722,18 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   }
 
   //TODO:move to components
+
+  Widget evalTabForm(TabController controller){
+    switch(controller.index){
+      case 0:
+        return BudgetForm();
+        break;
+      case 1:
+        return BudgetForm();
+        break;
+      default:
+        return BudgetForm();
+    }
+  }
 
 }

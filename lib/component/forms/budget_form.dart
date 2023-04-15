@@ -50,7 +50,7 @@ class _BudgetFormState extends State<BudgetForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 "Add new budget",
                 style: TextStyle(
                     fontSize: 25,
@@ -58,7 +58,7 @@ class _BudgetFormState extends State<BudgetForm> {
                     fontFamily: "K2D"),
               ),
               SizedBox(height: 20,),
-              Text(
+              const Text(
                 "Period",
                 style: TextStyle(
                     fontSize: 15,
@@ -67,24 +67,23 @@ class _BudgetFormState extends State<BudgetForm> {
               ),
               SizedBox(height: 10,),
               TextFormField(
+                textAlign: TextAlign.center,
                 //READ ONLY AND WILL GET DATA FROM DATETIME
-                style: TextStyle(color: Colors.white, fontFamily: "K2D"),
+                style: TextStyle(color: Colors.white, fontFamily: "K2D", fontSize: 20,fontWeight: FontWeight.bold),
                 enabled: false,
                 initialValue: DateFormat.MMMM().format(DateTime.now()).toString(),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
-
                   ),
                   filled: true,
-                  fillColor: Colors.grey[500],
+                  fillColor: Colors.grey[400],
                   labelStyle: TextStyle(color: Colors.white),
                 ),
                 readOnly: true,
               ),
               SizedBox(height: 10),
-              Text(
-
+              const Text(
                 "Budget Name",
                 style: TextStyle(
                     fontSize: 15,
@@ -124,7 +123,7 @@ class _BudgetFormState extends State<BudgetForm> {
                 },
               ),
               SizedBox(height: 10),
-              Text(
+              const Text(
                 "Amount",
                 style: TextStyle(
                     fontSize: 15,
