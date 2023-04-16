@@ -46,6 +46,7 @@ dependencies:
   firebase_core: ^1.24.0
   lottie: ^1.2.1
   intl: ^0.17.0
+  shared_preferences: ^2.1.0
 
 
 
