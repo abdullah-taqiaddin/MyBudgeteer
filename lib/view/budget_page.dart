@@ -4,9 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:testapp/component/forms/expense_form.dart';
 //import 'package:testapp/component/bottom_container.dart';
 //import 'package:testapp/component/card_design.dart';
 import 'package:testapp/component/right_drawer.dart';
+import 'package:testapp/view/expense_page.dart';
 import '../component/forms/budget_form.dart';
 import '../viewmodel/auth_provider.dart';
 
@@ -21,20 +23,6 @@ class BudgetPage extends StatefulWidget {
   State<BudgetPage> createState() => _BudgetPageState();
 }
 
-List<String> months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
-];
 
 final List<Map<String, String>> cardData = [
   {
@@ -98,30 +86,7 @@ final List<Map<String, String>> cardData = [
     'total': '\$50.00',
   },
 ];
-int selectedMonthIndex = 0;
-int MonthIndex = 0;
 
-// Expenses Colors Cards
-final gradient1 = LinearGradient(
-  begin: Alignment.topLeft,
-  end: Alignment.bottomRight,
-  colors: [
-    Color.fromRGBO(32, 162, 162, 1),
-    Color.fromRGBO(34, 165, 162, 1),
-    Color.fromRGBO(50, 210, 163, 1),
-  ],
-);
-final gradient2 = LinearGradient(
-  begin: Alignment.topLeft,
-  end: Alignment.bottomRight,
-  colors: [
-    // Color.fromRGBO(0, 78, 137, 1),
-    //Color.fromRGBO(26, 101, 158, 1),
-    Color.fromRGBO(75, 158, 184, 1),
-    Color.fromRGBO(101, 129, 168, 1),
-    //Color.fromRGBO(180, 210, 237, 1),
-  ],
-);
 
 
 int TextPrimary = 0XFF145756;
@@ -456,11 +421,11 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
       children: [
         MainBudgetInfo("2100", "100", "4000"),
         SizedBox(
-          height: 1,
+          height: 0.5,
         ),
         Container(
           width: 330,
-          height: 380,
+          height: 400,
           child: ListView.builder(
             scrollDirection: Axis.vertical,
             //cardData is for testing purposes only, itll be a firebase request and mapping from JSON
@@ -528,198 +493,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
-  //Expense
-  Widget buildExpenseCard(Gradient gradient, DateTime dateTime,
-      String budgetCategory, String total, String description) {
-    return Container(
-      width: 300,
-      height: 140,
-      decoration: BoxDecoration(
-        gradient: gradient,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      padding: EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          //date
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(40), gradient: gradient),
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text(
-                dateTime.year.toString(),
-                style: TextStyle(
-                    fontFamily: "K2D",
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              //Budget category
-              Text(
-                budgetCategory,
-                style: TextStyle(
-                    fontFamily: "K2D",
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500),
-              ),
-              SizedBox(),
-              //total
-              Text(
-                "\$ $total",
-                style: TextStyle(
-                    fontFamily: "K2D", fontSize: 16, color: Colors.white),
-              ),
-            ],
-          ),
-          SizedBox(height: 8),
-          //description
-          Text(
-            description,
-            style:
-                TextStyle(fontFamily: "K2D", fontSize: 12, color: Colors.white),
-          )
-        ],
-      ),
-    );
-  }
 
-  Widget expenseTab() {
-    return Column(children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          //Months
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: Container(
-                  height: 40,
-                  width: 190,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Colors.teal[200],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            MonthIndex = MonthIndex == 0 ? 0 : MonthIndex - 1;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.chevron_left,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          '${months[MonthIndex]}',
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            MonthIndex = MonthIndex == 11 ? 11 : MonthIndex + 1;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.chevron_right,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            width: 5,
-          ),
-          //Years
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: Container(
-                  height: 40,
-                  width: 90,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Color.fromRGBO(123, 203, 201, 1),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: Text(
-                          'Years',
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      SizedBox(
-        height: 0.2,
-      ),
-      Container(
-          width: 344,
-          height: 485,
-          child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            //cardData is for testing purposes only, itll be a firebase request and mapping from JSON
-            itemBuilder: (BuildContext context, int index) {
-              //final int firstCardIndex = index ;
-              //final int secondCardIndex = index * 2 + 1;
-
-/*
-                * when index is 0, set the colors as is and set lastcolor to secondCardColor for comparison,
-                * next time it checks last color if its the secondCardColor,it switches, and so on
-                * */
-              //TODO:LOOK FOR A WAY TO KEEP COLORS CONTSTANT,FLUTTER KEEPS CHANING COLORS CUZ IT BUILDS THE LIST DYNAMICALLY
-
-              final Widget ExpenseCard1 = buildExpenseCard(
-                  gradient1, DateTime(2023), "Food", "100", "KFC");
-              final Widget ExpenseCard2 = buildExpenseCard(
-                  gradient2, DateTime(2000), "Shopping", "200", "ZARA");
-
-              return Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Column(
-                  children: [ExpenseCard1, SizedBox(height: 10), ExpenseCard2],
-                ),
-              );
-            },
-          )),
-    ]);
-  }
 
   //TODO:move to components
 
@@ -729,7 +503,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         return BudgetForm();
         break;
       case 1:
-        return BudgetForm();
+        return ExpenseForm();
         break;
       default:
         return BudgetForm();

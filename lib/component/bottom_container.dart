@@ -165,7 +165,7 @@ class _BottomContainerState extends State<BottomContainer> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ExpensePage()),
+                        MaterialPageRoute(builder: (context) => expenseTab()),
                       );
                     },
                   ),
