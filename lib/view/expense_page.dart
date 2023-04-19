@@ -69,7 +69,7 @@ class _expenseTabState extends State<expenseTab> {
                   },
                   child: Container(
                     height: 40,
-                    width: 190,
+                    width: 170,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
                       color: Color.fromRGBO(123, 203, 201, 1),
