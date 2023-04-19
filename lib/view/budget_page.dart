@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:testapp/component/forms/expense_form.dart';
+
 //import 'package:testapp/component/bottom_container.dart';
 //import 'package:testapp/component/card_design.dart';
 import 'package:testapp/component/right_drawer.dart';
@@ -12,17 +13,12 @@ import 'package:testapp/view/expense_page.dart';
 import '../component/forms/budget_form.dart';
 import '../viewmodel/auth_provider.dart';
 
-
-
-
-
 class BudgetPage extends StatefulWidget {
   const BudgetPage({Key? key}) : super(key: key);
 
   @override
   State<BudgetPage> createState() => _BudgetPageState();
 }
-
 
 final List<Map<String, String>> cardData = [
   {
@@ -87,8 +83,6 @@ final List<Map<String, String>> cardData = [
   },
 ];
 
-
-
 int TextPrimary = 0XFF145756;
 
 class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
@@ -127,43 +121,72 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                   begin: Alignment.topLeft,
-                  end: Alignment.topRight,
+                  end: Alignment.topCenter,
                   colors: [
                     Color.fromRGBO(59, 202, 163, 1),
                     Color.fromRGBO(34, 165, 162, 1),
                   ]),
               borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(50), topLeft: Radius.circular(50)),
+                topRight: Radius.circular(50),
+                topLeft: Radius.circular(50),
+              ),
             ),
-            height: 60,
+            height: 50,
           ),
         ),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: FloatingActionButton.large(
+        child:
+        /*FloatingActionButton.large(
+          backgroundColor: Color(0XFFFF6B35),
           elevation: 0,
           onPressed: () {
-
             showModalBottomSheet(
               isScrollControlled: true,
-
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(40),
+                  top: Radius.circular(50),
                 ),
               ),
               context: context,
               builder: (BuildContext context) => Padding(
                 padding: MediaQuery.of(context).viewInsets,
-                child:
-                evalTabForm(_tabController),
+                child: evalTabForm(_tabController),
               ),
             );
           },
           child: Icon(Icons.add),
-          backgroundColor: Color(0XFFFF6B35),
+
+        ),*/
+        Material(
+          elevation: 4,
+          shape: CircleBorder(),
+          color: Color(0XFFFF6B35),
+          child: InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                isScrollControlled: true,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(50),
+                  ),
+                ),
+                context: context,
+                builder: (BuildContext context) => Padding(
+                  padding: MediaQuery.of(context).viewInsets,
+                  child: evalTabForm(_tabController),
+                ),
+              );
+            },
+            child: Container(
+              width: 70,
+              height: 70,
+              child: Icon(Icons.add,size: 35, color: Colors.white),
+            ),
+          ),
         ),
+
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       endDrawer: RightDrawer(
@@ -215,7 +238,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             title: Padding(
               padding: const EdgeInsets.all(25.0),
               child: Text(
-                "Hello, ${(userCredential?.user?.displayName)==null?"guest!":userCredential?.user?.displayName}",
+                "Hello, ${(userCredential?.user?.displayName) == null ? "guest!" : userCredential?.user?.displayName}",
                 style: TextStyle(fontFamily: "K2D", fontSize: 23),
               ),
             ),
@@ -226,8 +249,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                 //******** container decoration ********
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                        image:
-                            AssetImage("assets/images/background-cropped-2.jpg"),
+                        image: AssetImage(
+                            "assets/images/background-cropped-2.jpg"),
                         fit: BoxFit.fill,
                         opacity: 0.3),
                     border: Border.all(
@@ -493,12 +516,10 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
-
-
   //TODO:move to components
 
-  Widget evalTabForm(TabController controller){
-    switch(controller.index){
+  Widget evalTabForm(TabController controller) {
+    switch (controller.index) {
       case 0:
         return BudgetForm();
         break;
@@ -509,5 +530,4 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         return BudgetForm();
     }
   }
-
 }
