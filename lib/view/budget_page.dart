@@ -138,7 +138,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(20.0),
         child:
-        /*FloatingActionButton.large(
+            /*FloatingActionButton.large(
           backgroundColor: Color(0XFFFF6B35),
           elevation: 0,
           onPressed: () {
@@ -159,7 +159,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           child: Icon(Icons.add),
 
         ),*/
-        Material(
+            Material(
           elevation: 4,
           shape: CircleBorder(),
           color: Color(0XFFFF6B35),
@@ -182,11 +182,10 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             child: Container(
               width: 70,
               height: 70,
-              child: Icon(Icons.add,size: 35, color: Colors.white),
+              child: Icon(Icons.add, size: 35, color: Colors.white),
             ),
           ),
         ),
-
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       endDrawer: RightDrawer(
@@ -207,6 +206,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
      */
 
   Widget MainBody(TabController controller, UserCredential? userCredential) {
+    final String? photoUrl = userCredential?.user?.photoURL;
+
     return Container(
       alignment: Alignment.centerLeft,
       decoration: BoxDecoration(color: Color(0XFF2DB79E)),
@@ -236,10 +237,22 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             elevation: 0,
             backgroundColor: Colors.transparent,
             title: Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: Text(
-                "Hello, ${(userCredential?.user?.displayName) == null ? "guest!" : userCredential?.user?.displayName}",
-                style: TextStyle(fontFamily: "K2D", fontSize: 23),
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(photoUrl ?? ""),
+                    radius: 20,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    "Hello, ${(userCredential?.user?.displayName) == null ? "guest!" : userCredential?.user?.displayName}",
+                    style: TextStyle(
+                      fontFamily: "K2D",
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
