@@ -43,6 +43,8 @@ class _settingspageState extends State<settingspage> {
     'Ft (HUF) - Hungarian Forint',
   ];
 
+  bool isDarkModeEnabled = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +107,7 @@ class _settingspageState extends State<settingspage> {
                         color: Colors.white,
                       ),
                       width: 300,
-                      height: 170,
+                      height: 270,
                       child: Column(
                         children: [
                           SizedBox(height: 20,),
@@ -177,7 +179,6 @@ class _settingspageState extends State<settingspage> {
                               );
                             },
                           ),
-
                           Divider(
                             height: 10,thickness: 1,indent: 30,endIndent: 30,
                           ),
@@ -201,7 +202,25 @@ class _settingspageState extends State<settingspage> {
 
                             },
                           ),
-                        ],
+                          Divider(
+                            height: 10,thickness: 1,indent: 30,endIndent: 30,
+                          ),
+                      ListTile(
+                        leading: Icon(Icons.dark_mode_sharp, size: 30),
+                        title: Text('Dark Mode',style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'K2D',)),
+                        trailing: Switch(
+                          value: isDarkModeEnabled,
+                          onChanged: (bool value) {
+                            setState(() {
+                              isDarkModeEnabled = value;
+                            });
+                          },
+                        ),
+                      ),
+
+                      ],
                       ),
                     )
                   ],
