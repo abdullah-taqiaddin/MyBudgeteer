@@ -21,8 +21,9 @@ class AuthProvider extends ChangeNotifier{
   User? get user => _user;
 
   void setUser(User? user){
-    _user = user;
-    notifyListeners();
+      _user = user;
+      notifyListeners();
+
   }
 
   void removeUser(){

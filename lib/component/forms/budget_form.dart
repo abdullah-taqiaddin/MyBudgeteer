@@ -176,10 +176,7 @@ class _BudgetFormState extends State<BudgetForm> {
                   onPressed: () {
                     print("pressed");
                     if (_formKey.currentState!.validate()) {
-                      // Submit the form data
-                      print("Budget Name: $_budgetName");
-                      print(
-                          "Amount: $_amount");
+                      submitBudget(_budgetName,_amount);
                     }
                   },
                   child: Text("Add",
@@ -194,6 +191,11 @@ class _BudgetFormState extends State<BudgetForm> {
         ),
       ),
     );
+  }
+
+
+  void submitBudget(TextEditingController name, TextEditingController amount){
+
   }
 }
 

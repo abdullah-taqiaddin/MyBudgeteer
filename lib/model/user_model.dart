@@ -10,16 +10,16 @@ class UserModel{
   UserModel({
     required this.uid,
     required this.displayName,
-    this.currency,
+    this.currency = "JOD",
     this.budgets
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  factory UserModel.fromJson(Map<String, dynamic>? json) {
     return UserModel(
-      uid: json['uid'],
-      displayName: json['displayName'],
-      currency: json['currency'],
-      budgets: (json['budgets'] != null) ? json['budgets'] as List<Budget> : [],
+      uid: json!['uid'],
+      displayName: json!['displayName'],
+      currency: json!['currency'],
+      budgets: (json!['budgets'] != null) ? json!['budgets'] as List<Budget> : [],
     );
   }
 

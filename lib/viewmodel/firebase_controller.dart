@@ -1,5 +1,6 @@
 
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,6 +14,8 @@ final firebaseAuth = FirebaseAuth.instance;
 class FirebaseController{
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+
 
   UserModel? userFromFirebase(User? user){
     return user != null ? UserModel(uid: user.uid, displayName: user.displayName!): null;
@@ -63,30 +66,40 @@ class FirebaseController{
         idToken: googleAuth?.idToken,
       );
 
-
       try {
+
         // Once signed in, return the UserCredential
         final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
         final user = userCredential.user;
-        Provider.of<AuthProvider>(context, listen: false).setUserCredentials(userCredential);
+
+        //store in firebase firestore
+        // //TODO:check if the user already exist
+        UserModel newuser = new UserModel(uid: user!.uid, displayName: user!.displayName!);
+        var docUser = FirebaseFirestore.instance.collection('users').doc(user.uid);
+        docUser.set(newuser.toJson());
+        print("added user");
+
         Provider.of<AuthProvider>(context, listen: false).setUser(user);
 
+
+        print(userCredential);
         saveLocalUser(user!);
         return userCredential;
 
       } catch (e) {
         // Sign the user out and try again
-        await GoogleSignIn().signOut();
         return signInWithGoogle(context);
       }
 
   }
 
-  signOutUser(BuildContext context) {
+  signOutUser(BuildContext context) async{
     try {
-      Provider.of<AuthProvider>(context, listen: false).removeUserCredentials();
-      firebaseAuth.signOut();
+      Provider.of<AuthProvider>(context, listen: false).removeUser();
       clearLocalUser();
+      await GoogleSignIn().signOut();
+
+      firebaseAuth.signOut();
     }
     catch(e){
       //TODO:Make a snackbar if any errors occure

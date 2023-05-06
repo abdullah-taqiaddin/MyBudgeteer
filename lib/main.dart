@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,7 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   final SharedPreferences prefs = await _prefs;
+
 
   runApp(
     ChangeNotifierProvider(
@@ -45,15 +47,17 @@ class _MyAppState extends State<MyApp> {
   }
   //login page or budgetpage
   
-  
+
+
   @override
   Widget build(BuildContext context) {
+    Widget routeWidget = checkUser();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: checkUser(),
+      home: routeWidget,
     );
   }
-  
+
   Widget checkUser(){
     if((localstorageref.getBool("loggedIn")) == true){
       var user = FirebaseAuth.instance.currentUser;
