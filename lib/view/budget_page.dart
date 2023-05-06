@@ -86,6 +86,7 @@ final List<Map<String, String>> cardData = [
 int TextPrimary = 0XFF145756;
 
 class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
+
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -104,7 +105,10 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     int tabindex = 0;
 
-    final userCredential = Provider.of<AuthProvider>(context).userCredential;
+    final user = Provider.of<AuthProvider>(context).user;
+
+    print(user);
+
     TabController _tabController = TabController(length: 2, vsync: this);
 
     return Scaffold(
@@ -197,7 +201,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           });
         },
       ),
-      body: MainBody(_tabController, userCredential),
+      body: MainBody(_tabController, user),
     );
   }
 
@@ -205,8 +209,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     /Main body widget takes two params, tabcontroller, user creds
      */
 
-  Widget MainBody(TabController controller, UserCredential? userCredential) {
-    final String? photoUrl = userCredential?.user?.photoURL;
+  Widget MainBody(TabController controller, User? user) {
+    final String? photoUrl = user?.photoURL;
 
     return Container(
       alignment: Alignment.centerLeft,
@@ -246,7 +250,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    "Hello, ${(userCredential?.user?.displayName) == null ? "guest!" : userCredential?.user?.displayName}",
+                    "Hello, ${(user?.displayName) == null ? "guest!" : user?.displayName}",
                     style: TextStyle(
                       fontFamily: "K2D",
                       fontSize: 20,

@@ -1,13 +1,18 @@
+
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/viewmodel/auth_provider.dart';
 import 'package:testapp/model/user_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final firebaseAuth = FirebaseAuth.instance;
 
 class FirebaseController{
+
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   UserModel? userFromFirebase(User? user){
     return user != null ? UserModel(uid: user.uid, displayName: user.displayName!): null;
@@ -62,8 +67,11 @@ class FirebaseController{
       try {
         // Once signed in, return the UserCredential
         final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-
+        final user = userCredential.user;
         Provider.of<AuthProvider>(context, listen: false).setUserCredentials(userCredential);
+        Provider.of<AuthProvider>(context, listen: false).setUser(user);
+
+        saveLocalUser(user!);
         return userCredential;
 
       } catch (e) {
@@ -78,10 +86,22 @@ class FirebaseController{
     try {
       Provider.of<AuthProvider>(context, listen: false).removeUserCredentials();
       firebaseAuth.signOut();
+      clearLocalUser();
     }
     catch(e){
       //TODO:Make a snackbar if any errors occure
       print(e);
     }
+  }
+
+  void saveLocalUser(User user) async{
+    final SharedPreferences prefs = await _prefs;
+    prefs.setBool("loggedIn", true);
+
+  }
+
+  void clearLocalUser() async{
+    final SharedPreferences prefs = await _prefs;
+    prefs.setBool("loggedIn", false);
   }
 }
