@@ -74,7 +74,7 @@ class FirebaseController{
 
         //store in firebase firestore
         // //TODO:check if the user already exist
-        UserModel newuser = new UserModel(uid: user!.uid, displayName: user!.displayName!);
+        UserModel newuser = new UserModel(uid: user!.uid, displayName: user.displayName!);
         var docUser = FirebaseFirestore.instance.collection('users').doc(user.uid);
         docUser.set(newuser.toJson());
         print("added user");
@@ -83,7 +83,7 @@ class FirebaseController{
 
 
         print(userCredential);
-        saveLocalUser(user!);
+        saveLocalUser(user);
         return userCredential;
 
       } catch (e) {

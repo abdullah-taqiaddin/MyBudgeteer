@@ -2,14 +2,13 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import 'package:testapp/component/forms/expense_form.dart';
 
-//import 'package:testapp/component/bottom_container.dart';
-//import 'package:testapp/component/card_design.dart';
 import 'package:testapp/component/right_drawer.dart';
+import 'package:testapp/model/budget.dart';
 import 'package:testapp/view/expense_page.dart';
 import '../component/forms/budget_form.dart';
 import '../viewmodel/auth_provider.dart';
@@ -27,61 +26,7 @@ final List<Map<String, String>> cardData = [
     'spent': '\$25.00',
     'total': '\$100.00',
   },
-  {
-    'type': 'Shopping',
-    'spent': '\$50.00',
-    'total': '\$200.00',
-  },
-  {
-    'type': 'transport',
-    'spent': '\$20.00',
-    'total': '\$50.00',
-  },
-  {
-    'type': 'Food',
-    'spent': '\$25.00',
-    'total': '\$100.00',
-  },
-  {
-    'type': 'Shopping',
-    'spent': '\$50.00',
-    'total': '\$200.00',
-  },
-  {
-    'type': 'transport',
-    'spent': '\$20.00',
-    'total': '\$50.00',
-  },
-  {
-    'type': 'Food',
-    'spent': '\$25.00',
-    'total': '\$100.00',
-  },
-  {
-    'type': 'Shopping',
-    'spent': '\$50.00',
-    'total': '\$200.00',
-  },
-  {
-    'type': 'transport',
-    'spent': '\$20.00',
-    'total': '\$50.00',
-  },
-  {
-    'type': 'Food',
-    'spent': '\$25.00',
-    'total': '\$100.00',
-  },
-  {
-    'type': 'Shopping',
-    'spent': '\$50.00',
-    'total': '\$200.00',
-  },
-  {
-    'type': 'transport',
-    'spent': '\$20.00',
-    'total': '\$50.00',
-  },
+
 ];
 
 int TextPrimary = 0XFF145756;
@@ -106,24 +51,23 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
-    int tabindex = 0;
-
     final user = Provider.of<AuthProvider>(context).user;
 
-    print(user);
+    var document = FirebaseFirestore.instance.collection('users').doc(user!.uid);
 
     TabController _tabController = TabController(length: 2, vsync: this);
 
     return Scaffold(
       extendBody: true,
       bottomNavigationBar: Container(
+
+        //Bottom app bar
         child: BottomAppBar(
           shape: AutomaticNotchedShape(RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topRight: Radius.circular(50), topLeft: Radius.circular(50)),
           )),
-          //color: Color(0XFF2DB79E),
+
           elevation: 0,
           child: Container(
             decoration: BoxDecoration(
@@ -146,28 +90,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(20.0),
         child:
-            /*FloatingActionButton.large(
-          backgroundColor: Color(0XFFFF6B35),
-          elevation: 0,
-          onPressed: () {
-            showModalBottomSheet(
-              isScrollControlled: true,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(50),
-                ),
-              ),
-              context: context,
-              builder: (BuildContext context) => Padding(
-                padding: MediaQuery.of(context).viewInsets,
-                child: evalTabForm(_tabController),
-              ),
-            );
-          },
-          child: Icon(Icons.add),
-
-        ),*/
-            Material(
+      Material(
           elevation: 4,
           shape: CircleBorder(),
           color: Color(0XFFFF6B35),
@@ -205,13 +128,26 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           });
         },
       ),
-      body: MainBody(_tabController, user),
+
+
+
+    //Body code which takes in a tabcontroller and a user
+      body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>> (
+        stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).snapshots(),
+        builder: (context, snapshot) {
+          if(!snapshot.hasData){
+              //print(FirebaseFirestore.instance.collection('users').doc(user!.uid).get());
+              print("loading..");
+              return Center(child:  CircularProgressIndicator(
+                valueColor:AlwaysStoppedAnimation<Color>(Colors.red),
+              ));
+            }
+          print("--------------" + snapshot!.data!.data()!.toString());
+          return MainBody(_tabController, user);
+        }
+      ),
     );
   }
-
-  /*
-    /Main body widget takes two params, tabcontroller, user creds
-     */
 
   Widget MainBody(TabController controller, User? user) {
     final String? photoUrl = user?.photoURL;
@@ -461,6 +397,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     Color lastColor = Color(0xFF34cfb3);
     Color firstColor = Color(0xFF34cfb3);
     Color secondColor = Color(0xFF4B9EB8);
+
     return Column(
       children: [
         MainBudgetInfo("2100", "100", "4000"),
@@ -482,6 +419,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                 * when index is 0, set the colors as is and set lastcolor to secondCardColor for comparison,
                 * next time it checks last color if its the secondCardColor,it switches, and so on
                 * */
+
               //TODO:LOOK FOR A WAY TO KEEP COLORS CONTSTANT,FLUTTER KEEPS CHANING COLORS CUZ IT BUILDS THE LIST DYNAMICALLY
 
               Color firstCardColor, secondCardColor;
@@ -536,6 +474,16 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
       ],
     );
   }
+
+
+  Future<dynamic> getUserInfo(String uid) async {
+    var document = FirebaseFirestore.instance.collection('users').doc(uid);
+    DocumentSnapshot snapshot = await document.get();
+    return snapshot.data();
+  }
+
+
+
 
   //TODO:move to components
 

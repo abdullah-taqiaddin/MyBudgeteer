@@ -17,9 +17,9 @@ class UserModel{
   factory UserModel.fromJson(Map<String, dynamic>? json) {
     return UserModel(
       uid: json!['uid'],
-      displayName: json!['displayName'],
-      currency: json!['currency'],
-      budgets: (json!['budgets'] != null) ? json!['budgets'] as List<Budget> : [],
+      displayName: json['displayName'],
+      currency: json['currency'],
+      budgets: (json['budgets'] != null) ? json['budgets'] as List<Budget> : [],
     );
   }
 
