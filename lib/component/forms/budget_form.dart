@@ -1,9 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:testapp/model/budget.dart';
+import 'package:testapp/viewmodel/database_provider.dart';
 
 class BudgetForm extends StatefulWidget {
 
-  const BudgetForm({Key? key}) : super(key: key);
+  final DatabaseProvider dbProvider;
+
+  BudgetForm({ required this.dbProvider });
 
   @override
   State<BudgetForm> createState() => _BudgetFormState();
@@ -16,10 +21,6 @@ class _BudgetFormState extends State<BudgetForm> {
   final _formKey = GlobalKey<FormState>();
   final _budgetName = TextEditingController();
   final _amount = TextEditingController();
-
-  void budgetFormSubmit(TextEditingController budgeName,TextEditingController ){
-
-  }
 
 
   @override
@@ -195,7 +196,13 @@ class _BudgetFormState extends State<BudgetForm> {
 
 
   void submitBudget(TextEditingController name, TextEditingController amount){
+    DateTime budgetDate = DateTime.now();
+    Timestamp timestamp = Timestamp.fromDate(budgetDate);
 
+    Budget newBudget = Budget(name: name.text.toString(),amount: double.parse(amount.text.toString(),), budgetDate: timestamp, id: "");
+    widget.dbProvider.addBudget(newBudget);
+
+    print("FUNCTION RAN!");
   }
 }
 

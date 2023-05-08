@@ -9,18 +9,25 @@ class DatabaseProvider{
     required this.uid
   });
 
-  //now we have a list of the budgets
+
   CollectionReference<Map<String, dynamic>> get budgetCollection => FirebaseFirestore.instance.collection('users').doc(uid).collection('budgets');
 
   //get budgets
   CollectionReference<Map<String, dynamic>> GetBudgets(){
     return budgetCollection;
   }
+
+  Future<List<Map<String, dynamic>>> GetListBudgets() async {
+    var snapshot = await budgetCollection.get();
+    var budgets = snapshot.docs.map((doc) => doc.data()).toList();
+    return budgets;
+  }
+
   //create a budget
   Future<void> addBudget(Budget budget) async{
     //get the budget id
     budget.id = budgetCollection.doc().id;
-    await budgetCollection.doc(budget.id).set(budget.toJson());
+    await budgetCollection.add(budget.toJson());
   }
   //update a budget
   Future<void> updateBudget(Budget budget, String budgetId) async{

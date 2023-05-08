@@ -1,11 +1,13 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'expense.dart';
 
 class Budget {
   String id;
   String name;
   double amount;
-  DateTime budgetDate;
+  Timestamp budgetDate;
   List<Expense>? expenses = [];
 
   Budget({
@@ -16,12 +18,15 @@ class Budget {
     this.expenses});
 
   factory Budget.fromJson(Map<String, dynamic> json) {
+    var expensesJson = json['expenses'] as List<dynamic>;
+    var expenses = expensesJson.map((e) => Expense.fromJson(e)).toList();
+
     return Budget(
       id: json['id'],
       name: json['name'],
       amount: json['amount'],
       budgetDate: json['budgetDate'],
-      expenses: json['expenses'] as List<Expense>,
+      expenses: expenses,
     );
   }
 
