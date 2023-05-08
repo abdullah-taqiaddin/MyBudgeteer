@@ -57,99 +57,110 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
     TabController _tabController = TabController(length: 2, vsync: this);
 
-    return Scaffold(
-      extendBody: true,
-      bottomNavigationBar: Container(
 
-        //Bottom app bar
-        child: BottomAppBar(
-          shape: AutomaticNotchedShape(RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(50), topLeft: Radius.circular(50)),
-          )),
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).snapshots(),
+      builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.waiting){
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+        }
+        return Scaffold(
+          extendBody: true,
+          bottomNavigationBar: Container(
+            //Bottom app bar
+            child: BottomAppBar(
+              shape: AutomaticNotchedShape(RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(50), topLeft: Radius.circular(50)),
+              )),
 
-          elevation: 0,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Color.fromRGBO(59, 202, 163, 1),
-                    Color.fromRGBO(34, 165, 162, 1),
-                  ]),
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(50),
-                topLeft: Radius.circular(50),
-              ),
-            ),
-            height: 50,
-          ),
-        ),
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child:
-      Material(
-          elevation: 4,
-          shape: CircleBorder(),
-          color: Color(0XFFFF6B35),
-          child: InkWell(
-            onTap: () {
-              showModalBottomSheet(
-                isScrollControlled: true,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(50),
+              elevation: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Color.fromRGBO(59, 202, 163, 1),
+                        Color.fromRGBO(34, 165, 162, 1),
+                      ]),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(50),
+                    topLeft: Radius.circular(50),
                   ),
                 ),
-                context: context,
-                builder: (BuildContext context) => Padding(
-                  padding: MediaQuery.of(context).viewInsets,
-                  child: evalTabForm(_tabController),
-                ),
-              );
-            },
-            child: Container(
-              width: 70,
-              height: 70,
-              child: Icon(Icons.add, size: 35, color: Colors.white),
+                height: 50,
+              ),
             ),
           ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      endDrawer: RightDrawer(
-        selectedIndex: _selectedIndex,
-        onItemTapped: (index) {
-          setState(() {
-            _selectedIndex = index;
-            Navigator.pop(context);
-          });
-        },
-      ),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child:
+          Material(
+              elevation: 4,
+              shape: CircleBorder(),
+              color: Color(0XFFFF6B35),
+              child: InkWell(
+                onTap: () {
+                  showModalBottomSheet(
+                    isScrollControlled: true,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(50),
+                      ),
+                    ),
+                    context: context,
+                    builder: (BuildContext context) => Padding(
+                      padding: MediaQuery.of(context).viewInsets,
+                      child: evalTabForm(_tabController),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: 70,
+                  height: 70,
+                  child: Icon(Icons.add, size: 35, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          endDrawer: RightDrawer(
+            selectedIndex: _selectedIndex,
+            onItemTapped: (index) {
+              setState(() {
+                _selectedIndex = index;
+                Navigator.pop(context);
+              });
+            },
+          ),
 
 
 
-    //Body code which takes in a tabcontroller and a user
-      body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>> (
-        stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).snapshots(),
-        builder: (context, snapshot) {
-          if(!snapshot.hasData){
-              //print(FirebaseFirestore.instance.collection('users').doc(user!.uid).get());
-              print("loading..");
-              return Center(child:  CircularProgressIndicator(
-                valueColor:AlwaysStoppedAnimation<Color>(Colors.red),
-              ));
-            }
-          print("--------------" + snapshot!.data!.data()!.toString());
-          return MainBody(_tabController, user);
-        }
-      ),
+        //Body code which takes in a tabcontroller and a user
+        //   body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>> (
+        //     stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).snapshots(),
+        //     builder: (context, snapshot) {
+        //       if(!snapshot.hasData){
+        //           //print(FirebaseFirestore.instance.collection('users').doc(user!.uid).get());
+        //           print("loading..");
+        //           return Center(child:  CircularProgressIndicator(
+        //             valueColor:AlwaysStoppedAnimation<Color>(Colors.red),
+        //           ));
+        //         }
+        //       print("--------------\n" + snapshot!.data!.data().toString());
+        //       return MainBody(_tabController, user, snapshot);
+        //     }
+        //   ),\
+          body: MainBody(_tabController,user, snapshot),
+        );
+      }
     );
   }
 
-  Widget MainBody(TabController controller, User? user) {
+  Widget MainBody(TabController controller, User? user, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
     final String? photoUrl = user?.photoURL;
 
     return Container(
@@ -263,7 +274,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                       child: TabBarView(
                         controller: controller,
                         children: [
-                          Tab(child: budgetTab()),
+                          Tab(child: budgetTab(snapshot)),
                           Tab(child: expenseTab()),
                         ],
                       ),
@@ -393,11 +404,15 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget budgetTab() {
+  Widget budgetTab( AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot ) {
     Color lastColor = Color(0xFF34cfb3);
     Color firstColor = Color(0xFF34cfb3);
     Color secondColor = Color(0xFF4B9EB8);
 
+    final data = snapshot.data!.data();
+
+    //TODO:continue building the budgets
+    final budgets = data!['budgets'];
     return Column(
       children: [
         MainBudgetInfo("2100", "100", "4000"),
@@ -408,6 +423,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           width: 330,
           height: 400,
           child: ListView.builder(
+
+
             scrollDirection: Axis.vertical,
             //cardData is for testing purposes only, itll be a firebase request and mapping from JSON
             itemCount: (cardData.length / 2).ceil(),
@@ -500,3 +517,4 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     }
   }
 }
+
