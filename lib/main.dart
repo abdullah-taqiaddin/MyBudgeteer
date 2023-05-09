@@ -62,9 +62,7 @@ class _MyAppState extends State<MyApp> {
     if((localstorageref.getBool("loggedIn")) == true){
       var user = FirebaseAuth.instance.currentUser;
       print(user);
-
       Provider.of<AuthProvider>(context).setUser(user);
-
       return BudgetPage();
     }
     return loginPage();

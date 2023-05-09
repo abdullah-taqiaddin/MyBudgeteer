@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:testapp/model/budget.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
 
@@ -201,8 +202,8 @@ class _BudgetFormState extends State<BudgetForm> {
     Timestamp timestamp = Timestamp.fromDate(budgetDate);
 
     Budget newBudget = Budget(name: name.text.toString(),amount: double.parse(amount.text.toString(),), budgetDate: timestamp, id: "");
-    widget.dbProvider.addBudget(newBudget);
-
+    // widget.dbProvider.addBudget(newBudget);
+    Provider.of<DatabaseProvider>(context, listen: false).addBudget(newBudget);
     print("FUNCTION RAN!");
   }
 }

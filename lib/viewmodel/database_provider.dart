@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:testapp/model/budget.dart';
 
-class DatabaseProvider{
+class DatabaseProvider extends ChangeNotifier{
 
   final String uid;
 
@@ -35,7 +36,9 @@ class DatabaseProvider{
   }
   //delete a budget
   Future<void> deleteBudget(String budgetId) async{
+
     await budgetCollection.doc(budgetId).delete();
+    print("Deleted");
   }
   //get expenses
   CollectionReference<Map<String, dynamic>> getExpenses(String budgetId){

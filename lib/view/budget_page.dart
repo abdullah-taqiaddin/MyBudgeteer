@@ -399,7 +399,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     Color firstColor = Color(0xFF34cfb3);
     Color secondColor = Color(0xFF4B9EB8);
     List<QueryDocumentSnapshot<Map<String, dynamic>>> budgets = snapshot.data!.docs;
-    int iterator = budgets.length;
 
     if(budgets.isEmpty){
       return noFoundBudget();
