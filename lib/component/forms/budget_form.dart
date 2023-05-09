@@ -178,6 +178,7 @@ class _BudgetFormState extends State<BudgetForm> {
                     print("pressed");
                     if (_formKey.currentState!.validate()) {
                       submitBudget(_budgetName,_amount);
+                      Navigator.pop(context);
                     }
                   },
                   child: Text("Add",

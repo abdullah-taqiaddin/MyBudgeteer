@@ -400,6 +400,11 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     Color secondColor = Color(0xFF4B9EB8);
     List<QueryDocumentSnapshot<Map<String, dynamic>>> budgets = snapshot.data!.docs;
     int iterator = budgets.length;
+
+    if(budgets.isEmpty){
+      return noFoundBudget();
+    }
+
     return Column(
       children: [
         MainBudgetInfo("2100", "100", "4000"),
@@ -541,7 +546,19 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     return snapshot.data();
   }
 
+  Widget noFoundBudget(){
+    return Stack(
+        clipBehavior: Clip.none, alignment: Alignment.topCenter,
+        children: [
+          Positioned(
+              top: 150.0,
 
+              child: Text("No Budgets?\nAdd up!", style: TextStyle(fontSize: 40.0,
+                fontFamily: "K2D",),)
+          )
+        ]
+    );
+  }
 
 
   //TODO:move to components
