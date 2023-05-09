@@ -13,6 +13,20 @@ class DatabaseProvider extends ChangeNotifier{
 
   CollectionReference<Map<String, dynamic>> get budgetCollection => FirebaseFirestore.instance.collection('users').doc(uid).collection('budgets');
 
+  Future<String> getTotalBudgetAmount() async {
+    double totalAmount = 0;
+
+    var budgetsSnapshot = await budgetCollection.get();
+    var budgets = budgetsSnapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList();
+
+    for (var budget in budgets) {
+      totalAmount += budget.amount;
+    }
+
+    print(totalAmount);
+    return totalAmount.toString();
+  }
+
   //get budgets
   CollectionReference<Map<String, dynamic>> GetBudgets(){
     return budgetCollection;

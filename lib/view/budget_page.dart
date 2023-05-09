@@ -142,13 +142,13 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             },
           ),
 
-        body: MainBody(_tabController,user, snapshot),
+        body: MainBody(_tabController,user, snapshot, dbProvider),
         );
       }
     );
   }
 
-  Widget MainBody(TabController controller, User? user, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+  Widget MainBody(TabController controller, User? user, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot, DatabaseProvider dbProvider) {
     final String? photoUrl = user?.photoURL;
 
     return Container(
@@ -262,7 +262,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                       child: TabBarView(
                         controller: controller,
                         children: [
-                          Tab(child: budgetTab(snapshot)),
+                          Tab(child: budgetTab(snapshot, dbProvider)),
                           Tab(child: expenseTab()),
                         ],
                       ),
@@ -317,82 +317,99 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget MainBudgetInfo(String remaining, String spent, String total) {
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "remaining",
-                  style: TextStyle(
-                      fontFamily: "K2D",
-                      fontSize: 22,
-                      color: Color(0XFF145756),
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "$remaining \$",
-                  style: TextStyle(
-                      fontFamily: "K2D",
-                      fontSize: 50,
-                      color: Color(0XFF145756),
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            SizedBox(width: 30),
-            Column(
-              children: [
-                Text(
-                  "Spent",
-                  style: TextStyle(
-                      fontFamily: "K2D",
-                      fontSize: 18,
-                      color: Color(0XFF145756),
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "\-$spent \$",
-                  style: TextStyle(
-                      fontFamily: "K2D",
-                      fontSize: 16,
-                      color: Color(0XFF145756),
-                      fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  "Total",
-                  style: TextStyle(
-                      fontFamily: "K2D",
-                      fontSize: 18,
-                      color: Color(0XFF145756),
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "\+$total \$",
-                  style: TextStyle(
-                      fontFamily: "K2D",
-                      fontSize: 16,
-                      color: Color(0XFF145756),
-                      fontWeight: FontWeight.bold),
-                )
-              ],
-            ),
-          ],
+  Widget MainBudgetInfo(String remaining, String spent, String total, DatabaseProvider dbProvider) {
+
+    String totalamount = dbProvider.getTotalBudgetAmount().toString();
+
+    print(totalamount);
+    String remainingamount;
+    String totalspent;
+
+    return FutureBuilder(
+      future: dbProvider.getTotalBudgetAmount(),
+      builder: (context, snapshot) {
+        if(!snapshot.hasData){
+          return Text("srngj");
+        }if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        }
+        else{
+        return Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "remaining",
+                    style: TextStyle(
+                        fontFamily: "K2D",
+                        fontSize: 22,
+                        color: Color(0XFF145756),
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "${snapshot.data} \$",
+                    style: TextStyle(
+                        fontFamily: "K2D",
+                        fontSize: 50,
+                        color: Color(0XFF145756),
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              SizedBox(width: 30),
+              Column(
+                children: [
+                  Text(
+                    "Spent",
+                    style: TextStyle(
+                        fontFamily: "K2D",
+                        fontSize: 18,
+                        color: Color(0XFF145756),
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "\-$spent \$",
+                    style: TextStyle(
+                        fontFamily: "K2D",
+                        fontSize: 16,
+                        color: Color(0XFF145756),
+                        fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Total",
+                    style: TextStyle(
+                        fontFamily: "K2D",
+                        fontSize: 18,
+                        color: Color(0XFF145756),
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "\+$total \$",
+                    style: TextStyle(
+                        fontFamily: "K2D",
+                        fontSize: 16,
+                        color: Color(0XFF145756),
+                        fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
+      );}}
     );
   }
 
-  Widget budgetTab( AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot ) {
+  Widget budgetTab( AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot , DatabaseProvider dbprovider) {
 
 
     Color lastColor = Color(0xFF34cfb3);
@@ -406,7 +423,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
     return Column(
       children: [
-        MainBudgetInfo("2100", "100", "4000"),
+        MainBudgetInfo("2100", "100", "4000", dbprovider),
         SizedBox(
           height: 0.5,
         ),
@@ -424,7 +441,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             itemCount: budgets.length,
             itemBuilder: (BuildContext context, int index) {
               return buildBudgetCard(
-                Colors.blue.shade200,
+                firstColor,
                 budgets[index]['name'],
                 budgets[index]['amount'].toString(),
                 budgets[index]['amount'].toString(),

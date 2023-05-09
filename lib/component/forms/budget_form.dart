@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:testapp/model/budget.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
 
+//i guess we need to create a flag to distinguish the update from the create
+
+
 class BudgetForm extends StatefulWidget {
 
   final DatabaseProvider dbProvider;
@@ -202,9 +205,12 @@ class _BudgetFormState extends State<BudgetForm> {
     Timestamp timestamp = Timestamp.fromDate(budgetDate);
 
     Budget newBudget = Budget(name: name.text.toString(),amount: double.parse(amount.text.toString(),), budgetDate: timestamp, id: "");
-    // widget.dbProvider.addBudget(newBudget);
-    Provider.of<DatabaseProvider>(context, listen: false).addBudget(newBudget);
+    widget.dbProvider.addBudget(newBudget);
+    //Provider.of<DatabaseProvider>(context, listen: false).addBudget(newBudget);
     print("FUNCTION RAN!");
   }
+
+
+
 }
 
