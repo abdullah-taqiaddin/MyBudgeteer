@@ -393,14 +393,13 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   }
 
   Widget budgetTab( AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot ) {
+
+
     Color lastColor = Color(0xFF34cfb3);
     Color firstColor = Color(0xFF34cfb3);
     Color secondColor = Color(0xFF4B9EB8);
     List<QueryDocumentSnapshot<Map<String, dynamic>>> budgets = snapshot.data!.docs;
-    print(budgets[0].data());
-    print(budgets[1].data());
-    //TODO:continue building the budgets
-    //final budgets = data!['budgets'];
+    int iterator = budgets.length;
     return Column(
       children: [
         MainBudgetInfo("2100", "100", "4000"),
@@ -410,69 +409,61 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         Container(
           width: 330,
           height: 400,
-
-          child: ListView.builder(
-
-
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: MediaQuery.of(context).size.width /
+                  (MediaQuery.of(context).size.height / 2),
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20,
+            ),
+            itemCount: budgets.length,
+            itemBuilder: (BuildContext context, int index) {
+              return buildBudgetCard(
+                Colors.blue.shade200,
+                budgets[index]['name'],
+                budgets[index]['amount'].toString(),
+                budgets[index]['amount'].toString(),
+              );
+            },
+          ),
+          /*child: ListView.builder(
             scrollDirection: Axis.vertical,
             itemCount: budgets.length,
             itemBuilder: (BuildContext context, int index) {
+              print("----" + index.toString());
+              Widget firstCard = buildBudgetCard(
+                Colors.blue.shade200,
+                budgets[index]['name'],
+                budgets[index]['amount'].toString(),
+                budgets[index]['amount'].toString(),
+              );
+              Widget secondCard = SizedBox();
+              if (index + 1 < budgets.length) {
+                secondCard = buildBudgetCard(
+                  Colors.blue.shade200,
+                  budgets[index + 1]['name'],
+                  budgets[index + 1]['amount'].toString(),
+                  budgets[index + 1]['amount'].toString(),
+                );
+                index += 1;
+                print(index);
+              }
 
-              // final int firstCardIndex = index * 2;
-              // final int secondCardIndex = index * 2 + 1;
-              // print(firstCardIndex);
-              // print(secondCardIndex);
-              // //TODO:LOOK FOR A WAY TO KEEP COLORS CONTSTANT,FLUTTER KEEPS CHANING COLORS CUZ IT BUILDS THE LIST DYNAMICALLY
-              //
-              // Color firstCardColor, secondCardColor;
-              //
-              // if (index == 0) {
-              //   //start off the coloring
-              //   firstCardColor = secondColor;
-              //   secondCardColor = firstColor;
-              // } else {
-              //   if (lastColor == firstColor) {
-              //     firstCardColor = firstColor;
-              //     secondCardColor = secondColor;
-              //   } else {
-              //     firstCardColor = secondColor;
-              //     secondCardColor = firstColor;
-              //   }
-              // }
-              //
-              // lastColor = secondCardColor;
-              //
-              // final Widget firstCard = (firstCardIndex < cardData.length)
-              //     ? buildBudgetCard(
-              //   firstCardColor,
-              //   budgets[firstCardIndex]['name'],
-              //   budgets[firstCardIndex]['amount'].toString(),
-              //   budgets[firstCardIndex]['amount'].toString(),
-              // )
-              //     : SizedBox();
-              //
-              // final Widget secondCard = (secondCardIndex < budgets.length)
-              //     ? buildBudgetCard(
-              //   secondCardColor,
-              //   budgets[secondCardIndex]['name']!,
-              //   budgets[secondCardIndex]['amount']!.toString(),
-              //   budgets[secondCardIndex]['amount']!.toString(),
-              // )
-              //     : SizedBox();
-              //
-              // return Padding(
-              //   padding: const EdgeInsets.all(5.0),
-              //   child: Row(
-              //     children: [
-              //       Expanded(child: firstCard),
-              //       SizedBox(width: 20),
-              //       Expanded(child: secondCard),
-              //     ],
-              //   ),
-              // );
-             return buildBudgetCard(Colors.blue.shade50, budgets[index]['name'], budgets[index]['amount'].toString(), budgets[index]['amount'].toString());
+              return Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Row(
+                  children: [
+                    Expanded(child: firstCard),
+                    SizedBox(width: 20),
+                    Expanded(child: secondCard),
+                  ],
+                ),
+              );
             },
-          ),
+          ),*/
+
+
           /*child: ListView.builder(
 
 
