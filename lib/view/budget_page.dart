@@ -414,17 +414,17 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   }
 
   Widget budgetTab( AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-
-
-    Color lastColor = Color(0xFF34cfb3);
     Color firstColor = Color(0xFF34cfb3);
+    Color lastColor = firstColor;
     Color secondColor = Color(0xFF4B9EB8);
+    // 0,1
+
+    int rowFinished = 0;
     List<QueryDocumentSnapshot<Map<String, dynamic>>> budgets = snapshot.data!.docs;
 
     if(budgets.isEmpty){
       return noFoundBudget();
     }
-
     return Column(
       children: [
         MainBudgetInfo("2100", "100", "4000"),
@@ -444,8 +444,23 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             ),
             itemCount: budgets.length,
             itemBuilder: (BuildContext context, int index) {
+
+              //keep track if the row finished
+              rowFinished = index % 2 == 0 ? 1 : 0;
+              //need to check the values of the colors, if they right we need to flip, if flipped return to normal
+              if(rowFinished == 1){
+                if(firstColor == Color(0xFF34cfb3)){
+                  //the colors arent flipped, so we flip them
+                  firstColor = secondColor;
+                  secondColor = Color(0xFF34cfb3);
+                }else{
+                  firstColor = Color(0xFF34cfb3);
+                  secondColor = Color(0xFF4B9EB8);
+                }
+              }
+                        //now to check if the item is first or second in the row
               return buildBudgetCard(
-                firstColor,
+                index % 2 != 0 ? firstColor: secondColor,
                 budgets[index]['name'],
                 budgets[index]['amount'].toString(),
                 budgets[index]['amount'].toString(),
