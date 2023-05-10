@@ -7,6 +7,7 @@ import 'package:testapp/view/budget_page.dart';
 import 'package:testapp/view/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:testapp/viewmodel/auth_provider.dart';
+import 'package:testapp/viewmodel/database_provider.dart';
 
 
 final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -17,13 +18,22 @@ void main() async{
   await Firebase.initializeApp();
   final SharedPreferences prefs = await _prefs;
 
-
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AuthProvider(),
-      child: MyApp(ref: prefs),
-    ),
+    MultiProvider(
+      providers: [
+      ChangeNotifierProvider(create: (_) => AuthProvider(),)
+      ,ChangeNotifierProvider(create: (_) => DatabaseProvider()),
+    ]
+      ,child: MyApp(ref: prefs,),)
   );
+
+  //
+  // runApp(
+  //   ChangeNotifierProvider(
+  //     create: (_) => AuthProvider(),
+  //     child: MyApp(ref: prefs),
+  //   ),
+  // );
 }
 
 class MyApp extends StatefulWidget {

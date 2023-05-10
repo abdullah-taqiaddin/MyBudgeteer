@@ -3,16 +3,10 @@ import 'package:flutter/widgets.dart';
 import 'package:testapp/model/budget.dart';
 
 class DatabaseProvider extends ChangeNotifier{
-
-  final String uid;
-
-  DatabaseProvider({
-    required this.uid
-  });
-
+  late String uid;
+  DatabaseProvider();
 
   CollectionReference<Map<String, dynamic>> get budgetCollection => FirebaseFirestore.instance.collection('users').doc(uid).collection('budgets');
-
   Future<String> getTotalBudgetAmount() async {
     double totalAmount = 0;
 
@@ -43,16 +37,21 @@ class DatabaseProvider extends ChangeNotifier{
     //get the budget id
     budget.id = budgetCollection.doc().id;
     await budgetCollection.add(budget.toJson());
+    notifyListeners();
   }
   //update a budget
   Future<void> updateBudget(Budget budget, String budgetId) async{
     await budgetCollection.doc(budget.id).update(budget.toJson());
+
+    notifyListeners();
   }
   //delete a budget
   Future<void> deleteBudget(String budgetId) async{
 
     await budgetCollection.doc(budgetId).delete();
     print("Deleted");
+
+    notifyListeners();
   }
   //get expenses
   CollectionReference<Map<String, dynamic>> getExpenses(String budgetId){

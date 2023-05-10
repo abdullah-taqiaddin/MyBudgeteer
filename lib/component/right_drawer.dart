@@ -77,7 +77,7 @@ class RightDrawer extends StatelessWidget {
                       onItemTapped(2);
                       Navigator.push(
                           context,
-                          new MaterialPageRoute(
+                          MaterialPageRoute(
                               builder: (context) => settingspage()));
                     },
                   ),

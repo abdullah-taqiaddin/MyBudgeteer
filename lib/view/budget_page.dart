@@ -56,12 +56,12 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthProvider>(context).user;
-    final dbProvider = DatabaseProvider(uid: user!.uid);
+    Provider.of<DatabaseProvider>(context).uid = user!.uid;
 
     TabController _tabController = TabController(length: 2, vsync: this);
 
     return StreamBuilder<QuerySnapshot<Map<String,dynamic>>>(
-      stream: dbProvider.GetBudgets().snapshots(),
+      stream: Provider.of<DatabaseProvider>(context).GetBudgets().snapshots(),
       builder: (context, snapshot) {
         if(!snapshot.hasData){
           noData = true;
@@ -71,84 +71,88 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
               child: CircularProgressIndicator(),
             );
         }
-        return Scaffold(
-          extendBody: true,
-          bottomNavigationBar: Container(
-            //Bottom app bar
-            child: BottomAppBar(
-              shape: AutomaticNotchedShape(RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(50), topLeft: Radius.circular(50)),
-              )),
+        return Builder(
+          builder: (context) {
+            return Scaffold(
+              extendBody: true,
+              bottomNavigationBar: Container(
+                //Bottom app bar
+                child: BottomAppBar(
+                  shape: AutomaticNotchedShape(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(50), topLeft: Radius.circular(50)),
+                  )),
 
-              elevation: 0,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.topCenter,
-                      colors: [
-                        Color.fromRGBO(59, 202, 163, 1),
-                        Color.fromRGBO(34, 165, 162, 1),
-                      ]),
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(50),
-                    topLeft: Radius.circular(50),
-                  ),
-                ),
-                height: 50,
-              ),
-            ),
-          ),
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child:
-          Material(
-              elevation: 4,
-              shape: CircleBorder(),
-              color: Color(0XFFFF6B35),
-              child: InkWell(
-                onTap: () {
-                  showModalBottomSheet(
-                    isScrollControlled: true,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(50),
+                  elevation: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.topCenter,
+                          colors: [
+                            Color.fromRGBO(59, 202, 163, 1),
+                            Color.fromRGBO(34, 165, 162, 1),
+                          ]),
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(50),
+                        topLeft: Radius.circular(50),
                       ),
                     ),
-                    context: context,
-                    builder: (BuildContext context) => Padding(
-                      padding: MediaQuery.of(context).viewInsets,
-                      child: evalTabForm(_tabController, dbProvider),
-                    ),
-                  );
-                },
-                child: Container(
-                  width: 70,
-                  height: 70,
-                  child: Icon(Icons.add, size: 35, color: Colors.white),
+                    height: 50,
+                  ),
                 ),
               ),
-            ),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          endDrawer: RightDrawer(
-            selectedIndex: _selectedIndex,
-            onItemTapped: (index) {
-              setState(() {
-                _selectedIndex = index;
-                Navigator.pop(context);
-              });
-            },
-          ),
+              floatingActionButton: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child:
+              Material(
+                  elevation: 4,
+                  shape: CircleBorder(),
+                  color: Color(0XFFFF6B35),
+                  child: InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(50),
+                          ),
+                        ),
+                        context: context,
+                        builder: (BuildContext context) => Padding(
+                          padding: MediaQuery.of(context).viewInsets,
+                          child: evalTabForm(_tabController, Provider.of<DatabaseProvider>(context)),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 70,
+                      height: 70,
+                      child: Icon(Icons.add, size: 35, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+              endDrawer: RightDrawer(
+                selectedIndex: _selectedIndex,
+                onItemTapped: (index) {
+                  setState(() {
+                    _selectedIndex = index;
+                    Navigator.pop(context);
+                  });
+                },
+              ),
 
-        body: MainBody(_tabController,user, snapshot, dbProvider),
+            body: MainBody(_tabController,user,snapshot),
+            );
+          }
         );
       }
     );
   }
 
-  Widget MainBody(TabController controller, User? user, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot, DatabaseProvider dbProvider) {
+  Widget MainBody(TabController controller, User? user, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
     final String? photoUrl = user?.photoURL;
 
     return Container(
@@ -262,7 +266,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                       child: TabBarView(
                         controller: controller,
                         children: [
-                          Tab(child: budgetTab(snapshot, dbProvider)),
+                          Tab(child: budgetTab(snapshot)),
                           Tab(child: expenseTab()),
                         ],
                       ),
@@ -317,16 +321,16 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget MainBudgetInfo(String remaining, String spent, String total, DatabaseProvider dbProvider) {
+  Widget MainBudgetInfo(String remaining, String spent, String total) {
 
-    String totalamount = dbProvider.getTotalBudgetAmount().toString();
+    var totalamount = Provider.of<DatabaseProvider>(context).getTotalBudgetAmount().toString();
 
     print(totalamount);
     String remainingamount;
     String totalspent;
 
     return FutureBuilder(
-      future: dbProvider.getTotalBudgetAmount(),
+      future: Provider.of<DatabaseProvider>(context).getTotalBudgetAmount(),
       builder: (context, snapshot) {
         if(!snapshot.hasData){
           return Text("srngj");
@@ -409,7 +413,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget budgetTab( AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot , DatabaseProvider dbprovider) {
+  Widget budgetTab( AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
 
 
     Color lastColor = Color(0xFF34cfb3);
@@ -423,7 +427,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
     return Column(
       children: [
-        MainBudgetInfo("2100", "100", "4000", dbprovider),
+        MainBudgetInfo("2100", "100", "4000"),
         SizedBox(
           height: 0.5,
         ),
@@ -448,108 +452,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
               );
             },
           ),
-          /*child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: budgets.length,
-            itemBuilder: (BuildContext context, int index) {
-              print("----" + index.toString());
-              Widget firstCard = buildBudgetCard(
-                Colors.blue.shade200,
-                budgets[index]['name'],
-                budgets[index]['amount'].toString(),
-                budgets[index]['amount'].toString(),
-              );
-              Widget secondCard = SizedBox();
-              if (index + 1 < budgets.length) {
-                secondCard = buildBudgetCard(
-                  Colors.blue.shade200,
-                  budgets[index + 1]['name'],
-                  budgets[index + 1]['amount'].toString(),
-                  budgets[index + 1]['amount'].toString(),
-                );
-                index += 1;
-                print(index);
-              }
-
-              return Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Row(
-                  children: [
-                    Expanded(child: firstCard),
-                    SizedBox(width: 20),
-                    Expanded(child: secondCard),
-                  ],
-                ),
-              );
-            },
-          ),*/
-
-
-          /*child: ListView.builder(
-
-
-            scrollDirection: Axis.vertical,
-            //cardData is for testing purposes only, itll be a firebase request and mapping from JSON
-            itemCount: (cardData.length / 2).ceil(),
-            itemBuilder: (BuildContext context, int index) {
-              final int firstCardIndex = index * 2;
-              final int secondCardIndex = index * 2 + 1;
-
-              /*
-                * when index is 0, set the colors as is and set lastcolor to secondCardColor for comparison,
-                * next time it checks last color if its the secondCardColor,it switches, and so on
-                * */
-
-              //TODO:LOOK FOR A WAY TO KEEP COLORS CONTSTANT,FLUTTER KEEPS CHANING COLORS CUZ IT BUILDS THE LIST DYNAMICALLY
-
-              Color firstCardColor, secondCardColor;
-
-              if (index == 0) {
-                //start off the coloring
-                firstCardColor = secondColor;
-                secondCardColor = firstColor;
-              } else {
-                if (lastColor == firstColor) {
-                  firstCardColor = firstColor;
-                  secondCardColor = secondColor;
-                } else {
-                  firstCardColor = secondColor;
-                  secondCardColor = firstColor;
-                }
-              }
-
-              lastColor = secondCardColor;
-
-              final Widget firstCard = (firstCardIndex < cardData.length)
-                  ? buildBudgetCard(
-                      firstCardColor,
-                      cardData[firstCardIndex]['type']!,
-                      cardData[firstCardIndex]['spent']!,
-                      cardData[firstCardIndex]['total']!,
-                    )
-                  : SizedBox();
-
-              final Widget secondCard = (secondCardIndex < cardData.length)
-                  ? buildBudgetCard(
-                      secondCardColor,
-                      cardData[secondCardIndex]['type']!,
-                      cardData[secondCardIndex]['spent']!,
-                      cardData[secondCardIndex]['total']!,
-                    )
-                  : SizedBox();
-
-              return Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Row(
-                  children: [
-                    Expanded(child: firstCard),
-                    SizedBox(width: 20),
-                    Expanded(child: secondCard),
-                  ],
-                ),
-              );
-            },
-          ),*/
         ),
       ],
     );
@@ -582,13 +484,13 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   Widget evalTabForm(TabController controller, DatabaseProvider provider) {
     switch (controller.index) {
       case 0:
-        return BudgetForm(dbProvider: provider,);
+        return BudgetForm();
         break;
       case 1:
         return ExpenseForm();
         break;
       default:
-        return BudgetForm(dbProvider: provider,);
+        return BudgetForm();
     }
   }
 }
