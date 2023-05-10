@@ -288,7 +288,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
       showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog();
+        return DeletePopup(id: budget!.id);
       })
       },
       onTap: () {
