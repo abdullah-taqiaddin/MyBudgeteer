@@ -26,6 +26,12 @@ class DatabaseProvider extends ChangeNotifier{
     return budgetCollection;
   }
 
+  //get budget
+  void getBudget(String id) async{
+    var x = await FirebaseFirestore.instance.collection('users').doc(uid).collection('budgets').doc(id).get();
+    print(x.data());
+  }
+
   Future<List<Map<String, dynamic>>> GetListBudgets() async {
     var snapshot = await budgetCollection.get();
     var budgets = snapshot.docs.map((doc) => doc.data()).toList();

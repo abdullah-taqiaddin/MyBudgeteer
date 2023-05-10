@@ -10,8 +10,10 @@ import 'package:testapp/viewmodel/database_provider.dart';
 
 class BudgetForm extends StatefulWidget {
 
+  //if its an update, we provider this
+  final Budget? initialBudget;
 
-  BudgetForm({Key? key}) : super(key: key);
+  BudgetForm({Key? key, this.initialBudget}) : super(key: key);
 
   @override
   State<BudgetForm> createState() => _BudgetFormState();
@@ -32,6 +34,16 @@ class _BudgetFormState extends State<BudgetForm> {
     _budgetName.dispose();
     _amount.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // fill form fields with initial budget data if provided
+    if (widget.initialBudget != null) {
+      _budgetName.text = widget.initialBudget!.name;
+      _amount.text = widget.initialBudget!.amount.toString();
+    }
   }
 
   Widget build(BuildContext context) {
@@ -204,7 +216,6 @@ class _BudgetFormState extends State<BudgetForm> {
     Timestamp timestamp = Timestamp.fromDate(budgetDate);
 
     Budget newBudget = Budget(name: name.text.toString(),amount: double.parse(amount.text.toString(),), budgetDate: timestamp, id: "");
-    //widget.dbProvider.addBudget(newBudget);
     Provider.of<DatabaseProvider>(context, listen: false).addBudget(newBudget);
     print("FUNCTION RAN!");
   }

@@ -281,42 +281,59 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
   //Budget
 
-  Widget buildBudgetCard(Color color, String type, String spent, String total) {
-    return Container(
-      width: 150,
-      height: 170,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      padding: EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            type,
-            style: TextStyle(
-                fontFamily: "K2D",
-                fontSize: (type.length) > 9 ? 17 : 25,
-                fontWeight: FontWeight.bold,
-                color: Colors.white),
+  Widget buildBudgetCard(Color color, String type, String spent, String total, Budget? budget) {
+    return InkWell(
+      onTap: () {
+        showModalBottomSheet(
+          isScrollControlled: true,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(50),
+            ),
           ),
-          SizedBox(height: 20),
-          Text(
-            spent,
-            style: TextStyle(
-                fontFamily: "K2D",
-                fontSize: 16,
-                color: Colors.white,
-                fontWeight: FontWeight.w500),
+          context: context,
+          builder: (BuildContext context) => Padding(
+            padding: MediaQuery.of(context).viewInsets,
+            child: BudgetForm(initialBudget: budget,),
           ),
-          SizedBox(height: 8),
-          Text(
-            "of $total",
-            style:
-                TextStyle(fontFamily: "K2D", fontSize: 16, color: Colors.white),
-          ),
-        ],
+        );
+      },
+      child: Container(
+        width: 150,
+        height: 170,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              type,
+              style: TextStyle(
+                  fontFamily: "K2D",
+                  fontSize: (type.length) > 9 ? 17 : 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            ),
+            SizedBox(height: 20),
+            Text(
+              spent,
+              style: TextStyle(
+                  fontFamily: "K2D",
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500),
+            ),
+            SizedBox(height: 8),
+            Text(
+              "of $total",
+              style:
+                  TextStyle(fontFamily: "K2D", fontSize: 16, color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -325,7 +342,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
     var totalamount = Provider.of<DatabaseProvider>(context).getTotalBudgetAmount().toString();
 
-    print(totalamount);
+    print("total amount: ${totalamount}");
     String remainingamount;
     String totalspent;
 
@@ -425,6 +442,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     if(budgets.isEmpty){
       return noFoundBudget();
     }
+
     return Column(
       children: [
         MainBudgetInfo("2100", "100", "4000"),
@@ -444,7 +462,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             ),
             itemCount: budgets.length,
             itemBuilder: (BuildContext context, int index) {
-
+              //return current budget
               //keep track if the row finished
               rowFinished = index % 2 == 0 ? 1 : 0;
               //need to check the values of the colors, if they right we need to flip, if flipped return to normal
@@ -458,12 +476,17 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                   secondColor = Color(0xFF4B9EB8);
                 }
               }
-                        //now to check if the item is first or second in the row
+
+
+              Budget passed = Budget.fromJson(budgets[index].data());
+              print(passed);
+              //now we need to check if the item is first or second in the row
               return buildBudgetCard(
                 index % 2 != 0 ? firstColor: secondColor,
                 budgets[index]['name'],
                 budgets[index]['amount'].toString(),
                 budgets[index]['amount'].toString(),
+                passed
               );
             },
           ),
