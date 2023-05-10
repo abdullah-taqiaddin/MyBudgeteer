@@ -102,7 +102,7 @@ class RightDrawer extends StatelessWidget {
                               ),
                             ),
                             content: Text(
-                              'Are you sure you want to sign out?',
+                              'Sign out?',
                               style: TextStyle(
                                 color: Color(0XFF145756),
                                 fontFamily: "K2D",
@@ -114,7 +114,7 @@ class RightDrawer extends StatelessWidget {
                               Container(
                                 width: 80,
                                 height: 50,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Color.fromRGBO(255, 107, 53, 1),
                                   borderRadius: BorderRadius.only(
                                       topRight: Radius.circular(30),
@@ -122,7 +122,7 @@ class RightDrawer extends StatelessWidget {
                                 ),
                                 padding: EdgeInsets.all(10),
                                 child: TextButton(
-                                  child: Text(
+                                  child: const Text(
                                     'Yes',
                                     style: TextStyle(
                                       color: Colors.white,

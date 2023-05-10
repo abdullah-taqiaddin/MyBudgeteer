@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:testapp/component/delete_alert.dart';
 import 'package:testapp/component/forms/expense_form.dart';
 
 import 'package:testapp/component/right_drawer.dart';
@@ -61,7 +62,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     TabController _tabController = TabController(length: 2, vsync: this);
 
     return StreamBuilder<QuerySnapshot<Map<String,dynamic>>>(
-      stream: Provider.of<DatabaseProvider>(context).GetBudgets().snapshots(),
+      stream: Provider.of<DatabaseProvider>(context).getBudgets().snapshots(),
       builder: (context, snapshot) {
         if(!snapshot.hasData){
           noData = true;
@@ -283,6 +284,13 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
   Widget buildBudgetCard(Color color, String type, String spent, String total, Budget? budget) {
     return InkWell(
+      onLongPress: () => {
+      showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog();
+      })
+      },
       onTap: () {
         showModalBottomSheet(
           isScrollControlled: true,

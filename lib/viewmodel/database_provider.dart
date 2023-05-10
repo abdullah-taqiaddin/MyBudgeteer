@@ -22,7 +22,7 @@ class DatabaseProvider extends ChangeNotifier{
   }
 
   //get budgets
-  CollectionReference<Map<String, dynamic>> GetBudgets(){
+  CollectionReference<Map<String, dynamic>> getBudgets(){
     return budgetCollection;
   }
 
@@ -32,7 +32,7 @@ class DatabaseProvider extends ChangeNotifier{
     print(x.data());
   }
 
-  Future<List<Map<String, dynamic>>> GetListBudgets() async {
+  Future<List<Map<String, dynamic>>> getListBudgets() async {
     var snapshot = await budgetCollection.get();
     var budgets = snapshot.docs.map((doc) => doc.data()).toList();
     return budgets;
@@ -41,22 +41,29 @@ class DatabaseProvider extends ChangeNotifier{
   //create a budget
   Future<void> addBudget(Budget budget) async{
     //get the budget id
-    budget.id = budgetCollection.doc().id;
-    await budgetCollection.add(budget.toJson());
+    var docRef = await budgetCollection.add(budget.toJson());
+    budget.id = docRef.id;
+    await docRef.update(
+        {
+          'id': docRef.id
+        }
+    );
     notifyListeners();
   }
   //update a budget
-  Future<void> updateBudget(Budget budget, String budgetId) async{
-    await budgetCollection.doc(budget.id).update(budget.toJson());
-
-    notifyListeners();
+  Future<void> updateBudget(Budget budget, String budgetId) async {
+    try {
+      await budgetCollection.doc(budgetId).update(budget.toJson());
+      print("Updated");
+      notifyListeners();
+    } catch (error) {
+      print("Error updating budget: $error");
+    }
   }
   //delete a budget
   Future<void> deleteBudget(String budgetId) async{
-
     await budgetCollection.doc(budgetId).delete();
     print("Deleted");
-
     notifyListeners();
   }
   //get expenses

@@ -192,11 +192,17 @@ class _BudgetFormState extends State<BudgetForm> {
                   onPressed: () {
                     print("pressed");
                     if (_formKey.currentState!.validate()) {
-                      submitBudget(_budgetName,_amount);
+                      if(widget.initialBudget == null){
+                        submitBudget(_budgetName,_amount);
+                      }
+                      else{
+                        submitUpdate(_budgetName, _amount, widget.initialBudget!.id , widget.initialBudget!.budgetDate);
+                      }
                       Navigator.pop(context);
+
                     }
                   },
-                  child: Text("Add",
+                  child: Text( (widget.initialBudget == null)? "Add": "Update",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -214,13 +220,16 @@ class _BudgetFormState extends State<BudgetForm> {
   void submitBudget(TextEditingController name, TextEditingController amount){
     DateTime budgetDate = DateTime.now();
     Timestamp timestamp = Timestamp.fromDate(budgetDate);
-
     Budget newBudget = Budget(name: name.text.toString(),amount: double.parse(amount.text.toString(),), budgetDate: timestamp, id: "");
     Provider.of<DatabaseProvider>(context, listen: false).addBudget(newBudget);
     print("FUNCTION RAN!");
   }
 
-
+  void submitUpdate(TextEditingController name, TextEditingController amount , String id, Timestamp date){
+    print(widget.initialBudget!.id);
+    Budget newBudget = Budget(name: name.text.toString(),amount: double.parse(amount.text.toString(),), budgetDate: date, id: widget.initialBudget!.id);
+    Provider.of<DatabaseProvider>(context, listen: false).updateBudget(newBudget, id);
+  }
 
 }
 
