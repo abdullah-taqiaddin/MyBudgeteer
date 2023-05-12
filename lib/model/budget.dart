@@ -8,25 +8,20 @@ class Budget {
   String name;
   double amount;
   Timestamp budgetDate;
-  List<Expense>? expenses = [];
 
   Budget({
     required this.id,
     required this.name,
     required this.amount,
-    required this.budgetDate,
-    this.expenses});
+    required this.budgetDate,});
 
   factory Budget.fromJson(Map<String, dynamic> json) {
-    var expensesJson = json['expenses'] as List<dynamic>;
-    var expenses = expensesJson.map((e) => Expense.fromJson(e)).toList();
 
     return Budget(
       id: json['id'],
       name: json['name'],
       amount: json['amount'],
       budgetDate: json['budgetDate'],
-      expenses: expenses,
     );
   }
 
@@ -35,6 +30,5 @@ class Budget {
     'name': name,
     'amount': amount,
     'budgetDate': budgetDate,
-    'expenses': (expenses != null) ? expenses: [],
   };
 }

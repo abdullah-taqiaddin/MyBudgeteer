@@ -334,7 +334,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           SizedBox(height: 20,),
           Container(
             color: Colors.white,
-            height: 2,
+            height: 1.5,
           )
           , Expanded(
             flex: 1,
@@ -363,6 +363,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                   icon: Icon(
                     Icons.edit, size: 30, color: Colors.white, weight: 10,),
                 ),
+                SizedBox(width: 15,),
                 IconButton(
                     onPressed: () {
                       showDialog(
@@ -383,6 +384,11 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
   Widget budgetTab(
       AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+
+    print("________________");
+    print(Provider.of<DatabaseProvider>(context).getAllExpenses());
+
+    print("________________");
     Color firstColor = Color(0xFF34cfb3);
     Color secondColor = Color(0xFF4B9EB8);
     int rowFinished = 0;

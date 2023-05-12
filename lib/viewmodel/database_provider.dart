@@ -1,15 +1,18 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:testapp/model/budget.dart';
+import 'package:testapp/model/expense.dart';
 
 class DatabaseProvider extends ChangeNotifier{
   late String uid;
   DatabaseProvider();
 
   CollectionReference<Map<String, dynamic>> get budgetCollection => FirebaseFirestore.instance.collection('users').doc(uid).collection('budgets');
+
   Future<String> getTotalBudgetAmount() async {
     double totalAmount = 0;
-
     var budgetsSnapshot = await budgetCollection.get();
     var budgets = budgetsSnapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList();
 
@@ -20,24 +23,20 @@ class DatabaseProvider extends ChangeNotifier{
     print(totalAmount);
     return totalAmount.toString();
   }
-
   //get budgets
   CollectionReference<Map<String, dynamic>> getBudgets(){
     return budgetCollection;
   }
-
   //get budget
   void getBudget(String id) async{
-    var x = await FirebaseFirestore.instance.collection('users').doc(uid).collection('budgets').doc(id).get();
+    var x = await budgetCollection.doc(id).get();
     print(x.data());
   }
-
   Future<List<Map<String, dynamic>>> getListBudgets() async {
     var snapshot = await budgetCollection.get();
     var budgets = snapshot.docs.map((doc) => doc.data()).toList();
     return budgets;
   }
-
   //create a budget
   Future<void> addBudget(Budget budget) async{
     //get the budget id
@@ -66,13 +65,80 @@ class DatabaseProvider extends ChangeNotifier{
     print("Deleted");
     notifyListeners();
   }
-  //get expenses
-  CollectionReference<Map<String, dynamic>> getExpenses(String budgetId){
-    return budgetCollection.doc(budgetId).collection('expense');
+
+  //----------------------------------------
+
+  // CollectionReference<Map<String, dynamic>> get budgetCollection => FirebaseFirestore.instance.collection('users').doc(uid).collection('budgets');
+  //get expenses on this month
+  CollectionReference<Map<String, dynamic>> getBudgetExpense(String budgetId){
+    //returns all expesnes from a single budget
+    return budgetCollection.doc(budgetId).collection('Expenses');
   }
+  //
+  //
+  //
+  // Future<CollectionReference<Map<String,dynamic>>> getAllExpenses() async{
+  //   List<Map<String, dynamic>> expensesList;
+  //   budgetCollection.snapshots().map(
+  //       //get all budgets
+  //       //now loop through each budget and get its expense
+  //       (budgetList) async{
+  //         for(var budget in budgetList.docs){
+  //           var expense = await getBudgetExpense(budget.id);
+  //           expense.snapshots().map(
+  //             //complete the code
+  //             (expenseList) async{
+  //               for(var expense in expenseList.docs){
+  //                 expensesList.add(expense.data());
+  //               }
+  //             }
+  //
+  //           );
+  //         }
+  //       }
+  //   );
+  // }
+
+  Future<List<Map<String, dynamic>>> getAllExpenses() async{
+    List<Map<String, dynamic>> expensesList = [];
+    //get all budgets
+    //the .get method returns a future of QuerySnapshot that contains all the documents in the collection
+    var budgets = await budgetCollection.get();
+
+    //now loop through each budget and get its expense
+    for(var budget in budgets.docs){
+      //get all expenses from a budget
+      var expenses = await getBudgetExpense(budget.id).get();
+      //loop through each expense and add it to our list
+      for(var expense in expenses.docs){
+        expensesList.add(expense.data());
+      }
+    }
+    return expensesList;
+  }
+
+//write a function that returns a list of expenses from a single budget
+  Future<List<Map<String, dynamic>>> getExpenses(String budgetId) async{
+    List<Map<String, dynamic>> expensesList = [];
+    var expenses = await getBudgetExpense(budgetId).get();
+    for(var expense in expenses.docs){
+      expensesList.add(expense.data());
+    }
+    return expensesList;
+  }
+
   //add an expense
+  Future<void> addExpense(Expense expense) async{
+    await null;
+  }
   //delete an expense
+  Future<void> deleteExpense(Expense expense) async{
+    await null;
+  }
   //update an expense
+  Future<void> updateExpense(Expense expense) async{
+    await null;
+  }
 
 
 }
