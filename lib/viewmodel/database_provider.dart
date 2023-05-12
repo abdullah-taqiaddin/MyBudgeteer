@@ -74,30 +74,6 @@ class DatabaseProvider extends ChangeNotifier{
     //returns all expesnes from a single budget
     return budgetCollection.doc(budgetId).collection('Expenses');
   }
-  //
-  //
-  //
-  // Future<CollectionReference<Map<String,dynamic>>> getAllExpenses() async{
-  //   List<Map<String, dynamic>> expensesList;
-  //   budgetCollection.snapshots().map(
-  //       //get all budgets
-  //       //now loop through each budget and get its expense
-  //       (budgetList) async{
-  //         for(var budget in budgetList.docs){
-  //           var expense = await getBudgetExpense(budget.id);
-  //           expense.snapshots().map(
-  //             //complete the code
-  //             (expenseList) async{
-  //               for(var expense in expenseList.docs){
-  //                 expensesList.add(expense.data());
-  //               }
-  //             }
-  //
-  //           );
-  //         }
-  //       }
-  //   );
-  // }
 
   Future<List<Map<String, dynamic>>> getAllExpenses() async{
     List<Map<String, dynamic>> expensesList = [];
@@ -117,7 +93,7 @@ class DatabaseProvider extends ChangeNotifier{
     return expensesList;
   }
 
-//write a function that returns a list of expenses from a single budget
+  //get expense from a single budget
   Future<List<Map<String, dynamic>>> getExpenses(String budgetId) async{
     List<Map<String, dynamic>> expensesList = [];
     var expenses = await getBudgetExpense(budgetId).get();
@@ -129,7 +105,9 @@ class DatabaseProvider extends ChangeNotifier{
 
   //add an expense
   Future<void> addExpense(Expense expense) async{
-    await null;
+    //add an expense to the expense collection of a budget using the budget id
+    print("Adding expense");
+    await budgetCollection.doc(expense.budgetId).collection('Expenses').add(expense.toJson());
   }
   //delete an expense
   Future<void> deleteExpense(Expense expense) async{

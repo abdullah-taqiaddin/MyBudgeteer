@@ -1,5 +1,11 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:testapp/model/budget.dart';
+import 'package:testapp/model/expense.dart';
+import 'package:testapp/viewmodel/database_provider.dart';
 
 class ExpenseForm extends StatefulWidget {
 
@@ -14,9 +20,14 @@ class _ExpenseFormState extends State<ExpenseForm> {
   @override
 
   final _formKey = GlobalKey<FormState>();
-  final _budgetName = TextEditingController();
+  final _expenseName = TextEditingController();
   final _amount = TextEditingController();
+  final _date = TextEditingController();
+  DateTime selectedDate = DateTime.now();
 
+  late Budget selectedBudget;
+
+  String selectedBudgetId = "";
   void budgetFormSubmit(TextEditingController budgeName,TextEditingController ){
 
   }
@@ -25,15 +36,18 @@ class _ExpenseFormState extends State<ExpenseForm> {
   @override
   void dispose() {
     // Clean up the controllers when the widget is disposed
-    _budgetName.dispose();
+    _date.dispose();
+    _expenseName.dispose();
     _amount.dispose();
     super.dispose();
   }
 
   Widget build(BuildContext context) {
-    return AddBudgetForm();
+
+    final budgets = Provider.of<DatabaseProvider>(context).getBudgets().snapshots();
+    return AddBudgetForm(budgets);
   }
-  Widget AddBudgetForm() {
+  Widget AddBudgetForm(budgets) {
     return Container(
       height: MediaQuery.of(context).size.height* 0.6,
       width: MediaQuery.of(context).size.width,
@@ -58,33 +72,82 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     fontFamily: "K2D"),
               ),
               SizedBox(height: 20,),
+              //drop down menu for selecting the budget
               const Text(
-                "Period",
+                "Budget",
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
               ),
               SizedBox(height: 10,),
-              TextFormField(
-                textAlign: TextAlign.center,
-                //READ ONLY AND WILL GET DATA FROM DATETIME
-                style: TextStyle(color: Colors.white, fontFamily: "K2D", fontSize: 20,fontWeight: FontWeight.bold),
-                enabled: false,
-                initialValue: DateFormat.MMMM().format(DateTime.now()).toString(),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[400],
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-                readOnly: true,
+              StreamBuilder<QuerySnapshot>(
+                stream: budgets,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Text("Loading...");
+                  }
+                  return DropdownButtonFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 2.0,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 2.0,
+                        ),
+                      ),
+                    ),
+                    items: snapshot.data!.docs.map((DocumentSnapshot document) {
+                      print(document['name']);
+                      return DropdownMenuItem(
+                        value: document['id'],
+                        child: Text(
+                          document['name'],
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "K2D"),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedBudgetId = value.toString();
+                      });
+                    },
+                  );
+                },
               ),
+              const Text(
+                "Day",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "K2D"),
+              ),
+               IconButton(
+                icon: Icon(Icons.calendar_today),
+                tooltip: 'tap to open date picker',
+                onPressed: () async{
+                  selectedDate = (await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(DateTime.now().year, DateTime.now().month, 1),
+                      lastDate: DateTime(DateTime.now().year,DateTime.now().month+1, 0),
+                  ))!;
+                  //print the selected date from the date picker
+                }
+              ,),
               SizedBox(height: 10),
               const Text(
-                "Budget Name",
+                "Expense Name",
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -94,7 +157,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               TextFormField(
                 cursorColor: Colors.black,
                 cursorHeight: 20,
-                controller: _budgetName,
+                controller: _expenseName,
                 style: TextStyle(color: Colors.black, fontFamily: "K2D"),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -117,7 +180,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 ),
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return "Please enter a budget name";
+                    return "Please enter an expense name";
                   }
                   return null;
                 },
@@ -176,10 +239,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   onPressed: () {
                     print("pressed");
                     if (_formKey.currentState!.validate()) {
-                      // Submit the form data
-                      print("Budget Name: $_budgetName");
-                      print(
-                          "Amount: $_amount");
+                      // Submit the form data to firestore
+                      addExpense(_expenseName,_amount,selectedDate,selectedBudgetId);
+                      Navigator.pop(context);
                     }
                   },
                   child: Text("Add",
@@ -194,6 +256,13 @@ class _ExpenseFormState extends State<ExpenseForm> {
         ),
       ),
     );
+  }
+
+  void addExpense(TextEditingController name,TextEditingController amount,DateTime date,budgetId) async{
+    //add using the budget id and the provider DatabaseProvider\
+    Timestamp timestamp = Timestamp.fromDate(date);
+    Expense newExpense = Expense(id:"",name: name.text,amount: double.parse(amount.text), expenseDate: timestamp, budgetId: budgetId);
+    Provider.of<DatabaseProvider>(context,listen: false).addExpense(newExpense);
   }
 }
 

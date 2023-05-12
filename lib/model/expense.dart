@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Expense {
   String id;
   String name;
   double amount;
   String budgetId;
-  DateTime expenseDate;
+  Timestamp expenseDate;
   Expense({
     required this.id,
     required this.name,
