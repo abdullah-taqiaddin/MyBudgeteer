@@ -12,8 +12,10 @@ class DatabaseProvider extends ChangeNotifier{
 
   CollectionReference<Map<String, dynamic>> get budgetCollection => FirebaseFirestore.instance.collection('users').doc(uid).collection('budgets');
 
+  //change so code so that it gets for a certain month
+
   Future<String> getTotalBudgetAmount() async {
-    double totalAmount = 0;
+    double totalAmount = 0.0;
     var budgetsSnapshot = await budgetCollection.get();
     var budgets = budgetsSnapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList();
 
@@ -24,6 +26,35 @@ class DatabaseProvider extends ChangeNotifier{
     print(totalAmount);
     return totalAmount.toString();
   }
+
+  Future<String> getTotalSpentBudgetAmount() async {
+    double totalSpent = 0.0;
+    var budgetsSnapshot = await budgetCollection.get();
+    var budgets = budgetsSnapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList();
+
+    for (var budget in budgets) {
+      totalSpent += budget.totalSpent!;
+    }
+
+    return totalSpent.toString();
+  }
+
+  //calculate the remaining amount for all of them and return as a string, how to calculate create a variable called remainingAmount and subtract the totalSpent from the amount, if the result is negative continue, else add it
+  Future<String> getRemainingBudgetAmount() async {
+    double remainingAmount = 0.0;
+    var budgetsSnapshot = await budgetCollection.get();
+    var budgets = budgetsSnapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList();
+
+    for (var budget in budgets) {
+      if(budget.amount - budget.totalSpent! < 0){
+        continue;
+      }
+      remainingAmount += (budget.amount - budget.totalSpent!);
+
+    }
+    return remainingAmount.toString();
+  }
+
   //get budgets
   CollectionReference<Map<String, dynamic>> getBudgets(){
     return budgetCollection;
@@ -39,9 +70,9 @@ class DatabaseProvider extends ChangeNotifier{
   }
 
   //get budget
-  void getBudget(String id) async{
-    var x = await budgetCollection.doc(id).get();
-    print(x.data());
+  Future<DocumentSnapshot<Map<String, dynamic>>> getBudget(String id) async{
+    var budget = await budgetCollection.doc(id).get();
+    return budget;
   }
   //get all budgets
   Future<List<Map<String, dynamic>>> getListBudgets() async {
@@ -73,6 +104,11 @@ class DatabaseProvider extends ChangeNotifier{
   }
   //delete a budget
   Future<void> deleteBudget(String budgetId) async{
+    //delete all the subcollections of this budget
+    var expenses = await budgetCollection.doc(budgetId).collection('Expenses').get();
+    for(var expense in expenses.docs){
+      await budgetCollection.doc(budgetId).collection('Expenses').doc(expense.id).delete();
+    }
     await budgetCollection.doc(budgetId).delete();
     print("Deleted");
     notifyListeners();
@@ -106,16 +142,17 @@ class DatabaseProvider extends ChangeNotifier{
     return expensesList;
   }
 
-  //get all expenses from a certain month
-  Future<List<Map<String, dynamic>>> getAllMonthExpenses(DateTime currentMonth) async{
-    var month = DateFormat.MMMM().format(currentMonth);
+  //use the "getBudgetByMonth" function to return the all the expenses in that month and year
+  Future<List<Map<String, dynamic>>> getExpensesByMonth(int month, int year) async{
     List<Map<String, dynamic>> expensesList = [];
-    //get all budgets
-    //the .get method returns a future of QuerySnapshot that contains all the documents in the collection
-    var budgets = await budgetCollection.get();
-    var filteredUBudgets = budgets.docs.where((element) => DateFormat('MMMM').format(element.data()['budgetDate']) == month);
-    //now loop through each budget and get its expense
-    for(var budget in filteredUBudgets){
+    DateTime startDate = DateTime(year, month, 1);
+    DateTime endDate = DateTime(year, month + 1, 1);
+    //get all budgets from the month
+    var filteredBudgets = await budgetCollection
+        .where('budgetDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate), isLessThan: Timestamp.fromDate(endDate))
+        .get();
+    //loop through each budget and get its expenses
+    for(var budget in filteredBudgets.docs){
       //get all expenses from a budget
       var expenses = await getBudgetExpense(budget.id).get();
       //loop through each expense and add it to our list
@@ -125,7 +162,6 @@ class DatabaseProvider extends ChangeNotifier{
     }
     return expensesList;
   }
-
 
 
   //get expense from a single budget
@@ -140,6 +176,7 @@ class DatabaseProvider extends ChangeNotifier{
 
   //add an expense
   Future<void> addExpense(Expense expense) async{
+    //make the remaining attribute of the budget the amount of the budget minus the amount of the expense
     var docRef =  await budgetCollection.doc(expense.budgetId).collection('Expenses').add(expense.toJson());
     await docRef.update(
         {

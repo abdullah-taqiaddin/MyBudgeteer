@@ -43,9 +43,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
   }
 
   Widget build(BuildContext context) {
-    return AddBudgetForm();
+    return addExpenseForm();
   }
-  Widget AddBudgetForm() {
+  Widget addExpenseForm() {
     return Container(
       height: MediaQuery.of(context).size.height* 0.6,
       width: MediaQuery.of(context).size.width,
@@ -130,19 +130,17 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
               ),
-               IconButton(
+              IconButton(
                 icon: Icon(Icons.calendar_today),
-                tooltip: 'tap to open date picker',
                 onPressed: () async{
                   selectedDate = (await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(DateTime.now().year, DateTime.now().month, 1),
-                      lastDate: DateTime(DateTime.now().year,DateTime.now().month+1, 0),
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(DateTime.now().year, DateTime.now().month, 1),
+                    lastDate: DateTime(DateTime.now().year,DateTime.now().month+1, 0),
                   ))!;
-                  //print the selected date from the date picker
                 }
-              ,),
+                ,),
               SizedBox(height: 10),
               const Text(
                 "Expense Name",
@@ -238,6 +236,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     print("pressed");
                     if (_formKey.currentState!.validate()) {
                       // Submit the form data to firestore
+
                       addExpense(_expenseName,_amount,selectedDate,selectedBudgetId);
                       Navigator.pop(context);
                     }
@@ -257,10 +256,118 @@ class _ExpenseFormState extends State<ExpenseForm> {
   }
 
   void addExpense(TextEditingController name,TextEditingController amount,DateTime date,budgetId) async{
-    //add using the budget id and the provider DatabaseProvider\
-    Timestamp timestamp = Timestamp.fromDate(date);
-    Expense newExpense = Expense(id:"",name: name.text,amount: double.parse(amount.text), expenseDate: timestamp, budgetId: budgetId);
-    Provider.of<DatabaseProvider>(context,listen: false).addExpense(newExpense);
+    //add using the budget id and the provider DatabaseProvider
+    var budget = await Provider.of<DatabaseProvider>(context, listen: false).getBudget(budgetId);
+    double totalSpentAfterAddition = budget.data()!['totalSpent'] + double.parse(amount.text);
+    if (totalSpentAfterAddition > double.parse(budget.data()!['totalSpent'].toString())) {
+      print("${totalSpentAfterAddition}, ${double.parse(amount.text)}");
+      if(context.mounted){
+        showDialog(context: context, builder: (context){
+          return AlertDialog(
+            alignment: Alignment.center,
+            elevation: 250,
+            backgroundColor: Colors.white,
+            title: Text(
+              'Warning!',
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "K2D",
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.left,
+            ),
+            content: Container(
+              width: 220,
+              child: const Text(
+                'this amount exceeds the budget remaining amount, adding it will increase the budgets amount. Proceed?',
+                style: TextStyle(
+                  color: Color(0XFF145756),
+                  fontFamily: "K2D",
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            actions: [
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 130,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(255, 107, 53, 1),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
+                      child: TextButton(
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "K2D",
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: () {
+                          print(double.parse(budget.data()!['totalSpent'].toString()));
+                          budget.reference.update({
+                            'totalSpent': totalSpentAfterAddition
+                          });
+                          Timestamp timestamp = Timestamp.fromDate(date);
+                          Expense newExpense = Expense(id: "", name: name.text, amount: double.parse(amount.text), expenseDate: timestamp, budgetId: budgetId);
+                          Provider.of<DatabaseProvider>(context, listen: false).addExpense(newExpense);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 3,
+                    ),
+                    Container(
+                      width: 130,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black26),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
+                      child: TextButton(
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Color(0XFF145756),
+                            fontFamily: "K2D",
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          );
+        });
+      }
+    }
+    else{
+      budget.reference.update({
+        'totalSpent': double.parse(budget.data()!['totalSpent'].toString()) + double.parse(_amount.text)
+      });
+      Timestamp timestamp = Timestamp.fromDate(date);
+      Expense newExpense = Expense(id: "", name: name.text, amount: double.parse(amount.text), expenseDate: timestamp, budgetId: budget.id);
+      Provider.of<DatabaseProvider>(context, listen: false).addExpense(newExpense);
+    }
   }
+
+
 }
+
 

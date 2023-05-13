@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/gestures.dart';
@@ -11,9 +12,8 @@ class expenseTab extends StatefulWidget {
   State<expenseTab> createState() => _expenseTabState();
 }
 
-int currentMonthIndex = DateTime.now().month - 1;
-int MonthIndex = 0;
-String? _selectedYear;
+int currentMonthIndex = DateTime.now().month +1 ;
+String _selectedYear = DateFormat.y().format(DateTime.now()).toString();
 
 class _expenseTabState extends State<expenseTab> {
   void initState() {
@@ -21,11 +21,12 @@ class _expenseTabState extends State<expenseTab> {
     _selectedYear = DateFormat.y().format(DateTime.now()).toString();
   }
 
+
   @override
   Widget build(BuildContext context) {
-
+    print("current index: ${currentMonthIndex}");
     return StreamBuilder<List<Map<String,dynamic>>>(
-      stream: Provider.of<DatabaseProvider>(context).getAllExpenses().asStream() ,
+      stream: Provider.of<DatabaseProvider>(context).getExpensesByMonth(currentMonthIndex + 1 ,int.parse(_selectedYear!)).asStream() ,
       builder: (context, snapshot) {
         if(!snapshot.hasData){
           return Center(child: CircularProgressIndicator(),);
@@ -47,7 +48,6 @@ class _expenseTabState extends State<expenseTab> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    //Months
                     GestureDetector(
                       onHorizontalDragEnd: (DragEndDetails details) {
                         if (details.primaryVelocity! > 0) {
@@ -133,6 +133,7 @@ class _expenseTabState extends State<expenseTab> {
                                 Center(
                                   child: DropdownButton<String>(
                                     dropdownColor: Colors.teal[100],
+
                                     value: _selectedYear,
                                     onChanged: (String? newValue) {
                                       setState(() {
@@ -182,21 +183,20 @@ class _expenseTabState extends State<expenseTab> {
               width: 344,
               height: 485,
               child: ListView.builder(
-                itemCount: 1,
+                itemCount: snapshot.data!.length,
                 scrollDirection: Axis.vertical,
                 itemBuilder: (BuildContext context, int index) {
-                  Color c1 = const Color.fromRGBO(59, 123, 143, 1);
-                  Color c2 = const Color.fromRGBO(75, 158, 184, 1);
-                  Color c3 = const Color.fromRGBO(33, 137, 118, 1);
-                  Color c4 = const Color.fromRGBO(52, 207, 179, 1);
-                  Widget ExpenseCard1 = buildExpenseCard(c4, c3,
-                      DateTime(DateTime.daysPerWeek), "Food", "100000", "KFC");
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ExpenseCard1,
-                  );
+                print(snapshot.data);
+                Color c3 = const Color.fromRGBO(33, 137, 118, 1);
+                Color c4 = const Color.fromRGBO(52, 207, 179, 1);
 
+                return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: buildExpenseCard(c4, c3,
+                DateTime(DateTime.daysPerWeek), "Food", "100000", "KFC"),
+                );
                 },
+
               )
           ),
         ]);
@@ -209,7 +209,6 @@ Widget buildExpenseCard(Color color1, Color color2, DateTime dateTime,
     String budgetCategory, String total, String description) {
   return Container(
     width: 500,
-    height: 135,
     decoration: BoxDecoration(
       // gradient: gradient,
       color: color1,
@@ -217,90 +216,23 @@ Widget buildExpenseCard(Color color1, Color color2, DateTime dateTime,
     ),
     padding: EdgeInsets.all(10),
     child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         //date
         Container(
-          width: double.infinity,
+          width: 500,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: color2,
           ),
-          child: Padding(
-              padding: const EdgeInsets.only(left: 15,right: 15,top: 5,bottom: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    DateFormat('E, d/M/y').format(DateTime.now()).toString(),
-                    style: TextStyle(
-                      fontFamily: "K2D",
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        "Total",
-                        style: TextStyle(
-                            fontFamily: "K2D",
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        "$total\$",
-                        style: TextStyle(
-                            fontFamily: "K2D",
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                            color: Colors.white),
-                      )
-                    ],
-                  )
-                ],
-              )),
-        ),
-        SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(10),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  //description
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontFamily: "K2D",
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(width: 10,),
-                  //Budget category
-                  Text(
-                    budgetCategory,
-                    style: TextStyle(
-                      fontFamily: "K2D",
-                      fontSize: 12,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(),
-              //total
               Text(
-                "$total \$",
+                DateFormat('E, d/M/y').format(dateTime).toString(),
                 style: TextStyle(
                   fontFamily: "K2D",
                   fontSize: 16,
@@ -308,11 +240,41 @@ Widget buildExpenseCard(Color color1, Color color2, DateTime dateTime,
                   color: Colors.white,
                 ),
               ),
-            ],
+              SizedBox(
+                width: 50,
+              ),
+              Text(
+                    "Total:",
+                    style: TextStyle(
+                        fontFamily: "K2D",
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  Text(
+                    "$total\$",
+                    style: TextStyle(
+                        fontFamily: "K2D",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                        color: Colors.white),
+                  )
+              ],
+              )
+    ),
+        Container(
+          height: 25,
+          child: IconButton(
+            color: Colors.white,
+            onPressed: (){
+              //expand and show all the expenses of that date
+            },
+            icon: Icon(Icons.expand_more,),
           ),
         ),
-
-
       ],
     ),
   );

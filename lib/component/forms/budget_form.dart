@@ -220,9 +220,8 @@ class _BudgetFormState extends State<BudgetForm> {
   void submitBudget(TextEditingController name, TextEditingController amount){
     DateTime budgetDate = DateTime.now();
     Timestamp timestamp = Timestamp.fromDate(budgetDate);
-    Budget newBudget = Budget(name: name.text.toString(),amount: double.parse(amount.text.toString(),), budgetDate: timestamp, id: "");
+    Budget newBudget = Budget(name: name.text.toString(),amount: double.parse(amount.text.toString(),), budgetDate: timestamp, id: "", totalSpent: 0.0);
     Provider.of<DatabaseProvider>(context, listen: false).addBudget(newBudget);
-    print("FUNCTION RAN!");
   }
 
   void submitUpdate(TextEditingController name, TextEditingController amount , String id, Timestamp date){

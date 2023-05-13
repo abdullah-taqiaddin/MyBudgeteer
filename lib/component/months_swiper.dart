@@ -10,7 +10,20 @@ class MonthContainer extends StatefulWidget {
 class _MonthContainerState extends State<MonthContainer> {
   late PageController _pageController;
   int _currentPageIndex = DateTime.now().month - 1;
-  List<String> _months = [    'January',    'February',    'March',    'April',    'May',    'June',    'July',    'August',    'September',    'October',    'November',    'December',  ];
+  final List<String> _months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
 
   @override
   void initState() {
@@ -30,8 +43,8 @@ class _MonthContainerState extends State<MonthContainer> {
       body: Center(
         child: Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(40),
-              color: Colors.green
+            borderRadius: BorderRadius.circular(40),
+            color: Colors.green,
           ),
           width: 140,
           height: 100,

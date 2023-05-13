@@ -117,6 +117,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                       child: InkWell(
                         onTap: () {
                           showModalBottomSheet(
+                            isDismissible: true,
                             isScrollControlled: true,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.vertical(
@@ -314,7 +315,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           ),
           SizedBox(height: 15),
           Text(
-            spent,
+            //TODO:update this to be the totalspent
+            budget!.totalSpent.toString(),
             style: TextStyle(
                 fontFamily: "K2D",
                 fontSize: 16,
@@ -365,7 +367,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                       showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return DeletePopup(id: budget!.id);
+                            return DeletePopup(id: budget.id);
                           });
                     },
                     icon: Icon(Icons.delete, size: 30, color: Colors.white,)
@@ -380,7 +382,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
   Widget budgetTab(
       AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-
     print("________________");
     print(Provider.of<DatabaseProvider>(context).getAllExpenses());
 
@@ -390,14 +391,12 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     int rowFinished = 0;
     List<QueryDocumentSnapshot<Map<String, dynamic>>> budgets = snapshot.data!
         .docs;
-
     if (budgets.isEmpty) {
       return noFoundBudget();
     }
-
     return Column(
       children: [
-        MainBudgetInfo("2100", "100", "4000"),
+        MainBudgetInfo("100", "100", "150"),
         SizedBox(
           height: 0.5,
         ),
@@ -410,9 +409,10 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
               childAspectRatio: MediaQuery
                   .of(context)
                   .size
-                  .width / (MediaQuery.of(context)
-                      .size
-                      .height / 1.7),
+                  .width / (MediaQuery
+                  .of(context)
+                  .size
+                  .height / 1.7),
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
             ),
@@ -454,134 +454,127 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     var totalamount = Provider.of<DatabaseProvider>(context)
         .getTotalBudgetAmount()
         .toString();
-
-    print("total amount: ${totalamount}");
-    String remainingamount;
-    String totalspent;
-
-    return FutureBuilder(
-        future: Provider.of<DatabaseProvider>(context).getTotalBudgetAmount(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Text("srngj");
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
-          }
-          else {
-            return Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "remaining",
-                          style: TextStyle(
-                              fontFamily: "K2D",
-                              fontSize: 22,
-                              color: Color(0XFF145756),
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "${snapshot.data} \$",
-                          style: TextStyle(
-                              fontFamily: "K2D",
-                              fontSize: 50,
-                              color: Color(0XFF145756),
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    SizedBox(width: 30),
-                    Column(
-                      children: [
-                        Text(
-                          "Spent",
-                          style: TextStyle(
-                              fontFamily: "K2D",
-                              fontSize: 18,
-                              color: Color(0XFF145756),
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "\-$spent \$",
-                          style: TextStyle(
-                              fontFamily: "K2D",
-                              fontSize: 16,
-                              color: Color(0XFF145756),
-                              fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "Total",
-                          style: TextStyle(
-                              fontFamily: "K2D",
-                              fontSize: 18,
-                              color: Color(0XFF145756),
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "\+$total \$",
-                          style: TextStyle(
-                              fontFamily: "K2D",
-                              fontSize: 16,
-                              color: Color(0XFF145756),
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
-                  ],
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Container(
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+          FutureBuilder(
+          future: Provider.of<DatabaseProvider>(context)
+              .getRemainingBudgetAmount(),
+          builder: (context, snapshot) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "remaining",
+                  style: TextStyle(
+                      fontFamily: "K2D",
+                      fontSize: 22,
+                      color: Color(0XFF145756),
+                      fontWeight: FontWeight.bold),
                 ),
-              ),
+                Text(
+                  "${snapshot.data} \$",
+                  style: TextStyle(
+                      fontFamily: "K2D",
+                      fontSize: 50,
+                      color: Color(0XFF145756),
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
             );
           }
-        }
-    );
-  }
-
-
-  Future<dynamic> getUserInfo(String uid) async {
-    var document = FirebaseFirestore.instance.collection('users').doc(uid);
-    DocumentSnapshot snapshot = await document.get();
-    return snapshot.data();
-  }
-
-  Widget noFoundBudget() {
-    return Stack(
-        clipBehavior: Clip.none, alignment: Alignment.topCenter,
+      ),
+      SizedBox(width: 30),
+      Column(
         children: [
-          Positioned(
-              top: 150.0,
-
-              child: Text(
-                "No Budgets?\nAdd up!", style: TextStyle(fontSize: 40.0,
-                fontFamily: "K2D",),)
-          )
-        ]
-    );
-  }
-
-
-  //TODO:move to components
-
-  Widget evalTabForm(TabController controller, DatabaseProvider provider) {
-    switch (controller.index) {
-      case 0:
-        return BudgetForm();
-        break;
-      case 1:
-        return ExpenseForm();
-        break;
-      default:
-        return BudgetForm();
-    }
+          FutureBuilder(
+              future: Provider.of<DatabaseProvider>(context)
+                  .getTotalSpentBudgetAmount(),
+              builder: (context, snapshot) {
+                return Column(children: [
+                  Text(
+                    "Spent",
+                    style: TextStyle(
+                        fontFamily: "K2D",
+                        fontSize: 18,
+                        color: Color(0XFF145756),
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "\-${snapshot.data} \$",
+                    style: TextStyle(
+                        fontFamily: "K2D",
+                        fontSize: 16,
+                        color: Color(0XFF145756),
+                        fontWeight: FontWeight.bold),
+                  ),
+                ]);
+              }
+          ),
+          SizedBox(
+            height: 10,
+          ),
+              FutureBuilder(
+                  future: Provider.of<DatabaseProvider>(context)
+                      .getTotalBudgetAmount(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    return Column(children: [
+                      Text(
+                        "Total",
+                        style: TextStyle(
+                            fontFamily: "K2D",
+                            fontSize: 18,
+                            color: Color(0XFF145756),
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "\+${snapshot.data} \$",
+                        style: TextStyle(
+                            fontFamily: "K2D",
+                            fontSize: 16,
+                            color: Color(0XFF145756),
+                            fontWeight: FontWeight.bold),
+                      )
+                    ]);
+                  })
+            ],
+      ),
+    ])
+    ));
   }
 }
+
+
+Widget noFoundBudget() {
+  return Stack(
+      clipBehavior: Clip.none, alignment: Alignment.topCenter,
+      children: [
+        Positioned(
+            top: 150.0,
+
+            child: Text(
+              "No Budgets?\nAdd up!", style: TextStyle(fontSize: 40.0,
+              fontFamily: "K2D",),)
+        )
+      ]
+  );
+}
+
+Widget evalTabForm(TabController controller, DatabaseProvider provider) {
+  switch (controller.index) {
+    case 0:
+      return BudgetForm();
+      break;
+    case 1:
+      return ExpenseForm();
+      break;
+    default:
+      return BudgetForm();
+  }
+}
+
 
