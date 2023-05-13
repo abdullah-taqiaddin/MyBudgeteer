@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:testapp/model/budget.dart';
 import 'package:testapp/model/expense.dart';
 
@@ -27,11 +28,22 @@ class DatabaseProvider extends ChangeNotifier{
   CollectionReference<Map<String, dynamic>> getBudgets(){
     return budgetCollection;
   }
+
+  //get budgets from a certain month using the month and year of the attribute "budgetDate" from each budget and return as collectionreference so that i can use in the streambuilder
+  Stream<QuerySnapshot> getBudgetsByMonth(int month, int year) {
+    DateTime startDate = DateTime(year, month, 1);
+    DateTime endDate = DateTime(year, month + 1, 1);
+    return budgetCollection
+        .where('budgetDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate), isLessThan: Timestamp.fromDate(endDate))
+        .snapshots();
+  }
+
   //get budget
   void getBudget(String id) async{
     var x = await budgetCollection.doc(id).get();
     print(x.data());
   }
+  //get all budgets
   Future<List<Map<String, dynamic>>> getListBudgets() async {
     var snapshot = await budgetCollection.get();
     var budgets = snapshot.docs.map((doc) => doc.data()).toList();
@@ -75,6 +87,7 @@ class DatabaseProvider extends ChangeNotifier{
     return budgetCollection.doc(budgetId).collection('Expenses');
   }
 
+
   Future<List<Map<String, dynamic>>> getAllExpenses() async{
     List<Map<String, dynamic>> expensesList = [];
     //get all budgets
@@ -93,6 +106,28 @@ class DatabaseProvider extends ChangeNotifier{
     return expensesList;
   }
 
+  //get all expenses from a certain month
+  Future<List<Map<String, dynamic>>> getAllMonthExpenses(DateTime currentMonth) async{
+    var month = DateFormat.MMMM().format(currentMonth);
+    List<Map<String, dynamic>> expensesList = [];
+    //get all budgets
+    //the .get method returns a future of QuerySnapshot that contains all the documents in the collection
+    var budgets = await budgetCollection.get();
+    var filteredUBudgets = budgets.docs.where((element) => DateFormat('MMMM').format(element.data()['budgetDate']) == month);
+    //now loop through each budget and get its expense
+    for(var budget in filteredUBudgets){
+      //get all expenses from a budget
+      var expenses = await getBudgetExpense(budget.id).get();
+      //loop through each expense and add it to our list
+      for(var expense in expenses.docs){
+        expensesList.add(expense.data());
+      }
+    }
+    return expensesList;
+  }
+
+
+
   //get expense from a single budget
   Future<List<Map<String, dynamic>>> getExpenses(String budgetId) async{
     List<Map<String, dynamic>> expensesList = [];
@@ -105,9 +140,13 @@ class DatabaseProvider extends ChangeNotifier{
 
   //add an expense
   Future<void> addExpense(Expense expense) async{
-    //add an expense to the expense collection of a budget using the budget id
-    print("Adding expense");
-    await budgetCollection.doc(expense.budgetId).collection('Expenses').add(expense.toJson());
+    var docRef =  await budgetCollection.doc(expense.budgetId).collection('Expenses').add(expense.toJson());
+    await docRef.update(
+        {
+          'id': docRef.id
+        }
+    );
+    notifyListeners();
   }
   //delete an expense
   Future<void> deleteExpense(Expense expense) async{

@@ -223,11 +223,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
               //******** container decoration ********
                 decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage(
-                            "assets/images/background-cropped-2.jpg"),
-                        fit: BoxFit.fill,
-                        opacity: 0.3),
+
                     border: Border.all(
                       color: Colors.grey,
                     ),

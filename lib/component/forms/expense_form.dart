@@ -43,11 +43,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
   }
 
   Widget build(BuildContext context) {
-
-    final budgets = Provider.of<DatabaseProvider>(context).getBudgets().snapshots();
-    return AddBudgetForm(budgets);
+    return AddBudgetForm();
   }
-  Widget AddBudgetForm(budgets) {
+  Widget AddBudgetForm() {
     return Container(
       height: MediaQuery.of(context).size.height* 0.6,
       width: MediaQuery.of(context).size.width,
@@ -82,7 +80,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               ),
               SizedBox(height: 10,),
               StreamBuilder<QuerySnapshot>(
-                stream: budgets,
+                stream: Provider.of<DatabaseProvider>(context).getBudgetsByMonth(DateTime.now().month, DateTime.now().year),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Text("Loading...");
