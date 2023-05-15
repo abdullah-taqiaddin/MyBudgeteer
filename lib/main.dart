@@ -14,6 +14,7 @@ final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
 
 void main() async{
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   final SharedPreferences prefs = await _prefs;
@@ -56,8 +57,6 @@ class _MyAppState extends State<MyApp> {
     localstorageref = widget.ref;
   }
   //login page or budgetpage
-  
-
 
   @override
   Widget build(BuildContext context) {

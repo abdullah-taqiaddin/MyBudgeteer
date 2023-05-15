@@ -13,17 +13,11 @@ class DatabaseProvider extends ChangeNotifier{
 
   CollectionReference<Map<String, dynamic>> get budgetCollection => FirebaseFirestore.instance.collection('users').doc(uid).collection('budgets');
 
+  ///------------------------------
 
-  //get budgets
-  CollectionReference<Map<String, dynamic>> getBudgets(){
-    return budgetCollection;
-  }
-
-  Future<String> getTotalBudgetAmount() async {
+  Future<String> getTotalBudgetAmount(int month, int year) async {
     double totalAmount = 0.0;
-    var budgetsSnapshot = await budgetCollection.get();
-    var budgets = budgetsSnapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList();
-
+    var budgets = await getBudgetsByMonthFuture(month, year);
     for (var budget in budgets) {
       totalAmount += budget.amount;
     }
@@ -32,11 +26,10 @@ class DatabaseProvider extends ChangeNotifier{
     return totalAmount.toString();
   }
 
-  Future<String> getTotalSpentBudgetAmount() async {
+  Future<String> getTotalSpentBudgetAmount(int month, int year) async {
     double totalSpent = 0.0;
-    var budgetsSnapshot = await budgetCollection.get();
-    var budgets = budgetsSnapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList();
 
+    var budgets = await getBudgetsByMonthFuture(month, year);
     for (var budget in budgets) {
       totalSpent += budget.totalSpent!;
     }
@@ -45,11 +38,9 @@ class DatabaseProvider extends ChangeNotifier{
   }
 
   //calculate the remaining amount for all of them and return as a string, how to calculate create a variable called remainingAmount and subtract the totalSpent from the amount, if the result is negative continue, else add it
-  Future<String> getRemainingBudgetAmount() async {
+  Future<String> getRemainingBudgetAmount(int month, int year) async {
     double remainingAmount = 0.0;
-    var budgetsSnapshot = await budgetCollection.get();
-    var budgets = budgetsSnapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList();
-
+    var budgets = await getBudgetsByMonthFuture(month, year);
     for (var budget in budgets) {
       if(budget.amount - budget.totalSpent! < 0){
         continue;
@@ -59,6 +50,39 @@ class DatabaseProvider extends ChangeNotifier{
     }
     return remainingAmount.toString();
   }
+
+  //to optimize the future builder, we combine all queries into one future and return a list of strings
+  Future<List<String>> getAllAttributes(int month,int year) async{
+    List<String> attributes = [];
+    //each function should have two params (month and year)
+    attributes.add( await getRemainingBudgetAmount(month,year));
+    attributes.add( await getTotalBudgetAmount(month,year));
+    attributes.add( await getTotalSpentBudgetAmount(month,year));
+
+
+    return attributes;
+  }
+
+
+
+  //doesnt return a stream but a future
+  Future<List<Budget>> getBudgetsByMonthFuture(int month, int year) async {
+    DateTime startDate = DateTime(year, month, 1);
+    DateTime endDate = DateTime(year, month + 1, 1);
+    var budgetsSnapshot = await budgetCollection
+        .where('budgetDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate), isLessThan: Timestamp.fromDate(endDate))
+        .get();
+    var budgets = budgetsSnapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList();
+    return budgets;
+  }
+
+  //-------------
+
+  //get budgets
+  CollectionReference<Map<String, dynamic>> getBudgets(){
+    return budgetCollection;
+  }
+  //make the
 
 
   //get budgets from a certain month using the month and year of the attribute "budgetDate" from each budget and return as collectionreference so that i can use in the streambuilder

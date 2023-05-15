@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/component/delete_alert.dart';
 import 'package:testapp/component/forms/expense_form.dart';
@@ -26,17 +27,12 @@ class BudgetPage extends StatefulWidget {
 
 
 bool noData = false;
-
-final List<Map<String, String>> cardData = [
-  {
-    'type': 'Food',
-    'spent': '\$25.00',
-    'total': '\$100.00',
-  },
-
-];
-
 int TextPrimary = 0XFF145756;
+
+
+int currentMonthIndex = DateTime.now().month + 1 ;
+String _selectedYear = DateFormat.y().format(DateTime.now()).toString();
+
 
 class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
@@ -45,6 +41,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _selectedYear = DateFormat.y().format(DateTime.now()).toString();
     });
   }
 
@@ -66,8 +63,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
     TabController _tabController = TabController(length: 2, vsync: this);
 
-    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: Provider.of<DatabaseProvider>(context).getBudgets().snapshots(),
+    return StreamBuilder<QuerySnapshot>(
+        stream: Provider.of<DatabaseProvider>(context).getBudgetsByMonth(currentMonthIndex+1, 2023),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             noData = true;
@@ -170,7 +167,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   }
 
   Widget MainBody(TabController controller, User? user,
-      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+      AsyncSnapshot<QuerySnapshot> snapshot) {
     final String? photoUrl = user?.photoURL;
 
     return Container(
@@ -401,26 +398,20 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget budgetTab(
-      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-    print("________________");
-    print(Provider.of<DatabaseProvider>(context).getAllExpenses());
+  Widget budgetTab(AsyncSnapshot<QuerySnapshot> snapshot) {
 
-    print("________________");
     Color firstColor = Color(0xFF34cfb3);
     Color secondColor = Color(0xFF4B9EB8);
     int rowFinished = 0;
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> budgets = snapshot.data!
-        .docs;
-    if (budgets.isEmpty) {
-      return noFoundBudget();
-    }
+    var budgets = snapshot.data!.docs;
+
     return Column(
       children: [
-        MainBudgetInfo("100", "100", "150"),
+        mainBudgetInfo(),
         SizedBox(
           height: 0.5,
         ),
+        monthSliderYearDropdown(),
         Container(
           width: 330,
           height: 400,
@@ -454,7 +445,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                   secondColor = Color(0xFF4B9EB8);
                 }
               }
-              Budget passed = Budget.fromJson(budgets[index].data());
+              Budget passed = Budget.fromJson(budgets.elementAt(index).data() as Map<String, dynamic>);
               print(passed);
               //now we need to check if the item is first or second in the row
               return buildBudgetCard(
@@ -471,102 +462,191 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget MainBudgetInfo(String remaining, String spent, String total) {
-    var totalamount = Provider.of<DatabaseProvider>(context)
-        .getTotalBudgetAmount()
-        .toString();
+  Widget mainBudgetInfo() {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Container(
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-          FutureBuilder(
-          future: Provider.of<DatabaseProvider>(context)
-              .getRemainingBudgetAmount(),
-          builder: (context, snapshot) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "remaining",
-                  style: TextStyle(
-                      fontFamily: "K2D",
-                      fontSize: 22,
-                      color: Color(0XFF145756),
-                      fontWeight: FontWeight.bold),
+          child: FutureBuilder(
+            future: Provider.of<DatabaseProvider>(context).getAllAttributes(currentMonthIndex + 1,int.parse(_selectedYear)),
+            //[0] is the remaining, [1] is the total, [2] is the spent
+            builder: (context, snapshot) {
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return CircularProgressIndicator();
+              }
+              return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("remaining", style: TextStyle(fontFamily: "K2D", fontSize: 22, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
+                    Text("${snapshot.data![0]} \$", style: TextStyle(fontFamily: "K2D", fontSize: 50, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
+                  ],
                 ),
-                Text(
-                  "${snapshot.data} \$",
-                  style: TextStyle(
-                      fontFamily: "K2D",
-                      fontSize: 50,
-                      color: Color(0XFF145756),
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            );
-          }
-      ),
+
       SizedBox(width: 30),
       Column(
         children: [
-          FutureBuilder(
-              future: Provider.of<DatabaseProvider>(context)
-                  .getTotalSpentBudgetAmount(),
-              builder: (context, snapshot) {
-                return Column(children: [
-                  Text(
-                    "Spent",
-                    style: TextStyle(
-                        fontFamily: "K2D",
-                        fontSize: 18,
-                        color: Color(0XFF145756),
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "\-${snapshot.data} \$",
-                    style: TextStyle(
-                        fontFamily: "K2D",
-                        fontSize: 16,
-                        color: Color(0XFF145756),
-                        fontWeight: FontWeight.bold),
-                  ),
-                ]);
-              }
-          ),
-          SizedBox(
-            height: 10,
-          ),
-              FutureBuilder(
-                  future: Provider.of<DatabaseProvider>(context)
-                      .getTotalBudgetAmount(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    return Column(children: [
-                      Text(
-                        "Total",
-                        style: TextStyle(
-                            fontFamily: "K2D",
-                            fontSize: 18,
-                            color: Color(0XFF145756),
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "\+${snapshot.data} \$",
-                        style: TextStyle(
-                            fontFamily: "K2D",
-                            fontSize: 16,
-                            color: Color(0XFF145756),
-                            fontWeight: FontWeight.bold),
-                      )
-                    ]);
-                  })
-            ],
+              Column(
+                  children: [
+                  Text("Spent", style: TextStyle(fontFamily: "K2D", fontSize: 18, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
+                  Text("\-${snapshot.data![2]} \$", style: TextStyle(fontFamily: "K2D", fontSize: 16, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
+                ]
+              ),
+              SizedBox(height: 10,),
+                  Column(children: [
+                    Text("Total", style: TextStyle(fontFamily: "K2D", fontSize: 18, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
+                    Text(
+                      "\+${snapshot.data![1]} \$",
+                      style: TextStyle(
+                          fontFamily: "K2D",
+                          fontSize: 16,
+                          color: Color(0XFF145756),
+                          fontWeight: FontWeight.bold),
+                    )
+                  ])
+                ],
       ),
-    ])
+    ]);
+            }
+          )
     ));
   }
+
+
+  Widget monthSliderYearDropdown(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        GestureDetector(
+          onHorizontalDragEnd: (DragEndDetails details) {
+            if (details.primaryVelocity! > 0) {
+              setState(() {
+                currentMonthIndex = (currentMonthIndex - 1) % 12;
+              });
+            } else if (details.primaryVelocity! < 0) {
+              setState(() {
+                currentMonthIndex = (currentMonthIndex + 1) % 12;
+              });
+            }
+          },
+          child: Container(
+            height: 40,
+            width: 170,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Color.fromRGBO(123, 203, 201, 1),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      currentMonthIndex = (currentMonthIndex - 1) % 12;
+                    });
+                  },
+                  child: Icon(
+                    Icons.chevron_left,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    DateFormat.MMMM()
+                        .format(DateTime(
+                        DateTime.now().month, currentMonthIndex + 1))
+                        .toString(),
+                    style: TextStyle(
+                      fontFamily: "K2D",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      currentMonthIndex = (currentMonthIndex + 1) % 12;
+                    });
+                  },
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        SizedBox(
+          width: 10,
+        ),
+        //Years
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Container(
+                height: 40,
+                width: 120,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Color.fromRGBO(123, 203, 201, 1)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: DropdownButton<String>(
+                        dropdownColor: Colors.teal[100],
+
+                        value: _selectedYear,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            newValue = newValue;
+                          });
+                        },
+                        items: <String>[
+                          DateFormat.y()
+                              .format(DateTime.now())
+                              .toString(),
+                          (DateTime.now().year + 1).toString(),
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                fontFamily: "K2D",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+
 }
 
 
@@ -583,6 +663,7 @@ Widget noFoundBudget() {
         )
       ]
   );
+
 }
 
 Widget evalTabForm(TabController controller, DatabaseProvider provider) {
