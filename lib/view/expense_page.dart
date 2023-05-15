@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -25,8 +26,8 @@ class _expenseTabState extends State<expenseTab> {
   @override
   Widget build(BuildContext context) {
     print("current index: ${currentMonthIndex}");
-    return StreamBuilder<List<Map<String,dynamic>>>(
-      stream: Provider.of<DatabaseProvider>(context).getExpensesByMonth(currentMonthIndex + 1 ,int.parse(_selectedYear!)).asStream() ,
+    return StreamBuilder<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>>(
+      stream: Provider.of<DatabaseProvider>(context).getAllExpensesDates(currentMonthIndex+1).asStream() ,
       builder: (context, snapshot) {
         if(!snapshot.hasData){
           return Center(child: CircularProgressIndicator(),);
@@ -37,6 +38,7 @@ class _expenseTabState extends State<expenseTab> {
         if(snapshot.hasError){
           return Center(child: Text('Error'),);
         }
+        listBuilder(snapshot);
         print(snapshot.data);
         return Column(children: [
           Column(
@@ -133,7 +135,6 @@ class _expenseTabState extends State<expenseTab> {
                                 Center(
                                   child: DropdownButton<String>(
                                     dropdownColor: Colors.teal[100],
-
                                     value: _selectedYear,
                                     onChanged: (String? newValue) {
                                       setState(() {
@@ -170,7 +171,9 @@ class _expenseTabState extends State<expenseTab> {
                           ),
                         ),
                       ],
+
                     ),
+
                   ],
                 ),
               ),
@@ -182,68 +185,69 @@ class _expenseTabState extends State<expenseTab> {
           Container(
               width: 344,
               height: 485,
-              child: ListView.builder(
-                itemCount: snapshot.data!.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (BuildContext context, int index) {
-                print(snapshot.data);
-                Color c3 = const Color.fromRGBO(33, 137, 118, 1);
-                Color c4 = const Color.fromRGBO(52, 207, 179, 1);
-
-                return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: buildExpenseCard(c4, c3,
-                DateTime(DateTime.daysPerWeek), "Food", "100000", "KFC"),
-                );
-                },
-
-              )
+              child: listBuilder(snapshot)
           ),
         ]);
       }
     );
   }
-}
+  Widget listBuilder(AsyncSnapshot<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>> snapshot) {
+    return ListView.builder(
+      itemCount: snapshot.data!.keys.length,
+      scrollDirection: Axis.vertical,
+      itemBuilder: (BuildContext context, int index) {
+        var keys = snapshot.data!.keys.toList();
+        var key = keys[index];
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: buildExpenseExpansionCard(Color.fromRGBO(52, 207, 179, 1),Color.fromRGBO(33, 137, 118, 1), key , "Food", "100000", "KFC"),
+        );
+      },
 
-Widget buildExpenseCard(Color color1, Color color2, DateTime dateTime,
-    String budgetCategory, String total, String description) {
-  return Container(
-    width: 500,
-    decoration: BoxDecoration(
-      // gradient: gradient,
-      color: color1,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    padding: EdgeInsets.all(10),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        //date
-        Container(
-          width: 500,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: color2,
-          ),
-          padding: EdgeInsets.all(10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                DateFormat('E, d/M/y').format(dateTime).toString(),
-                style: TextStyle(
-                  fontFamily: "K2D",
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+    );
+  }
+
+
+  Widget buildExpenseExpansionCard(Color color1, Color color2, DateTime dateTime, String budgetCategory, String total, String description) {
+
+
+    return Container(
+      width: 500,
+      decoration: BoxDecoration(
+        // gradient: gradient,
+        color: color1,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      padding: EdgeInsets.all(10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          //date
+          Container(
+              width: 500,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: color2,
               ),
-              SizedBox(
-                width: 50,
-              ),
-              Text(
+              padding: EdgeInsets.all(10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormat('E, d/M/y').format(dateTime).toString(),
+                    style: TextStyle(
+                      fontFamily: "K2D",
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 50,
+                  ),
+                  Text(
                     "Total:",
                     style: TextStyle(
                         fontFamily: "K2D",
@@ -262,20 +266,26 @@ Widget buildExpenseCard(Color color1, Color color2, DateTime dateTime,
                         fontSize: 13,
                         color: Colors.white),
                   )
-              ],
+                ],
               )
-    ),
-        Container(
-          height: 25,
-          child: IconButton(
-            color: Colors.white,
-            onPressed: (){
-              //expand and show all the expenses of that date
-            },
-            icon: Icon(Icons.expand_more,),
           ),
-        ),
-      ],
-    ),
-  );
+          Container(
+            height: 25,
+            child: IconButton(
+              color: Colors.white,
+              onPressed: (){
+                //expand and show all the expenses of that date
+              },
+              icon: Icon(Icons.expand_more,),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  //we need to build an expansionpanellist for each date using the buildExpenseCard design above, them each inner list will contain the list of expenses for that day, to get the days which have expenses we need to use the getAllExpensesDates(int month) function
+
+
 }
+

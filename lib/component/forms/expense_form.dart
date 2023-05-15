@@ -50,7 +50,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
       height: MediaQuery.of(context).size.height* 0.6,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(50),
           topLeft: Radius.circular(50),
@@ -80,7 +80,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
               ),
               SizedBox(height: 10,),
               StreamBuilder<QuerySnapshot>(
-                stream: Provider.of<DatabaseProvider>(context).getBudgetsByMonth(DateTime.now().month, DateTime.now().year),
+                ///----------------------
+                //TODO: IMPORTANT!!!!!!!!!!! --> change the month to the current month from the expense_page currentMonthIndex variable!!!!!!!!!!!!!!!!!!!!
+                ///----------------------
+                stream: Provider.of<DatabaseProvider>(context).getBudgetsByMonth(5, DateTime.now().year),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Text("Loading...");
@@ -260,7 +263,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
     var budget = await Provider.of<DatabaseProvider>(context, listen: false).getBudget(budgetId);
     double totalSpentAfterAddition = budget.data()!['totalSpent'] + double.parse(amount.text);
 
-    if (totalSpentAfterAddition > double.parse(budget.data()!['totalSpent'].toString())) {
+    if (totalSpentAfterAddition > double.parse(budget.data()!['amount'].toString())) {
       print("${totalSpentAfterAddition}, ${double.parse(amount.text)}");
       if(context.mounted){
         showDialog(context: context, builder: (context){

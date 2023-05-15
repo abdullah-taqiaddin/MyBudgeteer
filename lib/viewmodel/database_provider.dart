@@ -1,9 +1,7 @@
-import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
 import 'package:testapp/model/budget.dart';
 import 'package:testapp/model/expense.dart';
 
@@ -147,17 +145,21 @@ class DatabaseProvider extends ChangeNotifier{
   }
 
 
-  Future<List<DateTime>> getAllExpensesDates(int month) async{
-    List<DateTime> dates = [];
+  Future<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>> getAllExpensesDates(int month) async {
+    Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>> dateGroupedCollection = {};
+
     var budgets = await budgetCollection.get();
-    for(var budget in budgets.docs){
+    for (var budget in budgets.docs) {
+
       var expenses = await getBudgetExpense(budget.id).get();
-      Map<dynamic, List<QueryDocumentSnapshot<Map<String, dynamic>>>> dateGroupedCollection;
-      dateGroupedCollection = groupBy(expenses.docs, (expense) => expense.data()['expenseDate'].toDate().day);
-        print("budgets: ${month}/${dateGroupedCollection.keys}");
+      dateGroupedCollection = groupBy(expenses.docs, (expense) {
+        var expenseDate = expense.data()['expenseDate'].toDate();
+        return DateTime(expenseDate.year, expenseDate.month, expenseDate.day);
+      });
     }
-    return dates;
+    return dateGroupedCollection;
   }
+
 
 
   Future<List<Map<String, dynamic>>> getAllExpenses() async{
