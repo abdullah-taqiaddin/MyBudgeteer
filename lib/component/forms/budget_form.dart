@@ -41,6 +41,7 @@ class _BudgetFormState extends State<BudgetForm> {
     super.initState();
     // fill form fields with initial budget data if provided
     if (widget.initialBudget != null) {
+      print(widget.initialBudget!.totalSpent);
       _budgetName.text = widget.initialBudget!.name;
       _amount.text = widget.initialBudget!.amount.toString();
     }
@@ -196,7 +197,7 @@ class _BudgetFormState extends State<BudgetForm> {
                         submitBudget(_budgetName,_amount);
                       }
                       else{
-                        submitUpdate(_budgetName, _amount, widget.initialBudget!.id , widget.initialBudget!.budgetDate);
+                        submitUpdate(_budgetName, _amount, widget.initialBudget!.id , widget.initialBudget!.budgetDate,widget.initialBudget!);
                       }
                       Navigator.pop(context);
 
@@ -224,9 +225,8 @@ class _BudgetFormState extends State<BudgetForm> {
     Provider.of<DatabaseProvider>(context, listen: false).addBudget(newBudget);
   }
 
-  void submitUpdate(TextEditingController name, TextEditingController amount , String id, Timestamp date){
-    print(widget.initialBudget!.id);
-    Budget newBudget = Budget(name: name.text.toString(),amount: double.parse(amount.text.toString(),), budgetDate: date, id: widget.initialBudget!.id);
+  void submitUpdate(TextEditingController name, TextEditingController amount , String id, Timestamp date, Budget budget){
+    Budget newBudget = Budget(name: name.text.toString(),amount: double.parse(amount.text.toString(),), budgetDate: date, id: widget.initialBudget!.id, totalSpent: budget.totalSpent);
     Provider.of<DatabaseProvider>(context, listen: false).updateBudget(newBudget, id);
   }
 

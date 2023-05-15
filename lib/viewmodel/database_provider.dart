@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:testapp/model/budget.dart';
@@ -12,7 +13,11 @@ class DatabaseProvider extends ChangeNotifier{
 
   CollectionReference<Map<String, dynamic>> get budgetCollection => FirebaseFirestore.instance.collection('users').doc(uid).collection('budgets');
 
-  //change so code so that it gets for a certain month
+
+  //get budgets
+  CollectionReference<Map<String, dynamic>> getBudgets(){
+    return budgetCollection;
+  }
 
   Future<String> getTotalBudgetAmount() async {
     double totalAmount = 0.0;
@@ -55,10 +60,6 @@ class DatabaseProvider extends ChangeNotifier{
     return remainingAmount.toString();
   }
 
-  //get budgets
-  CollectionReference<Map<String, dynamic>> getBudgets(){
-    return budgetCollection;
-  }
 
   //get budgets from a certain month using the month and year of the attribute "budgetDate" from each budget and return as collectionreference so that i can use in the streambuilder
   Stream<QuerySnapshot> getBudgetsByMonth(int month, int year) {
@@ -69,17 +70,14 @@ class DatabaseProvider extends ChangeNotifier{
         .snapshots();
   }
 
-  //get budget
+  //order the expenses by day then put every expense that occure in a certain day in a list and return a list of lists
+
+  //get a budget
   Future<DocumentSnapshot<Map<String, dynamic>>> getBudget(String id) async{
     var budget = await budgetCollection.doc(id).get();
     return budget;
   }
-  //get all budgets
-  Future<List<Map<String, dynamic>>> getListBudgets() async {
-    var snapshot = await budgetCollection.get();
-    var budgets = snapshot.docs.map((doc) => doc.data()).toList();
-    return budgets;
-  }
+
   //create a budget
   Future<void> addBudget(Budget budget) async{
     //get the budget id
@@ -87,7 +85,7 @@ class DatabaseProvider extends ChangeNotifier{
     budget.id = docRef.id;
     await docRef.update(
         {
-          'id': docRef.id
+          'id': docRef.id,
         }
     );
     notifyListeners();
@@ -95,6 +93,7 @@ class DatabaseProvider extends ChangeNotifier{
   //update a budget
   Future<void> updateBudget(Budget budget, String budgetId) async {
     try {
+      budget.totalSpent;
       await budgetCollection.doc(budgetId).update(budget.toJson());
       print("Updated");
       notifyListeners();
@@ -124,6 +123,19 @@ class DatabaseProvider extends ChangeNotifier{
   }
 
 
+  Future<List<DateTime>> getAllExpensesDates(int month) async{
+    List<DateTime> dates = [];
+    var budgets = await budgetCollection.get();
+    for(var budget in budgets.docs){
+      var expenses = await getBudgetExpense(budget.id).get();
+      Map<dynamic, List<QueryDocumentSnapshot<Map<String, dynamic>>>> dateGroupedCollection;
+      dateGroupedCollection = groupBy(expenses.docs, (expense) => expense.data()['expenseDate'].toDate().day);
+        print("budgets: ${month}/${dateGroupedCollection.keys}");
+    }
+    return dates;
+  }
+
+
   Future<List<Map<String, dynamic>>> getAllExpenses() async{
     List<Map<String, dynamic>> expensesList = [];
     //get all budgets
@@ -141,7 +153,6 @@ class DatabaseProvider extends ChangeNotifier{
     }
     return expensesList;
   }
-
   //use the "getBudgetByMonth" function to return the all the expenses in that month and year
   Future<List<Map<String, dynamic>>> getExpensesByMonth(int month, int year) async{
     List<Map<String, dynamic>> expensesList = [];
@@ -159,17 +170,6 @@ class DatabaseProvider extends ChangeNotifier{
       for(var expense in expenses.docs){
         expensesList.add(expense.data());
       }
-    }
-    return expensesList;
-  }
-
-
-  //get expense from a single budget
-  Future<List<Map<String, dynamic>>> getExpenses(String budgetId) async{
-    List<Map<String, dynamic>> expensesList = [];
-    var expenses = await getBudgetExpense(budgetId).get();
-    for(var expense in expenses.docs){
-      expensesList.add(expense.data());
     }
     return expensesList;
   }

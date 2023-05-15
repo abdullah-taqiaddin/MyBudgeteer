@@ -50,6 +50,7 @@ dependencies:
   intl: ^0.17.0
   cloud_firestore: ^3.5.1
   firebase_database: ^9.1.7
+  collection: ^1.17.0
 
 
 

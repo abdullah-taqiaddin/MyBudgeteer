@@ -259,6 +259,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
     //add using the budget id and the provider DatabaseProvider
     var budget = await Provider.of<DatabaseProvider>(context, listen: false).getBudget(budgetId);
     double totalSpentAfterAddition = budget.data()!['totalSpent'] + double.parse(amount.text);
+
     if (totalSpentAfterAddition > double.parse(budget.data()!['totalSpent'].toString())) {
       print("${totalSpentAfterAddition}, ${double.parse(amount.text)}");
       if(context.mounted){
@@ -316,6 +317,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                           budget.reference.update({
                             'totalSpent': totalSpentAfterAddition
                           });
+
                           Timestamp timestamp = Timestamp.fromDate(date);
                           Expense newExpense = Expense(id: "", name: name.text, amount: double.parse(amount.text), expenseDate: timestamp, budgetId: budgetId);
                           Provider.of<DatabaseProvider>(context, listen: false).addExpense(newExpense);

@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -75,6 +77,10 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
               child: CircularProgressIndicator(),
             );
           }
+
+          Provider.of<DatabaseProvider>(context).getAllExpensesDates(5);
+
+
           return Builder(
               builder: (context) {
                 return Scaffold(
@@ -224,7 +230,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
               //******** container decoration ********
                 decoration: BoxDecoration(
-
                     border: Border.all(
                       color: Colors.grey,
                     ),
@@ -295,6 +300,9 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
   Widget buildBudgetCard(Color color, String type, String spent, String total,
       Budget? budget) {
+    var lessThanAmount = (budget!.amount - budget.totalSpent!) < 0;
+    var remaining = budget.amount - budget.totalSpent!;
+
     return Container(
       decoration: BoxDecoration(
         color: color,
@@ -314,18 +322,31 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                 color: Colors.white),
           ),
           SizedBox(height: 15),
-          Text(
-            //TODO:update this to be the totalspent
-            budget!.totalSpent.toString(),
-            style: TextStyle(
+          Row(
+            children: [
+              Text(
+                //TODO:update this to be the totalspent
+                "${budget!.totalSpent.toString()}",
+                style: TextStyle(
+                    fontFamily: "K2D",
+                    fontSize: 16,
+                    color: lessThanAmount? Colors.yellow  : Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(width: 5),
+              Text(
+                  "spent",
+                style: TextStyle(
                 fontFamily: "K2D",
                 fontSize: 16,
-                color: Colors.white,
+                color: lessThanAmount? Colors.yellow : Colors.white,
                 fontWeight: FontWeight.w500),
+              ),
+            ],
           ),
           SizedBox(height: 5),
           Text(
-            "of $total",
+            "out of $total",
             style:
             TextStyle(fontFamily: "K2D", fontSize: 16, color: Colors.white),
           ),
