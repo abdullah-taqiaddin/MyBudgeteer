@@ -197,24 +197,31 @@ class _expenseTabState extends State<expenseTab> {
       scrollDirection: Axis.vertical,
       itemBuilder: (BuildContext context, int index) {
         var keys = snapshot.data!.keys.toList();
-        var key = keys[index];
+        DateTime key = keys[index];
+        double totalAmount = 0.0;
+        var list = [];
+        snapshot.data!.forEach((key, value) {
+          list = value.map((e) => e.data()!).toList();
+        });
+        for(int i = 0 ; i< list.length ;i++){
+          totalAmount += list[i]['amount'];
+        }
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: buildExpenseExpansionCard(Color.fromRGBO(52, 207, 179, 1),Color.fromRGBO(33, 137, 118, 1), key , "Food", "100000", "KFC"),
+          child: buildExpenseExpansionCard(Color.fromRGBO(52, 207, 179, 1),Color.fromRGBO(33, 137, 118, 1), key, totalAmount.toString(), {}),
         );
       },
 
     );
   }
 
-
-  Widget buildExpenseExpansionCard(Color color1, Color color2, DateTime dateTime, String budgetCategory, String total, String description) {
-
+  Widget buildExpenseExpansionCard(
+      Color color1, Color color2, DateTime dateTime, String total, Map<String, dynamic> expenses) {
+    bool isExpanded = false;
 
     return Container(
       width: 500,
       decoration: BoxDecoration(
-        // gradient: gradient,
         color: color1,
         borderRadius: BorderRadius.circular(20),
       ),
@@ -223,66 +230,83 @@ class _expenseTabState extends State<expenseTab> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          //date
           Container(
-              width: 500,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: color2,
-              ),
-              padding: EdgeInsets.all(10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    DateFormat('E, d/M/y').format(dateTime).toString(),
-                    style: TextStyle(
+            width: 500,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: color2,
+            ),
+            padding: EdgeInsets.all(10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  DateFormat('E, d/M/y').format(dateTime).toString(),
+                  style: TextStyle(
+                    fontFamily: "K2D",
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(
+                  width: 50,
+                ),
+                Text(
+                  "Total:",
+                  style: TextStyle(
                       fontFamily: "K2D",
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 50,
-                  ),
-                  Text(
-                    "Total:",
-                    style: TextStyle(
-                        fontFamily: "K2D",
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Text(
-                    "$total\$",
-                    style: TextStyle(
-                        fontFamily: "K2D",
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                        color: Colors.white),
-                  )
-                ],
-              )
+                      color: Colors.white),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Text(
+                  "$total\$",
+                  style: TextStyle(
+                      fontFamily: "K2D",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: Colors.white),
+                )
+              ],
+            ),
           ),
+          (isExpanded == true)? Container(
+            height: 200, // Adjust the height as needed
+            child: ListView.builder(
+              itemCount: expenses.length,
+              itemBuilder: (context, index) {
+                String expenseTitle = expenses.keys.toList()[index];
+                dynamic expenseValue = expenses.values.toList()[index];
+                return ListTile(
+                  title: Text(expenseTitle),
+                  subtitle: Text('$expenseValue\$'),
+                );
+              },
+            ),
+          )
+              : SizedBox(), // Empty SizedBox when not expanded
           Container(
             height: 25,
             child: IconButton(
               color: Colors.white,
-              onPressed: (){
-                //expand and show all the expenses of that date
+              onPressed: () {
+                setState(() {
+                  isExpanded = !isExpanded;
+                });// Toggle the expanded state
               },
-              icon: Icon(Icons.expand_more,),
+              icon: (isExpanded == true) ? Icon(Icons.expand_less) : Icon(Icons.expand_more),
             ),
           ),
         ],
       ),
     );
   }
+
 
   //we need to build an expansionpanellist for each date using the buildExpenseCard design above, them each inner list will contain the list of expenses for that day, to get the days which have expenses we need to use the getAllExpensesDates(int month) function
 

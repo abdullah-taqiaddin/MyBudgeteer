@@ -65,6 +65,7 @@ class DatabaseProvider extends ChangeNotifier{
 
   //doesnt return a stream but a future
   Future<List<Budget>> getBudgetsByMonthFuture(int month, int year) async {
+
     DateTime startDate = DateTime(year, month, 1);
     DateTime endDate = DateTime(year, month + 1, 1);
     var budgetsSnapshot = await budgetCollection
@@ -72,6 +73,7 @@ class DatabaseProvider extends ChangeNotifier{
         .get();
     var budgets = budgetsSnapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList();
     return budgets;
+
   }
 
   //-------------
