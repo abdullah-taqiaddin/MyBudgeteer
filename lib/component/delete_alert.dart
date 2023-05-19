@@ -1,9 +1,14 @@
+// ignore_for_file: unnecessary_string_interpolations, prefer_const_constructors
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
 
 import '../model/budget.dart';
+
+import 'package:testapp/viewmodel/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeletePopup extends StatefulWidget {
 
@@ -26,7 +31,7 @@ class _DeletePopupState extends State<DeletePopup> {
       backgroundColor: Colors.white,
 
       title: Text(
-        'Delete Budget?',
+        '${translation(context).deleteBudget}',
         style: TextStyle(
           color: Colors.black,
           fontFamily: "K2D",
@@ -61,8 +66,8 @@ class _DeletePopupState extends State<DeletePopup> {
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                   ),
                   child: TextButton(
-                    child: const Text(
-                      'Delete',
+                    child:Text(
+                      '${translation(context).delete}',
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: "K2D",
@@ -86,7 +91,7 @@ class _DeletePopupState extends State<DeletePopup> {
                     borderRadius: BorderRadius.all(Radius.circular(5)),),
                   child: TextButton(
                     child: Text(
-                      'Cancel',
+                      '${translation(context).cancel}',
                       style: TextStyle(
                         color: Color(0XFF145756),
                         fontFamily: "K2D",

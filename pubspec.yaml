@@ -47,10 +47,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_core: ^1.24.0
   lottie: ^1.2.1
-  intl: ^0.17.0
+  intl: any
   cloud_firestore: ^3.5.1
   firebase_database: ^9.1.7
   collection: ^1.17.0
+  flutter_localizations:
+    sdk: flutter
 
 
 
@@ -70,7 +72,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  generate: true # Add this line
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

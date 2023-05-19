@@ -18,6 +18,9 @@ import 'package:testapp/viewmodel/database_provider.dart';
 import '../component/forms/budget_form.dart';
 import '../viewmodel/auth_provider.dart';
 
+import 'package:testapp/viewmodel/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class BudgetPage extends StatefulWidget {
   const BudgetPage({Key? key}) : super(key: key);
 
@@ -211,7 +214,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    "Hello, ${(user?.displayName) == null ? "guest!" : user
+                    "${translation(context).hello}, ${(user?.displayName) == null ? "guest!" : user
                         ?.displayName}",
                     style: TextStyle(
                       fontFamily: "K2D",
@@ -257,7 +260,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                         tabs: [
                           Tab(
                             child: Text(
-                              "Budget",
+                              "${translation(context).budget}",
                               style: TextStyle(
                                   fontFamily: "K2D",
                                   fontSize: 25,
@@ -266,7 +269,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                           ),
                           Tab(
                             child: Text(
-                              "Expense",
+                              "${translation(context).expense}",
                               style: TextStyle(
                                   fontFamily: "K2D",
                                   fontSize: 25,
@@ -332,7 +335,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
               ),
               SizedBox(width: 5),
               Text(
-                  "spent",
+                  "${translation(context).spent}",
                 style: TextStyle(
                 fontFamily: "K2D",
                 fontSize: 16,
@@ -343,7 +346,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           ),
           SizedBox(height: 5),
           Text(
-            "out of $total",
+            "${translation(context).outOf} $total",
             style:
             TextStyle(fontFamily: "K2D", fontSize: 16, color: Colors.white),
           ),
@@ -480,7 +483,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("remaining", style: TextStyle(fontFamily: "K2D", fontSize: 22, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
+                    Text("${translation(context).remaining}", style: TextStyle(fontFamily: "K2D", fontSize: 22, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
                     Text("${snapshot.data![0]} \$", style: TextStyle(fontFamily: "K2D", fontSize: 50, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
                   ],
                 ),
@@ -490,13 +493,13 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         children: [
               Column(
                   children: [
-                  Text("Spent", style: TextStyle(fontFamily: "K2D", fontSize: 18, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
+                  Text("${translation(context).spent}", style: TextStyle(fontFamily: "K2D", fontSize: 18, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
                   Text("\-${snapshot.data![2]} \$", style: TextStyle(fontFamily: "K2D", fontSize: 16, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
                 ]
               ),
               SizedBox(height: 10,),
                   Column(children: [
-                    Text("Total", style: TextStyle(fontFamily: "K2D", fontSize: 18, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
+                    Text("${translation(context).total}", style: TextStyle(fontFamily: "K2D", fontSize: 18, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
                     Text(
                       "\+${snapshot.data![1]} \$",
                       style: TextStyle(

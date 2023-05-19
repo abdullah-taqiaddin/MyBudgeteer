@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:testapp/view/statistics_page.dart';
 import 'package:testapp/view/settings.dart';
@@ -6,6 +8,9 @@ import 'package:testapp/viewmodel/firebase_controller.dart';
 
 import '../view/budget_page.dart';
 import '../view/login.dart';
+
+import 'package:testapp/viewmodel/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RightDrawer extends StatelessWidget {
   final int selectedIndex;
@@ -96,7 +101,7 @@ class RightDrawer extends StatelessWidget {
                             backgroundColor: Colors.white,
 
                             title: Text(
-                              'Logout?',
+                              '${translation(context).logout}',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: "K2D",
@@ -109,7 +114,7 @@ class RightDrawer extends StatelessWidget {
                             content: Container(
                               width: 220,
                               child: Text(
-                                'Are you sure you want to logout?',
+                                '${translation(context).logoutConfirmation}',
                                 style: TextStyle(
                                   color: Color(0XFF145756),
                                   fontFamily: "K2D",
@@ -131,8 +136,8 @@ class RightDrawer extends StatelessWidget {
                                         borderRadius: BorderRadius.all(Radius.circular(5)),
                                       ),
                                       child: TextButton(
-                                        child: const Text(
-                                          'Logout',
+                                        child:Text(
+                                          '${translation(context).logout}',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontFamily: "K2D",
@@ -160,7 +165,7 @@ class RightDrawer extends StatelessWidget {
                                         borderRadius: BorderRadius.all(Radius.circular(5)),),
                                       child: TextButton(
                                         child: Text(
-                                          'Cancel',
+                                          '${translation(context).cancel}',
                                           style: TextStyle(
                                             color: Color(0XFF145756),
                                             fontFamily: "K2D",

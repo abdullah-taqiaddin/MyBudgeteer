@@ -1,4 +1,6 @@
 
+// ignore_for_file: unnecessary_string_interpolations, prefer_const_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -6,6 +8,9 @@ import 'package:provider/provider.dart';
 import 'package:testapp/model/budget.dart';
 import 'package:testapp/model/expense.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
+
+import 'package:testapp/viewmodel/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ExpenseForm extends StatefulWidget {
 
@@ -62,8 +67,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Add new Expense",
+              Text(
+                "${translation(context).addNewExpense}",
                 style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
@@ -71,8 +76,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
               ),
               SizedBox(height: 20,),
               //drop down menu for selecting the budget
-              const Text(
-                "Budget",
+              Text(
+                "${translation(context).budget}",
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -126,8 +131,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   );
                 },
               ),
-              const Text(
-                "Day",
+              Text(
+                "${translation(context).day}",
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -145,8 +150,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 }
                 ,),
               SizedBox(height: 10),
-              const Text(
-                "Expense Name",
+              Text(
+                "${translation(context).expenseName}",
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -174,19 +179,19 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     ),
                   ),
                   labelStyle: TextStyle(color: Colors.black),
-                  hintText: "Enter a budget Name",
+                  hintText: "${translation(context).enterExpenseName}",
                   hintStyle: TextStyle(color: Colors.grey),
                 ),
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return "Please enter an expense name";
+                    return "${translation(context).pleaseEnterExpense}";
                   }
                   return null;
                 },
               ),
               SizedBox(height: 10),
-              const Text(
-                "Amount",
+              Text(
+                "${translation(context).amount}",
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -213,15 +218,15 @@ class _ExpenseFormState extends State<ExpenseForm> {
                       width: 2.0,
                     ),
                   ),
-                  hintText: "Amount",
+                  hintText: "${translation(context).amount}",
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return "Please enter an amount";
+                    return "${translation(context).pleaseEnterAmount}";
                   }
                   if (!RegExp(r'^\d*\.?\d*$').hasMatch(value)) {
-                    return "Please enter only numbers";
+                    return "${translation(context).pleaseEnterNumbers}";
                   }
                   return null;
                 },
@@ -244,7 +249,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                       Navigator.pop(context);
                     }
                   },
-                  child: Text("Add",
+                  child: Text("${translation(context).add}",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -272,7 +277,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
             elevation: 250,
             backgroundColor: Colors.white,
             title: Text(
-              'Warning!',
+              '${translation(context).warning}',
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: "K2D",
@@ -283,8 +288,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
             ),
             content: Container(
               width: 220,
-              child: const Text(
-                'this amount exceeds the budget remaining amount, adding it will increase the budgets amount. Proceed?',
+              child: Text(
+                '${translation(context).expenseMoreThanBudget}',
                 style: TextStyle(
                   color: Color(0XFF145756),
                   fontFamily: "K2D",
@@ -306,8 +311,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                       ),
                       child: TextButton(
-                        child: const Text(
-                          'Yes',
+                        child: Text(
+                          '${translation(context).yes}',
                           style: TextStyle(
                             color: Colors.white,
                             fontFamily: "K2D",
@@ -341,7 +346,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                       ),
                       child: TextButton(
                         child: Text(
-                          'Cancel',
+                          '${translation(context).cancel}',
                           style: TextStyle(
                             color: Color(0XFF145756),
                             fontFamily: "K2D",

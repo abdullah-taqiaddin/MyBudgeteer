@@ -1,9 +1,14 @@
+// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, annotate_overrides
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/model/budget.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
+
+import 'package:testapp/viewmodel/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 //i guess we need to create a flag to distinguish the update from the create
 
@@ -67,16 +72,16 @@ class _BudgetFormState extends State<BudgetForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Add new budget",
+              Text(
+                "${translation(context).addNewBudget}",
                 style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
               ),
               SizedBox(height: 20,),
-              const Text(
-                "Period",
+              Text(
+                "${translation(context).period}",
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -100,8 +105,8 @@ class _BudgetFormState extends State<BudgetForm> {
                 readOnly: true,
               ),
               SizedBox(height: 10),
-              const Text(
-                "Budget Name",
+              Text(
+                "${translation(context).budgetName}",
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -129,19 +134,19 @@ class _BudgetFormState extends State<BudgetForm> {
                     ),
                   ),
                   labelStyle: TextStyle(color: Colors.black),
-                  hintText: "Enter a budget Name",
+                  hintText: "${translation(context).enterBudgetName}",
                   hintStyle: TextStyle(color: Colors.grey),
                 ),
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return "Please enter a budget name";
+                    return "${translation(context).pleaseEnterBudget}";
                   }
                   return null;
                 },
               ),
               SizedBox(height: 10),
-              const Text(
-                "Amount",
+              Text(
+                "${translation(context).amount}",
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -168,15 +173,15 @@ class _BudgetFormState extends State<BudgetForm> {
                       width: 2.0,
                     ),
                   ),
-                  hintText: "Amount",
+                  hintText: "${translation(context).amount}",
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return "Please enter an amount";
+                    return "${translation(context).pleaseEnterAmount}";
                   }
                   if (!RegExp(r'^\d*\.?\d*$').hasMatch(value)) {
-                    return "Please enter only numbers";
+                    return "${translation(context).pleaseEnterNumbers}";
                   }
                   return null;
                 },
@@ -203,7 +208,7 @@ class _BudgetFormState extends State<BudgetForm> {
 
                     }
                   },
-                  child: Text( (widget.initialBudget == null)? "Add": "Update",
+                  child: Text( (widget.initialBudget == null)? "${translation(context).add}": "${translation(context).update}",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,

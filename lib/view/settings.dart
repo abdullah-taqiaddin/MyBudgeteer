@@ -1,6 +1,13 @@
+// ignore_for_file: prefer_final_fields, prefer_const_literals_to_create_immutables, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:testapp/component/right_drawer.dart';
 import 'package:testapp/view/budget_page.dart';
+import 'package:testapp/main.dart';
+
+import 'package:testapp/viewmodel/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class settingspage extends StatefulWidget {
   const settingspage({Key? key}) : super(key: key);
@@ -15,6 +22,14 @@ class _settingspageState extends State<settingspage> {
 
   // list of currenvies
   String _selectedCurrency = "JD (JOD)";
+  String _selectedLanguage = "EN";
+
+
+  List<String> _languages = [
+  'en - English',
+  'ar - Arabic',
+  ];
+
   List<String> _currencies = [
     'JD (JOD) - Jordanian Dinar',
     '\$ (USD) - US Dollar',
@@ -81,7 +96,7 @@ class _settingspageState extends State<settingspage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Settings",
+                  "${translation(context).settings}",
                   style: TextStyle(
                       fontSize: 50,
                       fontFamily: 'K2D',
@@ -94,7 +109,7 @@ class _settingspageState extends State<settingspage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "User Prefernces",
+                      "${translation(context).userPreferences}",
                       style: TextStyle(fontSize: 20, fontFamily: 'K2D'),
                     ),
                     SizedBox(
@@ -113,7 +128,7 @@ class _settingspageState extends State<settingspage> {
                           SizedBox(height: 20,),
                           ListTile(
                             leading: Icon(Icons.attach_money, size: 30),
-                            title: Text('Currency',style: TextStyle(
+                            title: Text('${translation(context).currency}',style: TextStyle(
                                 fontSize: 20,
                                 fontFamily: 'K2D',)),
                             trailing: Padding(
@@ -184,7 +199,7 @@ class _settingspageState extends State<settingspage> {
                           ),
                           ListTile(
                             leading: Icon(Icons.language, size: 30),
-                            title: Text('Language',style: TextStyle(
+                            title: Text('${translation(context).language}',style: TextStyle(
                               fontSize: 20,
                               fontFamily: 'K2D',)),
                             trailing: Padding(
@@ -192,22 +207,72 @@ class _settingspageState extends State<settingspage> {
                               child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text('EN', style: TextStyle(fontSize: 15,color: Colors.grey)), // Placeholder for selected value
+                                    Text('${_selectedLanguage.toUpperCase()}', style: TextStyle(fontSize: 15,color: Colors.grey)), // Placeholder for selected value
                                     SizedBox(width: 10,),
                                     Icon(Icons.arrow_forward_ios,size: 20,),
                                   ]),
                             ),
                             onTap: () {
-                              // TODO: Navigate to the currency selection page.
-
+                              showModalBottomSheet(
+                                context: context,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20),
+                                  ),
+                                ),
+                                builder: (BuildContext context) {
+                                  return Container(
+                                    height: 400,
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    child: ListView.builder(
+                                      itemCount: _languages.length,
+                                      itemBuilder: (BuildContext context, int index) {
+                                        final languageParts = _languages[index].split(' - ');
+                                        final languageCode = languageParts[0];
+                                        final languageName = languageParts[1];
+                                        return Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 16),
+                                          child: ListTile(
+                                            title: Text(
+                                              languageCode.toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 22,
+                                              ),
+                                            ),
+                                            subtitle: Text(
+                                              languageName,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                            trailing: _selectedLanguage == languageCode
+                                                ? Icon(Icons.check, color: Colors.green)
+                                                : null,
+                                            onTap: () {
+                                              setState(() {
+                                                _selectedLanguage = languageCode;
+                                                if(_selectedLanguage != null){
+                                                  MyApp.setLocale(context, Locale(_selectedLanguage));
+                                                }
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              );
                             },
+
                           ),
                           Divider(
                             height: 10,thickness: 1,indent: 30,endIndent: 30,
                           ),
                       ListTile(
                         leading: Icon(Icons.dark_mode_sharp, size: 30),
-                        title: Text('Dark Mode',style: TextStyle(
+                        title: Text('${translation(context).darkMode}',style: TextStyle(
                           fontSize: 20,
                           fontFamily: 'K2D',)),
                         trailing: Switch(

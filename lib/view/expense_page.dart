@@ -6,6 +6,9 @@ import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
 
+import 'package:testapp/viewmodel/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class expenseTab extends StatefulWidget {
   const expenseTab({Key? key}) : super(key: key);
 
