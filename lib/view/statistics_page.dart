@@ -13,6 +13,10 @@ class StatisticsPage extends StatefulWidget {
 
 class _StatisticsPageState extends State<StatisticsPage> {
   // var budgetData = cardData;
+  double _parseDouble(String value) {
+    final cleanValue = value.replaceAll('\$', ''); // Remove dollar sign
+    return double.tryParse(cleanValue) ?? 0.0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +37,18 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 child: Column(
                   children: [
                     Text(
-                      'Top 5 budgets',
+                      'Top 5 Budgets',
                       style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
+                        color: Color(0XFF145756),
                       ),
                     ),
+                    SizedBox(height: 10.0),
                     Container(
-                      height: MediaQuery.of(context).size.height / 3.5,
+                      margin: EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: EdgeInsets.all(10.0),
+                      height: MediaQuery.of(context).size.height / 3.4,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
@@ -48,12 +56,41 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
-                        itemCount: cardData.length,
+                        itemCount: cardData.length > 5 ? 5 : cardData.length,
                         itemBuilder: (context, index) {
-                          final card = cardData[index];
-                          return ListTile(
-                            title: Text(card['type'] ?? ''),
-                            subtitle: Text(card['total'] ?? ''),
+                          final sortedBudgets = cardData
+                              .where((card) => card['total'] != null)
+                              .toList()
+                            ..sort((a, b) => _parseDouble(b['total'] ?? '0')
+                                .compareTo(_parseDouble(a['total'] ?? '0')));
+
+                          final card = sortedBudgets[index];
+
+                          final color = index % 2 == 0
+                              ? Color.fromRGBO(34, 165, 162, 1)
+                              : Color.fromRGBO(59, 202, 163, 1);
+
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 8.0),
+                            decoration: BoxDecoration(
+                              color: color,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: ListTile(
+                              title: Text(
+                                card['type'] ?? '',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              subtitle: Text(
+                                '\$${card['total'] ?? ''}'.replaceAll('\$', ''),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           );
                         },
                       ),
@@ -61,19 +98,23 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   ],
                 ),
               ),
-              SizedBox(height: 50.0), // Add space of 50.0 between the boxes
+              SizedBox(height: 30.0),
               Container(
+                margin: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   children: [
                     Text(
-                      'Top 5 expenses',
+                      'Top 5 Expenses',
                       style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
+                        color: Color(0XFF145756),
                       ),
                     ),
+                    SizedBox(height: 10.0),
                     Container(
-                      height: MediaQuery.of(context).size.height / 3.5,
+                      padding: EdgeInsets.all(10.0),
+                      height: MediaQuery.of(context).size.height / 3.4,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
@@ -81,12 +122,41 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
-                        itemCount: cardData.length,
+                        itemCount: cardData.length > 5 ? 5 : cardData.length,
                         itemBuilder: (context, index) {
-                          final anotherCard = cardData[index];
-                          return ListTile(
-                            title: Text(anotherCard['type'] ?? ''),
-                            subtitle: Text(anotherCard['spent'] ?? ''),
+                          final sortedExpenses = cardData
+                              .where((card) => card['spent'] != null)
+                              .toList()
+                            ..sort((a, b) => _parseDouble(b['spent'] ?? '0')
+                                .compareTo(_parseDouble(a['spent'] ?? '0')));
+
+                          final anotherCard = sortedExpenses[index];
+
+                          final color = index % 2 == 0
+                              ? Color.fromRGBO(34, 165, 162, 1)
+                              : Color.fromRGBO(59, 202, 163, 1);
+
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 8.0),
+                            decoration: BoxDecoration(
+                              color: color,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: ListTile(
+                              title: Text(
+                                anotherCard['type'] ?? '',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              subtitle: Text(
+                                '\$${anotherCard['spent'] ?? ''}'.replaceAll('\$', ''),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           );
                         },
                       ),
@@ -95,7 +165,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 ),
               ),
             ],
-          ),
+          )
+
 
 
 
