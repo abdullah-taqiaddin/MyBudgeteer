@@ -263,120 +263,14 @@ class _ExpenseFormState extends State<ExpenseForm> {
     );
   }
 
-  void addExpense(TextEditingController name,TextEditingController amount,DateTime date,budgetId) async{
-    //add using the budget id and the provider DatabaseProvider
-    var budget = await Provider.of<DatabaseProvider>(context, listen: false).getBudget(budgetId);
-    double totalSpentAfterAddition = budget.data()!['totalSpent'] + double.parse(amount.text);
+  void addExpense(name,amount,date,budgetId){
+    var budget = Provider.of<DatabaseProvider>(context, listen: false).getBudget(budgetId);
 
-    if (totalSpentAfterAddition > double.parse(budget.data()!['amount'].toString())) {
-      print("${totalSpentAfterAddition}, ${double.parse(amount.text)}");
-      if(context.mounted){
-        showDialog(context: context, builder: (context){
-          return AlertDialog(
-            alignment: Alignment.center,
-            elevation: 250,
-            backgroundColor: Colors.white,
-            title: Text(
-              '${translation(context).warning}',
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "K2D",
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.left,
-            ),
-            content: Container(
-              width: 220,
-              child: Text(
-                '${translation(context).expenseMoreThanBudget}',
-                style: TextStyle(
-                  color: Color(0XFF145756),
-                  fontFamily: "K2D",
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            actions: [
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 130,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(255, 107, 53, 1),
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                      ),
-                      child: TextButton(
-                        child: Text(
-                          '${translation(context).yes}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: "K2D",
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          print(double.parse(budget.data()!['totalSpent'].toString()));
-                          budget.reference.update({
-                            'totalSpent': totalSpentAfterAddition
-                          });
-
-                          Timestamp timestamp = Timestamp.fromDate(date);
-                          Expense newExpense = Expense(id: "", name: name.text, amount: double.parse(amount.text), expenseDate: timestamp, budgetId: budgetId);
-                          Provider.of<DatabaseProvider>(context, listen: false).addExpense(newExpense);
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      width: 3,
-                    ),
-                    Container(
-                      width: 130,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black26),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                      ),
-                      child: TextButton(
-                        child: Text(
-                          '${translation(context).cancel}',
-                          style: TextStyle(
-                            color: Color(0XFF145756),
-                            fontFamily: "K2D",
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          );
-        });
-      }
-    }
-    else{
-      budget.reference.update({
-        'totalSpent': double.parse(budget.data()!['totalSpent'].toString()) + double.parse(_amount.text)
-      });
-      Timestamp timestamp = Timestamp.fromDate(date);
-      Expense newExpense = Expense(id: "", name: name.text, amount: double.parse(amount.text), expenseDate: timestamp, budgetId: budget.id);
-      Provider.of<DatabaseProvider>(context, listen: false).addExpense(newExpense);
-    }
+    Timestamp timestamp = Timestamp.fromDate(date);
+    Expense expense = new Expense(id: "", name: name.text, amount: double.parse(amount.text), expenseDate: timestamp, budgetId: budgetId.toString());
+    Provider.of<DatabaseProvider>(context, listen: false).addExpense(expense);
+    print("Added");
   }
-
 
 }
 
