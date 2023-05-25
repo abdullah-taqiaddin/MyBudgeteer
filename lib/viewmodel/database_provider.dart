@@ -150,15 +150,18 @@ class DatabaseProvider extends ChangeNotifier{
   Future<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>> getAllExpensesDates(int month) async {
     Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>> dateGroupedCollection = {};
 
-    var budgets = await budgetCollection.get();
-    for (var budget in budgets.docs) {
+    var budgets = await getBudgetsByMonthFuture(month, DateTime.now().year);
 
-      var expenses = await getBudgetExpense(budget.id).get();
+    for (var budget in budgets) {
+      var filteredExpenses = await getBudgetExpense(budget.id);
+      var expenses = await filteredExpenses.get();
+
       dateGroupedCollection = groupBy(expenses.docs, (expense) {
         var expenseDate = expense.data()['expenseDate'].toDate();
         return DateTime(expenseDate.year, expenseDate.month, expenseDate.day);
       });
     }
+
     return dateGroupedCollection;
   }
 
@@ -170,7 +173,6 @@ class DatabaseProvider extends ChangeNotifier{
     //the .get method returns a future of QuerySnapshot that contains all the documents in the collection
     var budgets = await budgetCollection.get();
 
-    //now loop through each budget and get its expense
     for(var budget in budgets.docs){
       //get all expenses from a budget
       var expenses = await getBudgetExpense(budget.id).get();
@@ -192,9 +194,7 @@ class DatabaseProvider extends ChangeNotifier{
         .get();
     //loop through each budget and get its expenses
     for(var budget in filteredBudgets.docs){
-      //get all expenses from a budget
       var expenses = await getBudgetExpense(budget.id).get();
-      //loop through each expense and add it to our list
       for(var expense in expenses.docs){
         expensesList.add(expense.data());
       }
