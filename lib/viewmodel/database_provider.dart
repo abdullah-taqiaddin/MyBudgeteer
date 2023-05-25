@@ -63,18 +63,24 @@ class DatabaseProvider extends ChangeNotifier{
 
 
 
-  //doesnt return a stream but a future
+//doesnt return a stream but a future
   Future<List<Budget>> getBudgetsByMonthFuture(int month, int year) async {
 
     DateTime startDate = DateTime(year, month, 1);
+    if(month + 1 > 12){
+      month = 1;
+      year += 1;
+    }
     DateTime endDate = DateTime(year, month + 1, 1);
     var budgetsSnapshot = await budgetCollection
         .where('budgetDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate), isLessThan: Timestamp.fromDate(endDate))
         .get();
     var budgets = budgetsSnapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList();
+
     return budgets;
 
   }
+
 
   //-------------
 
@@ -145,6 +151,7 @@ class DatabaseProvider extends ChangeNotifier{
     //returns all expesnes from a single budget
     return budgetCollection.doc(budgetId).collection('Expenses');
   }
+
 
 
   Future<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>> getAllExpensesDates(int month) async {
