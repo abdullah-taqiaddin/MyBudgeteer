@@ -159,6 +159,7 @@ class DatabaseProvider extends ChangeNotifier{
 
     var budgets = await getBudgetsByMonthFuture(month, DateTime.now().year);
 
+    //loop through each budget
     for (var budget in budgets) {
       var filteredExpenses = await getBudgetExpense(budget.id);
       var expenses = await filteredExpenses.get();
@@ -169,6 +170,7 @@ class DatabaseProvider extends ChangeNotifier{
       });
     }
 
+    //return a map of date and list of expenses
     return dateGroupedCollection;
   }
 
@@ -209,9 +211,17 @@ class DatabaseProvider extends ChangeNotifier{
     return expensesList;
   }
 
+
+
+
   //add an expense
   Future<void> addExpense(Expense expense) async{
-    //make the remaining attribute of the budget the amount of the budget minus the amount of the expense
+
+    var budget = await budgetCollection.doc(expense.budgetId).get();
+    var budgetData = budget.data();
+    budgetData!['totalSpent'] = budgetData['totalSpent'] + expense.amount;
+    await budgetCollection.doc(expense.budgetId).update(budgetData);
+
     var docRef =  await budgetCollection.doc(expense.budgetId).collection('Expenses').add(expense.toJson());
     await docRef.update(
         {

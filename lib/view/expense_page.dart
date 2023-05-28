@@ -49,7 +49,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
             child: Text('Error'),
           );
         }
-        print(snapshot.data!);
+        print("data: ---> ${snapshot.data!}");
         return Column(
           children: [
             Padding(
@@ -191,13 +191,13 @@ class _ExpenseTabState extends State<ExpenseTab> {
                   DateTime key = keys[index];
                   double totalAmount = 0.0;
                   var expenseList = [];
-                  snapshot.data!.forEach((key, value) {
-                    expenseList = value.map((e) => e.data()!).toList();
-                  });
+                  expenseList = snapshot.data![key]!.toList();
+
+                  //calculate the total amount of that day
                   for (int i = 0; i < expenseList.length; i++) {
-                    print(expenseList[i]);
                     totalAmount += expenseList[i]['amount'];
                   }
+
                   return Padding(
                     padding: const EdgeInsets.only(
                       top: 12,
@@ -223,11 +223,9 @@ class _ExpenseTabState extends State<ExpenseTab> {
   Widget buildExpenseExpansionTile(
       DateTime dateTime,
       String total,
-      List<dynamic> expenses,
+      var expenseList,
       ) {
-    Map<String,dynamic> expenseList = {};
-
-    print(expenses);
+    print(expenseList);
     return Container(
       width: 500,
       decoration: BoxDecoration(
@@ -301,26 +299,20 @@ class _ExpenseTabState extends State<ExpenseTab> {
               ),
               children: <Widget>[
                 Container(
-                  height: 200,
-                  child: FutureBuilder(
-    //TODO: change month, year value to be from the gesture slider
-                    future: Provider.of<DatabaseProvider>(context,listen: false).getExpensesByMonth(5, 2023),
-                      builder: (context, snapshot) {
-                        if(snapshot.connectionState == ConnectionState.waiting){
-                          return CircularProgressIndicator();
-                      }else{
-                          //List<Map<String,Dynamic>>
-                          snapshot.data!.forEach((element) { });
-                          print(snapshot.data!);
-                          return Text("");
+                    height: 200,
+                    child: ListView.builder(
+                        itemCount: expenseList.length,
+                        itemBuilder:(BuildContext context,int index){
+                          Timestamp timstamp = expenseList[index]['expenseDate'];
+                          DateTime date = timstamp.toDate();
+                          return ListTile(
+                            leading:Text(expenseList![index]['name'].toString()),
+                            trailing:Text(expenseList[index]['amount'].toString()),
+                            title:Text( DateFormat("yyyy/MM/dd").format(date).toString()),
+                          );
                         }
-                      /*
-                      /Same function as above "getAllExpensesDates" which returns a list of lists getAllExpensesDates
-                       */
-                    },
-                  ),
+                    )
                 ),
-
               ],
             ),
           ),

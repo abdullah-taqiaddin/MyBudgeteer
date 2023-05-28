@@ -284,7 +284,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                         controller: controller,
                         children: [
                           Tab(child: budgetTab(snapshot)),
-                          Tab(child: expenseTab()),
+                          Tab(child: ExpenseTab()),
                         ],
                       ),
                     ),
