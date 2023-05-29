@@ -15,6 +15,7 @@ import 'package:testapp/component/right_drawer.dart';
 import 'package:testapp/model/budget.dart';
 import 'package:testapp/view/expense_page.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
+import 'package:testapp/viewmodel/date_provider.dart';
 import '../component/forms/budget_form.dart';
 import '../viewmodel/auth_provider.dart';
 
@@ -72,12 +73,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           if (!snapshot.hasData) {
             noData = true;
           }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
           Provider.of<DatabaseProvider>(context).getAllExpensesDates(5);
 
 
@@ -131,13 +126,12 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                               ),
                             ),
                             context: context,
-                            builder: (BuildContext context) =>
+                            builder: (context) =>
                                 Padding(
                                   padding: MediaQuery
                                       .of(context)
                                       .viewInsets,
-                                  child: evalTabForm(_tabController,
-                                      Provider.of<DatabaseProvider>(context)),
+                                  child: evalTabForm(_tabController, Provider.of<DatabaseProvider>(context), context),
                                 ),
                           );
                         },
@@ -650,36 +644,37 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   }
 
 
-}
+  Widget noFoundBudget() {
+    return Stack(
+        clipBehavior: Clip.none, alignment: Alignment.topCenter,
+        children: [
+          Positioned(
+              top: 150.0,
 
+              child: Text(
+                "No Budgets?\nAdd up!", style: TextStyle(fontSize: 40.0,
+                fontFamily: "K2D",),)
+          )
+        ]
+    );
 
-Widget noFoundBudget() {
-  return Stack(
-      clipBehavior: Clip.none, alignment: Alignment.topCenter,
-      children: [
-        Positioned(
-            top: 150.0,
-
-            child: Text(
-              "No Budgets?\nAdd up!", style: TextStyle(fontSize: 40.0,
-              fontFamily: "K2D",),)
-        )
-      ]
-  );
-
-}
-
-Widget evalTabForm(TabController controller, DatabaseProvider provider) {
-  switch (controller.index) {
-    case 0:
-      return BudgetForm();
-      break;
-    case 1:
-      return ExpenseForm();
-      break;
-    default:
-      return BudgetForm();
   }
+
+  Widget evalTabForm(TabController controller, DatabaseProvider provider , BuildContext context) {
+
+    switch (controller.index) {
+      case 0:
+        return BudgetForm();
+        break;
+      case 1:
+        return ExpenseForm(currentMonthIndex: 5,);
+        break;
+      default:
+        return BudgetForm();
+    }
+  }
+
 }
+
 
 

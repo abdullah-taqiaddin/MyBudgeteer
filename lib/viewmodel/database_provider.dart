@@ -166,7 +166,7 @@ class DatabaseProvider extends ChangeNotifier{
 
       dateGroupedCollection = groupBy(expenses.docs, (expense) {
         var expenseDate = expense.data()['expenseDate'].toDate();
-        return DateTime(expenseDate.year, expenseDate.month, expenseDate.day);
+        return DateTime(expenseDate.year, expenseDate.month + 1, expenseDate.day);
       });
     }
 

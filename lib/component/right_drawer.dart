@@ -87,169 +87,109 @@ class RightDrawer extends StatelessWidget {
                     },
                   ),
                   Divider(color: Colors.grey, indent: 15, endIndent: 15),
+
                   ListTile(
                     leading: Icon(Icons.logout),
                     onTap: () {
                       onItemTapped(3);
                       showDialog(
                         context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            alignment: Alignment.center,
-
-                            elevation: 250,
-                            backgroundColor: Colors.white,
-
-                            title: Text(
-                              '${translation(context).logout}',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "K2D",
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            content: Container(
-                              width: 220,
-                              child: Text(
-                                '${translation(context).logoutConfirmation}',
-                                style: TextStyle(
-                                  color: Color(0XFF145756),
-                                  fontFamily: "K2D",
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                        builder: (BuildContext dialogContext) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                alignment: Alignment.center,
+                                elevation: 250,
+                                backgroundColor: Colors.white,
+                                title: Text(
+                                  '${translation(context).logout}',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "K2D",
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.left,
                                 ),
-                              ),
-                            ),
-                            actions: [
-                              Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 130,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: Color.fromRGBO(255, 107, 53, 1),
-                                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                                      ),
-                                      child: TextButton(
-                                        child:Text(
-                                          '${translation(context).logout}',
-                                          style: TextStyle(
+                                content: Container(
+                                  width: 220,
+                                  child: Text(
+                                    '${translation(context).logoutConfirmation}',
+                                    style: TextStyle(
+                                      color: Color(0XFF145756),
+                                      fontFamily: "K2D",
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                actions: [
+                                  Center(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: 130,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: Color.fromRGBO(255, 107, 53, 1),
+                                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                                          ),
+                                          child: TextButton(
+                                            child: Text(
+                                              '${translation(context).logout}',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: "K2D",
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              FirebaseController().signOutUser(context);
+                                              Navigator.of(dialogContext).pushAndRemoveUntil(
+                                                MaterialPageRoute(builder: (context) => loginPage()),
+                                                    (route) => false,
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        SizedBox(width: 3,),
+                                        Container(
+                                          width: 130,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.black26),
                                             color: Colors.white,
-                                            fontFamily: "K2D",
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
+                                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                                          ),
+                                          child: TextButton(
+                                            child: Text(
+                                              '${translation(context).cancel}',
+                                              style: TextStyle(
+                                                color: Color(0XFF145756),
+                                                fontFamily: "K2D",
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(dialogContext);
+                                            },
                                           ),
                                         ),
-                                        onPressed: () {
-                                          FirebaseController().signOutUser(context);
-                                          Navigator.of(context).pushAndRemoveUntil(
-                                            MaterialPageRoute(
-                                                builder: (context) => loginPage()),
-                                                (route) => false,
-                                          );
-                                        },
-                                      ),
+                                      ],
                                     ),
-                                    SizedBox(width: 3,),
-                                    Container(
-                                      width: 130,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.black26),
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.all(Radius.circular(5)),),
-                                      child: TextButton(
-                                        child: Text(
-                                          '${translation(context).cancel}',
-                                          style: TextStyle(
-                                            color: Color(0XFF145756),
-                                            fontFamily: "K2D",
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
+                                  )
+                                ],
+                              );
+                            },
                           );
-
                         },
                       );
                     },
                   ),
 
-                  /*ListTile(
-                    leading: Icon(Icons.logout),
-                    onTap: () {
-                     onItemTapped(3);
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            elevation: 250,
-                            backgroundColor: Colors.white,
-                            title: Text('Sign Out',
-                              style: TextStyle(
-                                  color: Color.fromRGBO(255, 107, 53, 1),
-                                  fontFamily: "K2D",
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            content: Text('Are you sure you want to sign out?',
-                              style: TextStyle(
-                                  color: Color(0XFF145756),
-                                  fontFamily: "K2D",
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: Text('Yes',
-                                  style: TextStyle(
-                                      color: Color(0XFF145756),
-                                      fontFamily: "K2D",
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                onPressed: () {
-                                  FirebaseController().signOutUser(context);
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                        builder: (context) => loginPage()),
-                                    (route) => false,
-                                  );
-                                },
-                              ),
-                              TextButton(
-                                child: Text(
-                                  'Cancel',
-                                  style: TextStyle(
-                                      color: Color(0XFF145756),
-                                      fontFamily: "K2D",
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),*/
                 ],
               ),
             ),

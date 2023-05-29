@@ -8,6 +8,8 @@ import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/model/expense.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
+import 'package:testapp/viewmodel/date_provider.dart';
+import 'package:testapp/viewmodel/expense_date_provider.dart';
 
 import 'package:testapp/viewmodel/localization.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -19,10 +21,13 @@ class ExpenseTab extends StatefulWidget {
   State<ExpenseTab> createState() => _ExpenseTabState();
 }
 
-int currentMonthIndex = DateTime.now().month + 1;
+
+
 String _selectedYear = DateFormat.y().format(DateTime.now()).toString();
 
 class _ExpenseTabState extends State<ExpenseTab> {
+
+  late int currentMonthIndex;
   void initState() {
     super.initState();
     _selectedYear = DateFormat.y().format(DateTime.now()).toString();
@@ -30,7 +35,12 @@ class _ExpenseTabState extends State<ExpenseTab> {
 
   @override
   Widget build(BuildContext context) {
+    currentMonthIndex = Provider.of<ExpenseDateProvider>(context).month;
+    _selectedYear =   Provider.of<ExpenseDateProvider>(context).year.toString();
+
     print("current index: $currentMonthIndex");
+    print("Current index in the provider: ${Provider.of<ExpenseDateProvider>(context).month}");
+
     return StreamBuilder<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>>(
       stream: Provider.of<DatabaseProvider>(context).getAllExpensesDates(currentMonthIndex +1).asStream(),
       builder: (context, snapshot) {
@@ -59,16 +69,17 @@ class _ExpenseTabState extends State<ExpenseTab> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  GestureDetector(
-                    onHorizontalDragEnd: (DragEndDetails details) {
-                      if (details.primaryVelocity! > 0) {
-                        setState(() {
-                          currentMonthIndex = (currentMonthIndex - 1) % 12;
-                        });
-                      } else if (details.primaryVelocity! < 0) {
-                        setState(() {
-                          currentMonthIndex = (currentMonthIndex + 1) % 12;
-                        });
+                  Listener(
+                    onPointerMove: (PointerMoveEvent event) {
+                      final dx = event.delta.dx;
+                      if (dx > 0) {
+                        currentMonthIndex = (currentMonthIndex - 1) % 12;
+                        Provider.of<ExpenseDateProvider>(context, listen: false)
+                            .setMonth(currentMonthIndex);
+                      } else if (dx < 0) {
+                        currentMonthIndex = (currentMonthIndex + 1) % 12;
+                        Provider.of<ExpenseDateProvider>(context, listen: false)
+                            .setMonth(currentMonthIndex);
                       }
                     },
                     child: Container(
@@ -78,47 +89,47 @@ class _ExpenseTabState extends State<ExpenseTab> {
                         borderRadius: BorderRadius.circular(16),
                         color: Color.fromRGBO(123, 203, 201, 1),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                currentMonthIndex = (currentMonthIndex - 1) % 12;
-                              });
-                            },
-                            child: Icon(
-                              Icons.chevron_left,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ),
-                          Center(
-                            child: Text(
-                              DateFormat.MMMM()
-                                  .format(DateTime(DateTime.now().year, currentMonthIndex + 1))
-                                  .toString(),
-                              style: TextStyle(
-                                fontFamily: "K2D",
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                      child: GestureDetector(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                currentMonthIndex = (currentMonthIndex - 1) % 11;
+                                Provider.of<ExpenseDateProvider>(context,listen: false).setMonth(currentMonthIndex);
+                              },
+                              child: Icon(
+                                Icons.chevron_left,
                                 color: Colors.white,
+                                size: 30,
                               ),
                             ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                currentMonthIndex = (currentMonthIndex + 1) % 12;
-                              });
-                            },
-                            child: Icon(
-                              Icons.chevron_right,
-                              color: Colors.white,
-                              size: 30,
+                            Center(
+                              child: Text(
+                                DateFormat.MMMM()
+                                    .format(DateTime(DateTime.now().year, currentMonthIndex + 1))
+                                    .toString(),
+                                style: TextStyle(
+                                  fontFamily: "K2D",
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                            InkWell(
+                              onTap: () {
+                                  currentMonthIndex = (currentMonthIndex + 1) % 11;
+                                  Provider.of<ExpenseDateProvider>(context,listen: false).setMonth(currentMonthIndex);
+                              },
+                              child: Icon(
+                                Icons.chevron_right,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -154,14 +165,19 @@ class _ExpenseTabState extends State<ExpenseTab> {
                                   ].map<DropdownMenuItem<String>>((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
-                                      child: Text(
-                                        value,
-                                        style: TextStyle(
-                                          fontFamily: "K2D",
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                          color: Colors.white,
-                                        ),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(width: 15,),
+                                          Text(
+                                            value,
+                                            style: TextStyle(
+                                              fontFamily: "K2D",
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     );
                                   }).toList(),
@@ -183,36 +199,46 @@ class _ExpenseTabState extends State<ExpenseTab> {
             SizedBox(
               height: 0.2,
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: snapshot.data!.keys.length,
-                itemBuilder: (BuildContext context, int index) {
-                  var keys = snapshot.data!.keys.toList();
-                  DateTime key = keys[index];
-                  double totalAmount = 0.0;
-                  var expenseList = [];
-                  expenseList = snapshot.data![key]!.toList();
+            Container(
+              //make the height of the list view dynamic but not more than 50% of the screen
+              height: MediaQuery.of(context).size.height * 0.55,
 
-                  //calculate the total amount of that day
-                  for (int i = 0; i < expenseList.length; i++) {
-                    totalAmount += expenseList[i]['amount'];
-                  }
+              child: SizedBox(
 
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      top: 12,
-                      bottom: 15,
-                      right: 35,
-                      left: 35,
-                    ),
-                    child: buildExpenseExpansionTile(
-                      key,
-                      totalAmount.toString(),
-                      expenseList,
-                    ),
-                  );
-                },
+                child: ListView.builder(
+                  itemCount: snapshot.data!.keys.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    var keys = snapshot.data!.keys.toList();
+                    DateTime key = keys[index];
+                    double totalAmount = 0.0;
+                    var expenseList = [];
+                    expenseList = snapshot.data![key]!.toList();
+
+                    //calculate the total amount of that day
+                    for (int i = 0; i < expenseList.length; i++) {
+                      totalAmount += expenseList[i]['amount'];
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        top: 12,
+                        bottom: 15,
+                        right: 35,
+                        left: 35,
+                      ),
+                      child: buildExpenseExpansionTile(
+                        key,
+                        totalAmount.toString(),
+                        expenseList,
+                      ),
+                    );
+                  },
+                ),
               ),
+            ),
+            //add a sizedbox to the footer
+            SizedBox(
+              height: 20,
             ),
           ],
         );
@@ -220,14 +246,11 @@ class _ExpenseTabState extends State<ExpenseTab> {
     );
   }
 
-  Widget buildExpenseExpansionTile(
-      DateTime dateTime,
-      String total,
-      var expenseList,
-      ) {
+  Widget buildExpenseExpansionTile(DateTime dateTime, String total, var expenseList) {
     print(expenseList);
     return Container(
       width: 500,
+
       decoration: BoxDecoration(
         color: Color(0xFF34cfb3),
 

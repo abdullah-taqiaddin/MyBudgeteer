@@ -109,11 +109,11 @@ class _DeletePopupState extends State<DeletePopup> {
           )
       ],
     );
-  
+
   }
-  Future<void> deleteBudget(String id) async{
+  void deleteBudget(String id){
     print(id);
-    await Provider.of<DatabaseProvider>(context, listen: false).deleteBudget(id);
+    Provider.of<DatabaseProvider>(context, listen: false).deleteBudget(id);
   }
-  
+
 }

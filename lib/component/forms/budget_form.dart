@@ -46,7 +46,6 @@ class _BudgetFormState extends State<BudgetForm> {
     super.initState();
     // fill form fields with initial budget data if provided
     if (widget.initialBudget != null) {
-      print(widget.initialBudget!.totalSpent);
       _budgetName.text = widget.initialBudget!.name;
       _amount.text = widget.initialBudget!.amount.toString();
     }
@@ -196,7 +195,6 @@ class _BudgetFormState extends State<BudgetForm> {
                   color: Color(0XFFFF6B35),
                   elevation: 0,
                   onPressed: () {
-                    print("pressed");
                     if (_formKey.currentState!.validate()) {
                       if(widget.initialBudget == null){
                         submitBudget(_budgetName,_amount);

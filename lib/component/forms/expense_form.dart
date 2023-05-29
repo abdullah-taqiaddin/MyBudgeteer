@@ -8,13 +8,17 @@ import 'package:provider/provider.dart';
 import 'package:testapp/model/budget.dart';
 import 'package:testapp/model/expense.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
+import 'package:testapp/viewmodel/date_provider.dart';
+import 'package:testapp/viewmodel/expense_date_provider.dart';
 
 import 'package:testapp/viewmodel/localization.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ExpenseForm extends StatefulWidget {
 
-  const ExpenseForm({Key? key}) : super(key: key);
+  final int currentMonthIndex;
+  //change constructor
+  ExpenseForm({Key? key, required this.currentMonthIndex}) : super(key: key);
 
   @override
   State<ExpenseForm> createState() => _ExpenseFormState();
@@ -31,11 +35,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
   DateTime selectedDate = DateTime.now();
 
   late Budget selectedBudget;
-
   String selectedBudgetId = "";
-  void budgetFormSubmit(TextEditingController budgeName,TextEditingController ){
-
-  }
 
 
   @override
@@ -48,9 +48,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
   }
 
   Widget build(BuildContext context) {
-    return addExpenseForm();
-  }
-  Widget addExpenseForm() {
+
+
+    print("current month index: ${Provider.of<ExpenseDateProvider>(context).month}");
     return Container(
       height: MediaQuery.of(context).size.height* 0.6,
       width: MediaQuery.of(context).size.width,
@@ -88,11 +88,14 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 ///----------------------
                 //TODO: IMPORTANT!!!!!!!!!!! --> change the month to the current month from the expense_page currentMonthIndex variable!!!!!!!!!!!!!!!!!!!!
                 ///----------------------
-                stream: Provider.of<DatabaseProvider>(context).getBudgetsByMonth(5, DateTime.now().year),
+                ///
+                stream: Provider.of<DatabaseProvider>(context).getBudgetsByMonth(Provider.of<ExpenseDateProvider>(context).month, DateTime.now().year),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Text("Loading...");
                   }
+
+                  print("current month index from provider: ${Provider.of<ExpenseDateProvider>(context).month}");
                   return DropdownButtonFormField(
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -111,7 +114,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
                       ),
                     ),
                     items: snapshot.data!.docs.map((DocumentSnapshot document) {
-                      print(document['name']);
                       return DropdownMenuItem(
                         value: document['id'],
                         child: Text(
@@ -241,7 +243,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   color: Color(0XFFFF6B35),
                   elevation: 0,
                   onPressed: () {
-                    print("pressed");
                     if (_formKey.currentState!.validate()) {
                       // Submit the form data to firestore
 
@@ -268,7 +269,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
     Timestamp timestamp = Timestamp.fromDate(date);
     Expense expense = new Expense(id: "", name: name.text, amount: double.parse(amount.text), expenseDate: timestamp, budgetId: budgetId.toString());
     Provider.of<DatabaseProvider>(context, listen: false).addExpense(expense);
-    print("Added");
   }
 
 }

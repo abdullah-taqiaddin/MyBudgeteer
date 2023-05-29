@@ -13,6 +13,8 @@ import 'package:testapp/viewmodel/database_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:testapp/viewmodel/date_provider.dart';
+import 'package:testapp/viewmodel/expense_date_provider.dart';
 
 final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
@@ -27,7 +29,9 @@ void main() async{
     MultiProvider(
       providers: [
       ChangeNotifierProvider(create: (_) => AuthProvider(),)
-      ,ChangeNotifierProvider(create: (_) => DatabaseProvider()),
+      ,ChangeNotifierProvider(create: (_) => DatabaseProvider())
+      ,ChangeNotifierProvider(create: (_) => DateProvider())
+      ,ChangeNotifierProvider(create: (_) => ExpenseDateProvider())
     ]
       ,child: MyApp(ref: prefs,),)
   );
