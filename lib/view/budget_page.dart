@@ -79,6 +79,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           return Builder(
               builder: (context) {
                 return Scaffold(
+                  resizeToAvoidBottomInset: false,
                   extendBody: true,
                   bottomNavigationBar: Container(
                     //Bottom app bar
