@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/model/budget.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
+import 'package:testapp/viewmodel/date_provider.dart';
 
 import 'package:testapp/viewmodel/localization.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -55,6 +56,10 @@ class _BudgetFormState extends State<BudgetForm> {
     return AddBudgetForm();
   }
   Widget AddBudgetForm() {
+    print("year: ${Provider.of<DateProvider>(context).year}");
+
+    int month = Provider.of<DateProvider>(context).month +1;
+
     return Container(
       height: MediaQuery.of(context).size.height* 0.6,
       width: MediaQuery.of(context).size.width,
@@ -92,7 +97,7 @@ class _BudgetFormState extends State<BudgetForm> {
                 //READ ONLY AND WILL GET DATA FROM DATETIME
                 style: TextStyle(color: Colors.white, fontFamily: "K2D", fontSize: 20,fontWeight: FontWeight.bold),
                 enabled: false,
-                initialValue: DateFormat.MMMM().format(DateTime.now()).toString(),
+                initialValue: DateFormat.MMMM().format(DateTime(0,month)).toString(),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),

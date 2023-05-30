@@ -36,13 +36,6 @@ void main() async{
       ,child: MyApp(ref: prefs,),)
   );
 
-  //
-  // runApp(
-  //   ChangeNotifierProvider(
-  //     create: (_) => AuthProvider(),
-  //     child: MyApp(ref: prefs),
-  //   ),
-  // );
 }
 
 class MyApp extends StatefulWidget {
@@ -75,7 +68,6 @@ class _MyAppState extends State<MyApp> {
        _locale = locale;
     });
   }
-  //login page or budgetpage
 
   @override
   Widget build(BuildContext context) {

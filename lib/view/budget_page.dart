@@ -30,13 +30,13 @@ class BudgetPage extends StatefulWidget {
 }
 
 
-bool noData = false;
+bool hasNoData = false;
 int TextPrimary = 0XFF145756;
 
 
 int currentMonthIndex = DateTime.now().month + 1 ;
 String _selectedYear = DateFormat.y().format(DateTime.now()).toString();
-
+bool doOnce = false;
 
 class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
@@ -70,12 +70,20 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     return StreamBuilder<QuerySnapshot>(
         stream: Provider.of<DatabaseProvider>(context).getBudgetsByMonth(currentMonthIndex+1, 2023),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            noData = true;
+          if (snapshot.hasData) {
+            hasNoData = true;
           }
-          Provider.of<DatabaseProvider>(context).getAllExpensesDates(5);
+          if(snapshot.connectionState == ConnectionState.waiting){
+            if(doOnce != true) {
+              doOnce = true;
+              return Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
 
-
+            }
+          }
           return Builder(
               builder: (context) {
                 return Scaffold(
@@ -319,7 +327,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           Row(
             children: [
               Text(
-                //TODO:update this to be the totalspent
                 "${budget!.totalSpent.toString()}",
                 style: TextStyle(
                     fontFamily: "K2D",
@@ -400,19 +407,27 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     Color firstColor = Color(0xFF34cfb3);
     Color secondColor = Color(0xFF4B9EB8);
     int rowFinished = 0;
-    var budgets = snapshot.data!.docs;
 
-    return Column(
+    bool hasData = false;
+    var budgets = snapshot.data!.docs;
+    if(budgets.isNotEmpty){
+      hasData = true;
+    }
+    print(hasData);
+    return
+      Column(
       children: [
         mainBudgetInfo(),
         SizedBox(
           height: 0.5,
         ),
         monthSliderYearDropdown(),
+
         Container(
           width: 330,
           height: 400,
-          child: GridView.builder(
+          child: hasData?
+          GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: MediaQuery
@@ -453,7 +468,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                   passed
               );
             },
-          ),
+          ):noFoundBudget()
+          ,
         ),
       ],
     );
@@ -467,9 +483,15 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             future: Provider.of<DatabaseProvider>(context).getAllAttributes(currentMonthIndex + 1,int.parse(_selectedYear)),
             //[0] is the remaining, [1] is the total, [2] is the spent
             builder: (context, snapshot) {
-              if(snapshot.connectionState == ConnectionState.waiting){
+              if(!snapshot.hasData){
+                hasNoData = false;
                 return CircularProgressIndicator();
               }
+              if(snapshot.connectionState == ConnectionState.waiting){
+                if(!doOnce){
+                      return CircularProgressIndicator();
+                    }
+                  }
               return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -516,68 +538,58 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        GestureDetector(
-          onHorizontalDragEnd: (DragEndDetails details) {
-            if (details.primaryVelocity! > 0) {
-              setState(() {
-                currentMonthIndex = (currentMonthIndex - 1) % 12;
-              });
-            } else if (details.primaryVelocity! < 0) {
-              setState(() {
-                currentMonthIndex = (currentMonthIndex + 1) % 12;
-              });
-            }
-          },
-          child: Container(
-            height: 40,
-            width: 170,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: Color.fromRGBO(123, 203, 201, 1),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      currentMonthIndex = (currentMonthIndex - 1) % 12;
-                    });
-                  },
-                  child: Icon(
-                    Icons.chevron_left,
+        Container(
+          height: 40,
+          width: 170,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Color.fromRGBO(123, 203, 201, 1),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    currentMonthIndex = (currentMonthIndex - 1) % 12;
+                    Provider.of<DateProvider>(context,listen: false).month = currentMonthIndex;
+                  });
+                },
+                child: Icon(
+                  Icons.chevron_left,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+              Center(
+                child: Text(
+                  DateFormat.MMMM()
+                      .format(DateTime(
+                      DateTime.now().month,
+                      Provider.of<DateProvider>(context,listen: false).month + 1 ) )
+                      .toString(),
+                  style: TextStyle(
+                    fontFamily: "K2D",
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
                     color: Colors.white,
-                    size: 30,
                   ),
                 ),
-                Center(
-                  child: Text(
-                    DateFormat.MMMM()
-                        .format(DateTime(
-                        DateTime.now().month, currentMonthIndex + 1))
-                        .toString(),
-                    style: TextStyle(
-                      fontFamily: "K2D",
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: Colors.white,
-                    ),
-                  ),
+              ),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    currentMonthIndex = (currentMonthIndex + 1) % 12;
+                    Provider.of<DateProvider>(context,listen: false).month = currentMonthIndex;
+                  });
+                },
+                child: Icon(
+                  Icons.chevron_right,
+                  color: Colors.white,
+                  size: 30,
                 ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      currentMonthIndex = (currentMonthIndex + 1) % 12;
-                    });
-                  },
-                  child: Icon(
-                    Icons.chevron_right,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
 
@@ -649,8 +661,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         clipBehavior: Clip.none, alignment: Alignment.topCenter,
         children: [
           Positioned(
-              top: 150.0,
-
+              top: 100.0,
               child: Text(
                 "No Budgets?\nAdd up!", style: TextStyle(fontSize: 40.0,
                 fontFamily: "K2D",),)

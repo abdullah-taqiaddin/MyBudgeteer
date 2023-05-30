@@ -85,11 +85,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               ),
               SizedBox(height: 10,),
               StreamBuilder<QuerySnapshot>(
-                ///----------------------
-                //TODO: IMPORTANT!!!!!!!!!!! --> change the month to the current month from the expense_page currentMonthIndex variable!!!!!!!!!!!!!!!!!!!!
-                ///----------------------
-                ///
-                stream: Provider.of<DatabaseProvider>(context).getBudgetsByMonth(Provider.of<ExpenseDateProvider>(context).month, DateTime.now().year),
+                stream: Provider.of<DatabaseProvider>(context).getBudgetsByMonth(Provider.of<ExpenseDateProvider>(context).month + 1, Provider.of<ExpenseDateProvider>(context).year),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Text("Loading...");
