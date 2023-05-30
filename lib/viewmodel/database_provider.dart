@@ -159,6 +159,8 @@ class DatabaseProvider extends ChangeNotifier{
 
     var budgets = await getBudgetsByMonthFuture(month, DateTime.now().year);
 
+    print(budgets);
+
     //loop through each budget
     for (var budget in budgets) {
       var filteredExpenses = await getBudgetExpense(budget.id);

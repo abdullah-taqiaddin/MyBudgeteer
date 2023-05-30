@@ -28,6 +28,8 @@ String _selectedYear = DateFormat.y().format(DateTime.now()).toString();
 class _ExpenseTabState extends State<ExpenseTab> {
 
   late int currentMonthIndex;
+
+  bool hasData = false;
   void initState() {
     super.initState();
     _selectedYear = DateFormat.y().format(DateTime.now()).toString();
@@ -42,24 +44,17 @@ class _ExpenseTabState extends State<ExpenseTab> {
     print("Current index in the provider: ${Provider.of<ExpenseDateProvider>(context).month}");
 
     return StreamBuilder<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>>(
-      stream: Provider.of<DatabaseProvider>(context).getAllExpensesDates(currentMonthIndex +1).asStream(),
+      stream: Provider.of<DatabaseProvider>(context).getAllExpensesDates(Provider.of<ExpenseDateProvider>(context).month + 1).asStream(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
         if (snapshot.hasError) {
           return Center(
             child: Text('Error'),
           );
         }
-        print("data: ---> ${snapshot.data!}");
+        if(snapshot.hasData && snapshot.data != null){
+          hasData = true;
+        }
+        print("has data: $hasData");
         return Column(
           children: [
             Padding(
@@ -76,10 +71,12 @@ class _ExpenseTabState extends State<ExpenseTab> {
                         currentMonthIndex = (currentMonthIndex - 1) % 12;
                         Provider.of<ExpenseDateProvider>(context, listen: false)
                             .setMonth(currentMonthIndex);
+
                       } else if (dx < 0) {
                         currentMonthIndex = (currentMonthIndex + 1) % 12;
                         Provider.of<ExpenseDateProvider>(context, listen: false)
                             .setMonth(currentMonthIndex);
+
                       }
                     },
                     child: Container(
@@ -156,6 +153,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
                                   value: _selectedYear,
                                   onChanged: (String? newValue) {
                                     setState(() {
+                                      hasData = false;
                                       _selectedYear = newValue!;
                                     });
                                   },
@@ -163,6 +161,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
                                     DateFormat.y().format(DateTime.now()).toString(),
                                     (DateTime.now().year + 1).toString(),
                                   ].map<DropdownMenuItem<String>>((String value) {
+
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Row(
@@ -204,16 +203,27 @@ class _ExpenseTabState extends State<ExpenseTab> {
               height: MediaQuery.of(context).size.height * 0.55,
 
               child: SizedBox(
-
-                child: ListView.builder(
+                child: hasData?
+                ListView.builder(
                   itemCount: snapshot.data!.keys.length,
                   itemBuilder: (BuildContext context, int index) {
+                    if(snapshot.data == null){
+                      return Center(
+                        child: Text('No Data',style: TextStyle(
+                          fontFamily: "K2D",
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),),
+                      );
+                    }
                     var keys = snapshot.data!.keys.toList();
                     DateTime key = keys[index];
                     double totalAmount = 0.0;
                     var expenseList = [];
                     expenseList = snapshot.data![key]!.toList();
 
+                    print(keys);
                     //calculate the total amount of that day
                     for (int i = 0; i < expenseList.length; i++) {
                       totalAmount += expenseList[i]['amount'];
@@ -233,7 +243,14 @@ class _ExpenseTabState extends State<ExpenseTab> {
                       ),
                     );
                   },
-                ),
+                ): Center(
+                  child: Text('No Data',style: TextStyle(
+                    fontFamily: "K2D",
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),),
+                )
               ),
             ),
             //add a sizedbox to the footer

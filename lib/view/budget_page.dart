@@ -29,8 +29,6 @@ class BudgetPage extends StatefulWidget {
   State<BudgetPage> createState() => _BudgetPageState();
 }
 
-
-bool hasNoData = false;
 int TextPrimary = 0XFF145756;
 
 
@@ -70,9 +68,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     return StreamBuilder<QuerySnapshot>(
         stream: Provider.of<DatabaseProvider>(context).getBudgetsByMonth(currentMonthIndex+1, 2023),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            hasNoData = true;
-          }
           if(snapshot.connectionState == ConnectionState.waiting){
             if(doOnce != true) {
               doOnce = true;
@@ -485,7 +480,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             //[0] is the remaining, [1] is the total, [2] is the spent
             builder: (context, snapshot) {
               if(!snapshot.hasData){
-                hasNoData = false;
                 return CircularProgressIndicator();
               }
               if(snapshot.connectionState == ConnectionState.waiting){
