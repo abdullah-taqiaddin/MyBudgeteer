@@ -38,6 +38,7 @@ bool doOnce = false;
 
 class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
+
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -404,8 +405,16 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     Color secondColor = Color(0xFF4B9EB8);
     int rowFinished = 0;
 
+    List<QueryDocumentSnapshot<Object?>> budgets;
     bool hasData = false;
-    var budgets = snapshot.data!.docs;
+
+    //refactor this if statement
+    //check if there is data, if so set hasData to true
+
+    budgets = snapshot.hasData ? snapshot.data!.docs : [];
+
+
+    print("budgets: $budgets");
     if(budgets.isNotEmpty){
       hasData = true;
     }
@@ -436,7 +445,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
             ),
-            itemCount: budgets.length,
+            itemCount: budgets!.length,
             itemBuilder: (BuildContext context, int index) {
               //return current budget
 

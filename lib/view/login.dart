@@ -75,30 +75,6 @@ class _loginPageState extends State<loginPage> {
                   SizedBox(height: 70,),
                   SignInWithGoogleButton(),
                   SizedBox(height: 30,),
-                  Row(
-                      children: [
-                        const Expanded(
-                            child: Divider(color: Colors.black,indent: 50,)
-                        ),
-                        TextButton(
-                          child: Text("Continue as a guest",
-                                 style:TextStyle(fontSize: 15,color: Colors.black,fontFamily: 'K2D'),),
-                                 onPressed: () async {
-                                   dynamic results = await _auth.signInAnonymously(context);
-                                   if(results == null)
-                                     print('Error Signing-In');
-                                   else
-                                     {
-                                       print('Signed-In as user: ${results.uid}');
-                                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BudgetPage()));
-                                     }
-                            },
-                        ),
-                        const Expanded(
-                            child: Divider(color: Colors.black,endIndent: 50,)
-                        ),
-                      ]
-                  )
                 ],
               ),
             ),

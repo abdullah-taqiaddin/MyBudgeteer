@@ -44,7 +44,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
     print("Current index in the provider: ${Provider.of<ExpenseDateProvider>(context).month}");
 
     return StreamBuilder<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>>(
-      stream: Provider.of<DatabaseProvider>(context).getAllExpensesDates(Provider.of<ExpenseDateProvider>(context).month + 1).asStream(),
+      stream: Provider.of<DatabaseProvider>(context).getExpensesByDate(Provider.of<ExpenseDateProvider>(context).month + 1).asStream(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(

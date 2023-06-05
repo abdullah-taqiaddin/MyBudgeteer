@@ -154,7 +154,7 @@ class DatabaseProvider extends ChangeNotifier{
 
 
 
-  Future<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>> getAllExpensesDates(int month) async {
+  Future<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>> getExpensesByDate(int month) async {
     Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>> dateGroupedCollection = {};
 
     var budgets = await getBudgetsByMonthFuture(month, DateTime.now().year);
@@ -194,6 +194,7 @@ class DatabaseProvider extends ChangeNotifier{
     }
     return expensesList;
   }
+
   //use the "getBudgetByMonth" function to return the all the expenses in that month and year
   Future<List<Map<String, dynamic>>> getExpensesByMonth(int month, int year) async{
     List<Map<String, dynamic>> expensesList = [];
@@ -234,11 +235,14 @@ class DatabaseProvider extends ChangeNotifier{
   }
   //delete an expense
   Future<void> deleteExpense(Expense expense) async{
-    await null;
+    await budgetCollection.doc(expense.budgetId).collection('Expenses').doc(expense.id).delete();
+    notifyListeners();
   }
   //update an expense
   Future<void> updateExpense(Expense expense) async{
-    await null;
+    DocumentReference<Map<String, dynamic>> docRef = budgetCollection.doc(expense.budgetId).collection('Expenses').doc(expense.id);
+    await docRef.update(expense.toJson());
+    notifyListeners();
   }
 
 
