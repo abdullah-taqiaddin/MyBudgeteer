@@ -6,12 +6,15 @@ class Expense {
   double amount;
   String budgetId;
   Timestamp expenseDate;
+  String budgetName;
+
   Expense({
     required this.id,
     required this.name,
     required this.amount,
     required this.expenseDate,
     required this.budgetId,
+    required this.budgetName,
   });
 
   factory Expense.fromJson(Map<String, dynamic> json) {
@@ -21,6 +24,7 @@ class Expense {
       amount: json['amount'],
       expenseDate: json['expenseDate'],
       budgetId: json['budgetId'],
+      budgetName: json['budgetName'],
     );
   }
 
@@ -31,5 +35,6 @@ class Expense {
         'amount': amount,
         'expenseDate' : expenseDate,
         'budgetId': budgetId,
+        'budgetName': budgetName,
       };
 }

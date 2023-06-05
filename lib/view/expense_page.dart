@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
+import 'package:testapp/model/budget.dart';
 import 'package:testapp/model/expense.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
 import 'package:testapp/viewmodel/date_provider.dart';
@@ -20,6 +21,7 @@ class ExpenseTab extends StatefulWidget {
   @override
   State<ExpenseTab> createState() => _ExpenseTabState();
 }
+
 
 
 
@@ -265,6 +267,18 @@ class _ExpenseTabState extends State<ExpenseTab> {
 
   Widget buildExpenseExpansionTile(DateTime dateTime, String total, var expenseList) {
     print(expenseList);
+    var primary = TextStyle(
+      fontFamily: "K2D",
+      fontWeight: FontWeight.bold,
+      fontSize: 18,
+      color: Colors.white,
+    );
+    var secondary = TextStyle(
+      fontFamily: "K2D",
+      fontWeight: FontWeight.w300,
+      fontSize: 18,
+      color: Colors.white,
+    );
     return Container(
       width: 500,
 
@@ -343,12 +357,60 @@ class _ExpenseTabState extends State<ExpenseTab> {
                     child: ListView.builder(
                         itemCount: expenseList.length,
                         itemBuilder:(BuildContext context,int index){
-                          Timestamp timstamp = expenseList[index]['expenseDate'];
-                          DateTime date = timstamp.toDate();
-                          return ListTile(
-                            leading:Text(expenseList![index]['name'].toString()),
-                            trailing:Text(expenseList[index]['amount'].toString()),
-                            title:Text( DateFormat("yyyy/MM/dd").format(date).toString()),
+                          bool enditem = index == expenseList.length - 1;
+
+                          return Column(
+                            children: [
+                              /*ListTile(
+
+                                leading:Icon(Icons.payment,color: Colors.white,),
+                                title:Text(expenseList![index]['name'].toString(), style: primary),
+                                subtitle: Column(
+                                  children: [
+                                    Text(expenseList[index]['budgetName'].toString(), style: secondary),
+                                    Text(expenseList[index]['amount'].toString() , style: primary,),
+                                  ],
+                                ),
+                              ),*/
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+
+                                  Row(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          SizedBox(width: 15,),
+                                          Text(expenseList[index]['name'].toString(), style: primary),
+                                          SizedBox(width: 15,),
+                                          Text(expenseList[index]['budgetName'].toString(), style: secondary),
+                                          SizedBox(width: 15,),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 15,),
+                                      Text(expenseList[index]['amount'].toString() , style: primary,),
+                                      SizedBox(width: 15,),
+                                    ],
+                                  ),IconButton(
+                                      onPressed: () {
+                                        deleteExpense(expenseList[index]['budgetId'],expenseList[index]['id']);
+                                        },
+                                      icon: Icon(Icons.delete, size: 30, color: Colors.white,)
+                                  ),
+                                ],
+                              ),
+                              !enditem? Divider(
+                                color: Colors.white,
+                                endIndent: 150,
+                                indent: 10,
+                              ):Container(
+                                height: 0,
+                              )
+                            ],
                           );
                         }
                     )
@@ -360,5 +422,11 @@ class _ExpenseTabState extends State<ExpenseTab> {
       ),
     );
   }
+
+  void deleteExpense(budgetId,expenseId){
+
+    Provider.of<DatabaseProvider>(context,listen: false).deleteExpense(budgetId, expenseId);
+  }
+
 }
 

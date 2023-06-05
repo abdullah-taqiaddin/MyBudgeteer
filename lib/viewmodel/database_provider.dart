@@ -195,28 +195,6 @@ class DatabaseProvider extends ChangeNotifier{
     return expensesList;
   }
 
-  //use the "getBudgetByMonth" function to return the all the expenses in that month and year
-  Future<List<Map<String, dynamic>>> getExpensesByMonth(int month, int year) async{
-    List<Map<String, dynamic>> expensesList = [];
-    DateTime startDate = DateTime(year, month, 1);
-    DateTime endDate = DateTime(year, month + 1, 1);
-    //get all budgets from the month
-    var filteredBudgets = await budgetCollection
-        .where('budgetDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate), isLessThan: Timestamp.fromDate(endDate))
-        .get();
-    //loop through each budget and get its expenses
-    for(var budget in filteredBudgets.docs){
-      var expenses = await getBudgetExpense(budget.id).get();
-      for(var expense in expenses.docs){
-        expensesList.add(expense.data());
-      }
-    }
-    return expensesList;
-  }
-
-
-
-
   //add an expense
   Future<void> addExpense(Expense expense) async{
 
@@ -228,18 +206,38 @@ class DatabaseProvider extends ChangeNotifier{
     var docRef =  await budgetCollection.doc(expense.budgetId).collection('Expenses').add(expense.toJson());
     await docRef.update(
         {
-          'id': docRef.id
+          'id': docRef.id,
+          'budgetName': budgetData['name'],
         }
     );
     notifyListeners();
   }
+
+  //get expense by id from expenses collection in a budget
+  Future<DocumentSnapshot<Map<String, dynamic>>> getExpense(String budgetId, String expenseId) async{
+    var expense = await budgetCollection.doc(budgetId).collection('Expenses').doc(expenseId).get();
+    return expense;
+  }
+
   //delete an expense
-  Future<void> deleteExpense(Expense expense) async{
-    await budgetCollection.doc(expense.budgetId).collection('Expenses').doc(expense.id).delete();
+  Future<void> deleteExpense(String budgetId, String expenseId) async{
+    var expense = await getExpense(budgetId, expenseId);
+    var expenseAmount = expense.data()!['amount'];
+    var budget = await budgetCollection.doc(budgetId).get();
+    Map<String, dynamic>? budgetData = budget.data();
+    budgetData!['totalSpent'] = budgetData['totalSpent'] - expenseAmount;
+
+    await budgetCollection.doc(budgetId).update(budgetData);
+    await budgetCollection.doc(budgetId).collection('Expenses').doc(expenseId).delete();
     notifyListeners();
   }
   //update an expense
   Future<void> updateExpense(Expense expense) async{
+    var budget = await budgetCollection.doc(expense.budgetId).get();
+    var budgetData = budget.data();
+
+    budgetData!['totalSpent'] = budgetData['totalSpent'] + expense.amount;
+    await budgetCollection.doc(expense.budgetId).update(budgetData);
     DocumentReference<Map<String, dynamic>> docRef = budgetCollection.doc(expense.budgetId).collection('Expenses').doc(expense.id);
     await docRef.update(expense.toJson());
     notifyListeners();

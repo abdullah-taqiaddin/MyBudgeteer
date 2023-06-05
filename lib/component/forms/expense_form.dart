@@ -263,7 +263,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
   void addExpense(name,amount,date,budgetId){
     Timestamp timestamp = Timestamp.fromDate(date);
-    Expense expense = new Expense(id: "", name: name.text, amount: double.parse(amount.text), expenseDate: timestamp, budgetId: budgetId.toString());
+    Expense expense = new Expense(id: "", name: name.text, amount: double.parse(amount.text), expenseDate: timestamp, budgetId: budgetId.toString() , budgetName: "");
     Provider.of<DatabaseProvider>(context, listen: false).addExpense(expense);
   }
 
