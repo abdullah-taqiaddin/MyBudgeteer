@@ -65,7 +65,6 @@ class DatabaseProvider extends ChangeNotifier{
 
 //doesnt return a stream but a future
   Future<List<Budget>> getBudgetsByMonthFuture(int month, int year) async {
-
     DateTime startDate = DateTime(year, month, 1);
     if(month + 1 > 12){
       month = 1;
@@ -241,6 +240,28 @@ class DatabaseProvider extends ChangeNotifier{
     DocumentReference<Map<String, dynamic>> docRef = budgetCollection.doc(expense.budgetId).collection('Expenses').doc(expense.id);
     await docRef.update(expense.toJson());
     notifyListeners();
+  }
+
+  //------------------utility functions------------------
+
+  Future<double> getAmountPerMonth(int month, int year) async{
+    var budgets = await getBudgetsByMonthFuture(month, year);
+    double amount = 0.0;
+    for(Budget element in budgets){
+      amount += element.amount!;
+    }
+    print(amount);
+    return amount;
+  }
+
+  Future<double> getTotalSpentPerMonth(int month, int year) async{
+    var budgets = await getBudgetsByMonthFuture(month, year);
+    double totalSpent = 0.0;
+    for(Budget element in budgets){
+      totalSpent += element.totalSpent!;
+    }
+    print(totalSpent);
+    return totalSpent;
   }
 
 
