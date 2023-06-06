@@ -63,7 +63,7 @@ class DatabaseProvider extends ChangeNotifier{
 
 
 
-//doesnt return a stream but a future
+  //doesnt return a stream but a future
   Future<List<Budget>> getBudgetsByMonthFuture(int month, int year) async {
     DateTime startDate = DateTime(year, month, 1);
     if(month + 1 > 12){
@@ -81,8 +81,6 @@ class DatabaseProvider extends ChangeNotifier{
   }
 
 
-  //-------------
-
   //get budgets
   CollectionReference<Map<String, dynamic>> getBudgets(){
     return budgetCollection;
@@ -90,7 +88,6 @@ class DatabaseProvider extends ChangeNotifier{
   //make the
 
 
-  //get budgets from a certain month using the month and year of the attribute "budgetDate" from each budget and return as collectionreference so that i can use in the streambuilder
   Stream<QuerySnapshot> getBudgetsByMonth(int month, int year) {
     DateTime startDate = DateTime(year, month, 1);
     DateTime endDate = DateTime(year, month + 1, 1);
@@ -98,8 +95,6 @@ class DatabaseProvider extends ChangeNotifier{
         .where('budgetDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate), isLessThan: Timestamp.fromDate(endDate))
         .snapshots();
   }
-
-  //order the expenses by day then put every expense that occure in a certain day in a list and return a list of lists
 
   //get a budget
   Future<DocumentSnapshot<Map<String, dynamic>>> getBudget(String id) async{
@@ -142,7 +137,7 @@ class DatabaseProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  //----------------------------------------
+  ///----------------------Expense Functions------------------
 
   // CollectionReference<Map<String, dynamic>> get budgetCollection => FirebaseFirestore.instance.collection('users').doc(uid).collection('budgets');
   //get expenses on this month
@@ -242,7 +237,7 @@ class DatabaseProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  //------------------utility functions------------------
+  ///------------------utility functions------------------
 
   Future<double> getAmountPerMonth(int month, int year) async{
     var budgets = await getBudgetsByMonthFuture(month, year);
