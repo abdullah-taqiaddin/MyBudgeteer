@@ -10,7 +10,6 @@ import '../view/budget_page.dart';
 import '../view/login.dart';
 
 import 'package:testapp/viewmodel/localization.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RightDrawer extends StatelessWidget {
   final int selectedIndex;
@@ -33,7 +32,7 @@ class RightDrawer extends StatelessWidget {
           width: 60,
           height: 1000,
           child: Drawer(
-            backgroundColor: Colors.white,
+            backgroundColor: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 150),
               child: ListView(

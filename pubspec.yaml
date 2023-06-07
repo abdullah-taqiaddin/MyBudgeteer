@@ -90,9 +90,11 @@ flutter:
     - assets/images/background.jpg
     - assets/images/PlaceholderLogo.png
     - assets/images/background-cropped.jpg
+    - assets/images/background-cropped-dark.jpg
     - assets/images/background-cropped-2.jpg
     - assets/images/lightmode.png
     - assets/images/nightmode.jpg
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

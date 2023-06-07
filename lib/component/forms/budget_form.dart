@@ -9,7 +9,8 @@ import 'package:testapp/viewmodel/database_provider.dart';
 import 'package:testapp/viewmodel/date_provider.dart';
 
 import 'package:testapp/viewmodel/localization.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../view/budget_page.dart';
 
 //i guess we need to create a flag to distinguish the update from the create
 
@@ -65,6 +66,7 @@ class _BudgetFormState extends State<BudgetForm> {
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
       decoration: BoxDecoration(
+        color: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(50),
           topLeft: Radius.circular(50),
@@ -79,6 +81,7 @@ class _BudgetFormState extends State<BudgetForm> {
               Text(
                 "${translation(context).addNewBudget}",
                 style: TextStyle(
+                  color: isDark?Colors.white:Colors.black,
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
@@ -87,6 +90,7 @@ class _BudgetFormState extends State<BudgetForm> {
               Text(
                 "${translation(context).period}",
                 style: TextStyle(
+                    color: isDark?Colors.white:Colors.black,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
@@ -112,13 +116,14 @@ class _BudgetFormState extends State<BudgetForm> {
               Text(
                 "${translation(context).budgetName}",
                 style: TextStyle(
+                    color: isDark?Colors.white:Colors.black,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
               ),
               SizedBox(height: 10,),
               TextFormField(
-                cursorColor: Colors.black,
+                cursorColor: isDark?Colors.white:Colors.black,
                 cursorHeight: 20,
                 controller: _budgetName,
                 style: TextStyle(color: Colors.black, fontFamily: "K2D"),
@@ -126,20 +131,20 @@ class _BudgetFormState extends State<BudgetForm> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                     borderSide: BorderSide(
-                      color: Colors.grey,
+                      color: isDark?Colors.white:Colors.black,
                       width: 2.0,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                     borderSide: BorderSide(
-                      color: Colors.grey,
+                      color: isDark?Colors.white:Colors.black,
                       width: 2.0,
                     ),
                   ),
                   labelStyle: TextStyle(color: Colors.black),
                   hintText: "${translation(context).enterBudgetName}",
-                  hintStyle: TextStyle(color: Colors.grey),
+                  hintStyle: TextStyle(color: isDark?Colors.grey:Colors.black,),
                 ),
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -152,6 +157,7 @@ class _BudgetFormState extends State<BudgetForm> {
               Text(
                 "${translation(context).amount}",
                 style: TextStyle(
+                    color: isDark?Colors.white:Colors.black,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
@@ -159,25 +165,26 @@ class _BudgetFormState extends State<BudgetForm> {
               SizedBox(height: 10,),
               TextFormField(
                 style: TextStyle(color: Colors.black, fontFamily: "K2D"),
-                cursorColor: Colors.black,
+                cursorColor: isDark?Colors.white:Colors.black,
                 cursorHeight: 20,
                 controller: _amount,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                     borderSide: BorderSide(
-                      color: Colors.grey,
+                      color: isDark?Colors.white:Colors.grey,
                       width: 2.0,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                     borderSide: BorderSide(
-                      color: Colors.grey,
+                      color: isDark?Colors.white:Colors.grey,
                       width: 2.0,
                     ),
                   ),
                   hintText: "${translation(context).amount}",
+                  hintStyle: TextStyle(color: isDark?Colors.grey:Colors.black,),
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
@@ -197,7 +204,7 @@ class _BudgetFormState extends State<BudgetForm> {
                       borderRadius: BorderRadius.circular(15)
                   ),
                   minWidth: 120,
-                  color: Color(0XFFFF6B35),
+                  color: isDark?Color.fromRGBO(159, 79, 248, 1):Color(0XFFFF6B35),
                   elevation: 0,
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {

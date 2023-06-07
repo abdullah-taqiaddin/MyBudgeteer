@@ -1,10 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +17,8 @@ import '../component/forms/budget_form.dart';
 import '../viewmodel/auth_provider.dart';
 
 import 'package:testapp/viewmodel/localization.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../viewmodel/theme_provider.dart';
 
 class BudgetPage extends StatefulWidget {
   const BudgetPage({Key? key}) : super(key: key);
@@ -31,7 +29,7 @@ class BudgetPage extends StatefulWidget {
 
 int TextPrimary = 0XFF145756;
 
-
+bool isDark = false;
 int currentMonthIndex = DateTime.now().month + 1 ;
 String _selectedYear = DateFormat.y().format(DateTime.now()).toString();
 bool doOnce = false;
@@ -63,6 +61,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     Provider
         .of<DatabaseProvider>(context)
         .uid = user!.uid;
+    isDark = Provider.of<ThemeProvider>(context,listen: false).getTheme;
+
 
     TabController _tabController = TabController(length: 2, vsync: this);
 
@@ -99,10 +99,10 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                               begin: Alignment.topLeft,
-                              end: Alignment.topCenter,
+                              end: Alignment.topRight,
                               colors: [
-                                Color.fromRGBO(59, 202, 163, 1),
-                                Color.fromRGBO(34, 165, 162, 1),
+                                isDark?Color.fromRGBO(200, 79, 248, 50):Color.fromRGBO(34, 165, 162, 1),
+                                isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(59, 202, 163, 1),
                               ]),
                           borderRadius: BorderRadius.only(
                             topRight: Radius.circular(50),
@@ -119,7 +119,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                     Material(
                       elevation: 4,
                       shape: CircleBorder(),
-                      color: Color(0XFFFF6B35),
+                      color: isDark?Color.fromRGBO(159, 79, 248, 1):Color(0XFFFF6B35),
                       child: InkWell(
                         onTap: () {
                           showModalBottomSheet(
@@ -174,7 +174,15 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
     return Container(
       alignment: Alignment.centerLeft,
-      decoration: BoxDecoration(color: Color(0XFF2DB79E)),
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.topRight,
+              colors: [
+                isDark?Color.fromRGBO(200, 79, 248, 50):Color.fromRGBO(34, 165, 162, 1),
+                isDark?Color.fromRGBO(159, 79, 248, 25):Color.fromRGBO(59, 202, 163, 1),
+              ]),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -230,9 +238,9 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
               //******** container decoration ********
                 decoration: BoxDecoration(
                     border: Border.all(
-                      color: Colors.grey,
+                      color:isDark?Colors.deepPurple:Colors.grey,
                     ),
-                    color: Colors.white,
+                    color: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(35),
                       topRight: Radius.circular(35),
@@ -246,13 +254,13 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                           border: Border(
                               bottom:
-                              BorderSide(color: Colors.grey, width: 0.8))),
+                              BorderSide(color:Colors.grey, width: 0.8))),
                       child: TabBar(
-                        labelColor: Color(TextPrimary),
+                        labelColor: isDark?Color.fromRGBO(216, 129, 255, 1):Color(TextPrimary),
                         unselectedLabelColor: Colors.grey,
                         indicator: UnderlineTabIndicator(
                           borderSide:
-                          BorderSide(width: 2.0, color: Color(0XFF145756)),
+                          BorderSide(width: 2.0, color: isDark?Color.fromRGBO(216, 129, 255, 1):Color(0XFF145756)),
                           insets: EdgeInsets.symmetric(horizontal: 50.0),
                         ),
                         controller: controller,
@@ -401,8 +409,9 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
   Widget budgetTab(AsyncSnapshot<QuerySnapshot> snapshot) {
 
-    Color firstColor = Color(0xFF34cfb3);
-    Color secondColor = Color(0xFF4B9EB8);
+    Color firstColor = isDark?Color.fromRGBO(200, 70, 200, 1):Color(0xFF34cfb3);
+    Color secondColor = isDark?Colors.deepPurple:Color(0xFF4B9EB8);
+    Color condition = isDark?Color.fromRGBO(200, 70, 200, 1):Color(0xFF34cfb3);
     int rowFinished = 0;
 
     List<QueryDocumentSnapshot<Object?>> budgets;
@@ -453,13 +462,13 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
               rowFinished = index % 2 == 0 ? 1 : 0;
               //need to check the values of the colors, if they right we need to flip, if flipped return to normal
               if (rowFinished == 1) {
-                if (firstColor == Color(0xFF34cfb3)) {
+                if (firstColor == condition) {
                   //the colors arent flipped, so we flip them
                   firstColor = secondColor;
-                  secondColor = Color(0xFF34cfb3);
+                  secondColor = isDark?Color.fromRGBO(200, 70, 200, 1):Color(0xFF34cfb3);
                 } else {
-                  firstColor = Color(0xFF34cfb3);
-                  secondColor = Color(0xFF4B9EB8);
+                  firstColor = isDark?Color.fromRGBO(200, 70, 200, 1):Color(0xFF34cfb3);
+                  secondColor = isDark?Colors.deepPurple:Color(0xFF4B9EB8);
                 }
               }
               Budget passed = Budget.fromJson(budgets.elementAt(index).data() as Map<String, dynamic>);
@@ -503,8 +512,8 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("${translation(context).remaining}", style: TextStyle(fontFamily: "K2D", fontSize: 22, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
-                    Text("${snapshot.data![0]} \$", style: TextStyle(fontFamily: "K2D", fontSize: 50, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
+                    Text("${translation(context).remaining}", style: TextStyle(fontFamily: "K2D", fontSize: 22, color: isDark?Colors.white:Color(0XFF145756), fontWeight: FontWeight.bold),),
+                    Text("${snapshot.data![0]} \$", style: TextStyle(fontFamily: "K2D", fontSize: 50, color: isDark?Colors.white:Color(0XFF145756), fontWeight: FontWeight.bold),),
                   ],
                 ),
 
@@ -513,19 +522,19 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         children: [
               Column(
                   children: [
-                  Text("${translation(context).spent}", style: TextStyle(fontFamily: "K2D", fontSize: 18, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
-                  Text("\-${snapshot.data![2]} \$", style: TextStyle(fontFamily: "K2D", fontSize: 16, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
+                  Text("${translation(context).spent}", style: TextStyle(fontFamily: "K2D", fontSize: 18, color: isDark?Colors.white:Color(0XFF145756), fontWeight: FontWeight.bold),),
+                  Text("\-${snapshot.data![2]} \$", style: TextStyle(fontFamily: "K2D", fontSize: 16, color: isDark?Colors.white:Color(0XFF145756), fontWeight: FontWeight.bold),),
                 ]
               ),
               SizedBox(height: 10,),
                   Column(children: [
-                    Text("${translation(context).total}", style: TextStyle(fontFamily: "K2D", fontSize: 18, color: Color(0XFF145756), fontWeight: FontWeight.bold),),
+                    Text("${translation(context).total}", style: TextStyle(fontFamily: "K2D", fontSize: 18, color: isDark?Colors.white:Color(0XFF145756), fontWeight: FontWeight.bold),),
                     Text(
                       "\+${snapshot.data![1]} \$",
                       style: TextStyle(
                           fontFamily: "K2D",
                           fontSize: 16,
-                          color: Color(0XFF145756),
+                          color: isDark?Colors.white:Color(0XFF145756),
                           fontWeight: FontWeight.bold),
                     )
                   ])
@@ -547,7 +556,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           width: 170,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: Color.fromRGBO(123, 203, 201, 1),
+            color: isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -610,7 +619,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                 width: 120,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    color: Color.fromRGBO(123, 203, 201, 1)),
+                    color: isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -667,8 +676,13 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           Positioned(
               top: 100.0,
               child: Text(
-                "No Budgets?\nAdd up!", style: TextStyle(fontSize: 40.0,
-                fontFamily: "K2D",),)
+                "No Budgets?\nAdd up!",
+                style: TextStyle(
+                  fontSize: 40.0,
+                  fontFamily: "K2D",
+                  color: isDark?Colors.white:Colors.black
+                ),
+              )
           )
         ]
     );

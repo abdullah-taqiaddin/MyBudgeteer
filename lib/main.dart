@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,9 +11,11 @@ import 'package:testapp/viewmodel/auth_provider.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:testapp/viewmodel/date_provider.dart';
 import 'package:testapp/viewmodel/expense_date_provider.dart';
+import 'package:testapp/viewmodel/theme_provider.dart';
+import 'package:testapp/viewmodel/language_provider.dart';
+
 
 final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
@@ -32,7 +33,10 @@ void main() async{
       ,ChangeNotifierProvider(create: (_) => DatabaseProvider())
       ,ChangeNotifierProvider(create: (_) => DateProvider())
       ,ChangeNotifierProvider(create: (_) => ExpenseDateProvider())
+      ,ChangeNotifierProvider(create: (_) => ThemeProvider())
+      ,ChangeNotifierProvider(create: (_) => LanguageProvider())
     ]
+
       ,child: MyApp(ref: prefs,),)
   );
 
@@ -48,6 +52,11 @@ class MyApp extends StatefulWidget {
   static void setLocale(BuildContext context, Locale newLocale) {
     _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
     state?.setLocale(newLocale);
+  }
+
+  static void setTheme(BuildContext context, bool themeValue) {
+    _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+    state?.setTheme(themeValue);
   }
 }
 
@@ -68,7 +77,11 @@ class _MyAppState extends State<MyApp> {
        _locale = locale;
     });
   }
-
+  setTheme(bool isDark) {
+    setState(() {
+      Provider.of<ThemeProvider>(context, listen: false).setTheme(isDark);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     Widget routeWidget = checkUser();

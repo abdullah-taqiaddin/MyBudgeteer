@@ -41,6 +41,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
+  charts_common:
+    dependency: transitive
+    description:
+      name: charts_common
+      sha256: "7b8922f9b0d9b134122756a787dab1c3946ae4f3fc5022ff323ba0014998ea02"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.12.0"
+  charts_flutter:
+    dependency: "direct main"
+    description:
+      name: charts_flutter
+      sha256: "4172c3f4b85322fdffe1896ffbed79ae4689ae72cb6fe6690dcaaea620a9c558"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.12.0"
   clock:
     dependency: transitive
     description:
@@ -81,6 +97,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.17.0"
+  community_charts_common:
+    dependency: transitive
+    description:
+      name: community_charts_common
+      sha256: bcda2831d8c3225036102dff007e2a901a2fdfcbba604e10c78db3fe5d9362a5
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+  community_charts_flutter:
+    dependency: transitive
+    description:
+      name: community_charts_flutter
+      sha256: "2294cba46b67659109b665f2d9ffeffef93bb1540a5e7a7bcf2630b809a9363e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   convert:
     dependency: transitive
     description:
@@ -105,6 +137,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  curved_navigation_bar:
+    dependency: "direct main"
+    description:
+      name: curved_navigation_bar
+      sha256: ea6412d00c5d83501bbf1cf9d1ac2ff11a20fbaf910c103c95ace7de82910334
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.3"
+  d_chart:
+    dependency: "direct main"
+    description:
+      name: d_chart
+      sha256: da1e1155dcd5082690890a276da38b36f74bdd834082a0aa7f3159532d691e0c
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.11"
+  decimal:
+    dependency: transitive
+    description:
+      name: decimal
+      sha256: eece91944f523657c75a3a008a90ec7f7eb3986191153a78570c7d0ac8ef3d01
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.2"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: c2b87cb7756efdf69892005af546c56c0b5037f54d2a88269b4f347a505e3ca2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5"
   fake_async:
     dependency: transitive
     description:
@@ -201,11 +265,27 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+9"
+  fl_chart:
+    dependency: "direct main"
+    description:
+      name: fl_chart
+      sha256: "48a1b69be9544e2b03d9a8e843affd89e43f3194c9248776222efcb4206bb1ec"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.62.0"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_charts:
+    dependency: "direct main"
+    description:
+      name: flutter_charts
+      sha256: b5d60dcd3d10e2d6f3beeb1339d1e382a2abeb76e8bf8c764111606fc44b48af
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.1"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -325,6 +405,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  logger:
+    dependency: transitive
+    description:
+      name: logger
+      sha256: "7ad7215c15420a102ec687bb320a7312afd449bac63bfb1c60d9787c27b9767f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
+  logging:
+    dependency: transitive
+    description:
+      name: logging
+      sha256: "623a88c9594aa774443aa3eb2d41807a48486b5613e67599fb4c41c0ad47c340"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   lottie:
     dependency: "direct main"
     description:
@@ -429,6 +525,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.3"
+  pie_chart:
+    dependency: "direct main"
+    description:
+      name: pie_chart
+      sha256: "5dba6d0eb4718e8ed00a9079361cd8947c3f84ac5a5d76f05a27f4ec5e27589e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.3.2"
   platform:
     dependency: transitive
     description:
@@ -477,6 +581,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
+  rational:
+    dependency: transitive
+    description:
+      name: rational
+      sha256: ba58e9e18df9abde280e8b10051e4bce85091e41e8e7e411b6cde2e738d357cf
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.2"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -554,6 +666,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.0"
+  stacked_chart:
+    dependency: "direct main"
+    description:
+      name: stacked_chart
+      sha256: "5d8ec8f4c2586d9f3e60a9b0bb13e69b32e57d553b34682022ed8d35a9d410ee"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6"
   stream_channel:
     dependency: transitive
     description:
@@ -602,6 +722,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.16"
+  tuple:
+    dependency: transitive
+    description:
+      name: tuple
+      sha256: "0ea99cd2f9352b2586583ab2ce6489d1f95a5f6de6fb9492faaf97ae2060f0aa"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   typed_data:
     dependency: transitive
     description:

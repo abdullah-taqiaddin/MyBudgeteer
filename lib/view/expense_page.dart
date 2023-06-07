@@ -1,19 +1,14 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
-import 'package:testapp/model/budget.dart';
-import 'package:testapp/model/expense.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
-import 'package:testapp/viewmodel/date_provider.dart';
 import 'package:testapp/viewmodel/expense_date_provider.dart';
 
-import 'package:testapp/viewmodel/localization.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'budget_page.dart';
 
 class ExpenseTab extends StatefulWidget {
   const ExpenseTab({Key? key}) : super(key: key);
@@ -86,7 +81,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
                       width: 170,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
-                        color: Color.fromRGBO(123, 203, 201, 1),
+                        color: isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1),
                       ),
                       child: GestureDetector(
                         child: Row(
@@ -145,7 +140,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
                           width: 120,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
-                              color: Color.fromRGBO(123, 203, 201, 1)),
+                              color: isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1)),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

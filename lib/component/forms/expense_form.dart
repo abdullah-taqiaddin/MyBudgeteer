@@ -3,16 +3,15 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/model/budget.dart';
 import 'package:testapp/model/expense.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
-import 'package:testapp/viewmodel/date_provider.dart';
 import 'package:testapp/viewmodel/expense_date_provider.dart';
 
 import 'package:testapp/viewmodel/localization.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../view/budget_page.dart';
 
 class ExpenseForm extends StatefulWidget {
 
@@ -55,7 +54,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
       height: MediaQuery.of(context).size.height* 0.6,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
+        color: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(50),
           topLeft: Radius.circular(50),
@@ -70,6 +70,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               Text(
                 "${translation(context).addNewExpense}",
                 style: TextStyle(
+                    color: isDark?Colors.white:Colors.black,
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
@@ -79,6 +80,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               Text(
                 "${translation(context).budget}",
                 style: TextStyle(
+                    color: isDark?Colors.white:Colors.black,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
@@ -97,14 +99,14 @@ class _ExpenseFormState extends State<ExpenseForm> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(50),
                         borderSide: BorderSide(
-                          color: Colors.grey,
+                          color: isDark?Colors.white60:Colors.grey,
                           width: 2.0,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(50),
                         borderSide: BorderSide(
-                          color: Colors.grey,
+                          color: isDark?Colors.white60:Colors.grey,
                           width: 2.0,
                         ),
                       ),
@@ -115,6 +117,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                         child: Text(
                           document['name'],
                           style: TextStyle(
+                              color: isDark?Colors.black:Colors.black,
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                               fontFamily: "K2D"),
@@ -129,15 +132,18 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   );
                 },
               ),
+              SizedBox(height: 10,),
               Text(
                 "${translation(context).day}",
                 style: TextStyle(
+                    color: isDark?Colors.white:Colors.black,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
               ),
               IconButton(
                 icon: Icon(Icons.calendar_today),
+                color: isDark?Colors.white:Colors.black,
                 onPressed: () async{
                   selectedDate = (await showDatePicker(
                     context: context,
@@ -151,13 +157,14 @@ class _ExpenseFormState extends State<ExpenseForm> {
               Text(
                 "${translation(context).expenseName}",
                 style: TextStyle(
+                    color: isDark?Colors.white:Colors.black,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
               ),
               SizedBox(height: 10,),
               TextFormField(
-                cursorColor: Colors.black,
+                cursorColor: isDark?Colors.white:Colors.black,
                 cursorHeight: 20,
                 controller: _expenseName,
                 style: TextStyle(color: Colors.black, fontFamily: "K2D"),
@@ -165,20 +172,20 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                     borderSide: BorderSide(
-                      color: Colors.grey,
+                      color: isDark?Colors.white60:Colors.grey,
                       width: 2.0,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                     borderSide: BorderSide(
-                      color: Colors.grey,
+                      color: isDark?Colors.white60:Colors.grey,
                       width: 2.0,
                     ),
                   ),
-                  labelStyle: TextStyle(color: Colors.black),
+                  labelStyle: TextStyle(color: isDark?Colors.white:Colors.black),
                   hintText: "${translation(context).enterExpenseName}",
-                  hintStyle: TextStyle(color: Colors.grey),
+                  hintStyle: TextStyle(color: isDark?Colors.white60:Colors.grey,),
                 ),
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -191,32 +198,36 @@ class _ExpenseFormState extends State<ExpenseForm> {
               Text(
                 "${translation(context).amount}",
                 style: TextStyle(
+                    color: isDark?Colors.white:Colors.black,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
               ),
               SizedBox(height: 10,),
               TextFormField(
-                style: TextStyle(color: Colors.black, fontFamily: "K2D"),
-                cursorColor: Colors.black,
+                style: TextStyle(color: isDark?Colors.white:Colors.black, fontFamily: "K2D"),
+                cursorColor: isDark?Colors.white:Colors.black,
                 cursorHeight: 20,
                 controller: _amount,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                     borderSide: BorderSide(
-                      color: Colors.grey,
+                      color: isDark?Colors.white60:Colors.grey,
                       width: 2.0,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                     borderSide: BorderSide(
-                      color: Colors.grey,
+                      color: isDark?Colors.white60:Colors.grey,
                       width: 2.0,
                     ),
                   ),
                   hintText: "${translation(context).amount}",
+                  hintStyle: TextStyle(
+                    color: isDark?Colors.white60:Colors.grey,
+                  )
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
@@ -236,7 +247,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                       borderRadius: BorderRadius.circular(15)
                   ),
                   minWidth: 120,
-                  color: Color(0XFFFF6B35),
+                  color: isDark?Color.fromRGBO(159, 79, 248, 1):Color(0XFFFF6B35),
                   elevation: 0,
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {

@@ -1,12 +1,13 @@
 // ignore_for_file: prefer_final_fields, prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:testapp/component/right_drawer.dart';
+import 'package:provider/provider.dart';
 import 'package:testapp/view/budget_page.dart';
 import 'package:testapp/main.dart';
+import 'package:testapp/viewmodel/language_provider.dart';
 
 import 'package:testapp/viewmodel/localization.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:testapp/viewmodel/theme_provider.dart';
 
 
 class settingspage extends StatefulWidget {
@@ -22,7 +23,7 @@ class _settingspageState extends State<settingspage> {
 
   // list of currenvies
   String _selectedCurrency = "JD (JOD)";
-  String _selectedLanguage = "EN";
+  String _selectedLanguage = "en";
 
 
   List<String> _languages = [
@@ -62,6 +63,9 @@ class _settingspageState extends State<settingspage> {
 
   @override
   Widget build(BuildContext context) {
+    isDarkModeEnabled = Provider.of<ThemeProvider>(context).isDark;
+    _selectedLanguage = Provider.of<LanguageProvider>(context).language;
+
     return Scaffold(
       body: SettingsPage(),
     );
@@ -71,8 +75,8 @@ class _settingspageState extends State<settingspage> {
     return Container(
       width: double.maxFinite,
       decoration: BoxDecoration(
-        color: Colors.white,
-        image: DecorationImage(image: AssetImage("assets/images/background-cropped.jpg"),fit: BoxFit.fill,opacity: 0.5)
+        color: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
+        image: DecorationImage(image: isDark?AssetImage("assets/images/background-cropped-dark.jpg"):AssetImage("assets/images/background-cropped.jpg"),fit: BoxFit.fill,opacity: 0.3)
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -87,6 +91,7 @@ class _settingspageState extends State<settingspage> {
                 icon: Icon(
                   Icons.arrow_back,
                   size: 40,
+                  color: isDark?Colors.white:Colors.black,
                 )),
           ),
           //SizedBox(height: 10,),
@@ -98,6 +103,7 @@ class _settingspageState extends State<settingspage> {
                 Text(
                   "${translation(context).settings}",
                   style: TextStyle(
+                      color: isDark?Colors.white:Colors.black,
                       fontSize: 50,
                       fontFamily: 'K2D',
                       fontWeight: FontWeight.bold),
@@ -110,7 +116,11 @@ class _settingspageState extends State<settingspage> {
                   children: [
                     Text(
                       "${translation(context).userPreferences}",
-                      style: TextStyle(fontSize: 20, fontFamily: 'K2D'),
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'K2D',
+                          color: isDark?Colors.white:Colors.black,
+                      ),
                     ),
                     SizedBox(
                       height: 20,
@@ -119,7 +129,7 @@ class _settingspageState extends State<settingspage> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
 
-                        color: Colors.white,
+                        color: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
                       ),
                       width: 300,
                       height: 270,
@@ -127,10 +137,12 @@ class _settingspageState extends State<settingspage> {
                         children: [
                           SizedBox(height: 20,),
                           ListTile(
-                            leading: Icon(Icons.attach_money, size: 30),
+                            leading: Icon(Icons.attach_money, size: 30, color: isDark?Colors.white:Colors.blueGrey,),
                             title: Text('${translation(context).currency}',style: TextStyle(
                                 fontSize: 20,
-                                fontFamily: 'K2D',)),
+                                fontFamily: 'K2D',
+                                color: isDark?Colors.white:Colors.black,
+                            )),
                             trailing: Padding(
                               padding: const EdgeInsets.only(top: 5),
                               child: Row(
@@ -138,7 +150,7 @@ class _settingspageState extends State<settingspage> {
                                   children: [
                                     Text('${_selectedCurrency}', style: TextStyle(fontSize: 15,color: Colors.grey)), // Placeholder for selected value
                                     SizedBox(width: 10,),
-                                    Icon(Icons.arrow_forward_ios,size: 20,),
+                                    Icon(Icons.arrow_forward_ios,size: 20,color: isDark?Colors.white:Colors.black,),
                                   ]),
                             ),
 
@@ -153,6 +165,7 @@ class _settingspageState extends State<settingspage> {
                                 ),
                                 builder: (BuildContext context) {
                                   return Container(
+                                    color: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
                                     height: 400,
                                     padding: EdgeInsets.symmetric(vertical: 16),
                                     child: ListView.builder(
@@ -168,12 +181,14 @@ class _settingspageState extends State<settingspage> {
                                               currencyCode,
                                               style: TextStyle(
                                                 fontSize: 22,
+                                                color: isDark?Colors.white:Colors.black,
                                               ),
                                             ),
                                             subtitle: Text(
                                               currencyName,
                                               style: TextStyle(
                                                 fontSize: 18,
+                                                color: isDark?Colors.white:Colors.black,
                                               ),
                                             ),
                                             trailing: _selectedCurrency == currencyCode
@@ -198,10 +213,12 @@ class _settingspageState extends State<settingspage> {
                             height: 10,thickness: 1,indent: 30,endIndent: 30,
                           ),
                           ListTile(
-                            leading: Icon(Icons.language, size: 30),
+                            leading: Icon(Icons.language, size: 30,color: isDark?Colors.white:Colors.blueGrey,),
                             title: Text('${translation(context).language}',style: TextStyle(
                               fontSize: 20,
-                              fontFamily: 'K2D',)),
+                              fontFamily: 'K2D',
+                              color: isDark?Colors.white:Colors.black,
+                            )),
                             trailing: Padding(
                               padding: const EdgeInsets.only(top: 5),
                               child: Row(
@@ -209,7 +226,7 @@ class _settingspageState extends State<settingspage> {
                                   children: [
                                     Text('${_selectedLanguage.toUpperCase()}', style: TextStyle(fontSize: 15,color: Colors.grey)), // Placeholder for selected value
                                     SizedBox(width: 10,),
-                                    Icon(Icons.arrow_forward_ios,size: 20,),
+                                    Icon(Icons.arrow_forward_ios,size: 20,color: isDark?Colors.white:Colors.black,),
                                   ]),
                             ),
                             onTap: () {
@@ -222,6 +239,7 @@ class _settingspageState extends State<settingspage> {
                                 ),
                                 builder: (BuildContext context) {
                                   return Container(
+                                    color: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
                                     height: 400,
                                     padding: EdgeInsets.symmetric(vertical: 16),
                                     child: ListView.builder(
@@ -237,11 +255,13 @@ class _settingspageState extends State<settingspage> {
                                               languageCode.toUpperCase(),
                                               style: TextStyle(
                                                 fontSize: 22,
+                                                color: isDark?Colors.white:Colors.black,
                                               ),
                                             ),
                                             subtitle: Text(
                                               languageName,
                                               style: TextStyle(
+                                                color: isDark?Colors.white:Colors.black,
                                                 fontSize: 18,
                                               ),
                                             ),
@@ -252,6 +272,7 @@ class _settingspageState extends State<settingspage> {
                                               setState(() {
                                                 _selectedLanguage = languageCode;
                                                 if(_selectedLanguage != null){
+                                                  Provider.of<LanguageProvider>(context, listen: false).setLanguage(_selectedLanguage);
                                                   MyApp.setLocale(context, Locale(_selectedLanguage));
                                                 }
                                               });
@@ -271,15 +292,18 @@ class _settingspageState extends State<settingspage> {
                             height: 10,thickness: 1,indent: 30,endIndent: 30,
                           ),
                       ListTile(
-                        leading: Icon(Icons.dark_mode_sharp, size: 30),
+                        leading: Icon(Icons.dark_mode_sharp, size: 30, color: isDark?Colors.white:Colors.blueGrey,),
                         title: Text('${translation(context).darkMode}',style: TextStyle(
+                          color: isDark?Colors.white:Colors.black,
                           fontSize: 20,
                           fontFamily: 'K2D',)),
                         trailing: Switch(
                           value: isDarkModeEnabled,
                           onChanged: (bool value) {
                             setState(() {
-                              isDarkModeEnabled = value;
+                              isDarkModeEnabled = !isDarkModeEnabled;
+                              Provider.of<ThemeProvider>(context, listen: false).setTheme(isDarkModeEnabled);
+                              MyApp.setTheme(context, isDarkModeEnabled);
                             });
                           },
                         ),
