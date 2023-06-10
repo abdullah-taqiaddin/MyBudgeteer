@@ -8,6 +8,7 @@ import 'package:testapp/view/budget_page.dart';
 import 'package:testapp/view/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:testapp/viewmodel/auth_provider.dart';
+import 'package:testapp/viewmodel/currency_provider.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -35,6 +36,7 @@ void main() async{
       ,ChangeNotifierProvider(create: (_) => ExpenseDateProvider())
       ,ChangeNotifierProvider(create: (_) => ThemeProvider())
       ,ChangeNotifierProvider(create: (_) => LanguageProvider())
+      ,ChangeNotifierProvider(create: (_) => CurrencyProvider())
     ]
 
       ,child: MyApp(ref: prefs,),)
@@ -57,6 +59,11 @@ class MyApp extends StatefulWidget {
   static void setTheme(BuildContext context, bool themeValue) {
     _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
     state?.setTheme(themeValue);
+  }
+
+  static void setCurrency(BuildContext context, String currencyValue) {
+    _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+    state?.setCurrency(currencyValue);
   }
 }
 
@@ -82,6 +89,13 @@ class _MyAppState extends State<MyApp> {
       Provider.of<ThemeProvider>(context, listen: false).setTheme(isDark);
     });
   }
+
+  setCurrency(String currency) {
+    setState(() {
+      Provider.of<CurrencyProvider>(context, listen: false).setCurrency(currency);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget routeWidget = checkUser();

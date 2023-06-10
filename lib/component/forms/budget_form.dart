@@ -144,7 +144,7 @@ class _BudgetFormState extends State<BudgetForm> {
                   ),
                   labelStyle: TextStyle(color: Colors.black),
                   hintText: "${translation(context).enterBudgetName}",
-                  hintStyle: TextStyle(color: isDark?Colors.grey:Colors.black,),
+                  hintStyle: TextStyle(color: isDark?Colors.white60:Colors.grey,),
                 ),
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -184,7 +184,7 @@ class _BudgetFormState extends State<BudgetForm> {
                     ),
                   ),
                   hintText: "${translation(context).amount}",
-                  hintStyle: TextStyle(color: isDark?Colors.grey:Colors.black,),
+                  hintStyle: TextStyle(color: isDark?Colors.white60:Colors.grey,),
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {

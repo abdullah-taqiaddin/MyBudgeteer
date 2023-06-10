@@ -99,11 +99,11 @@ class RightDrawer extends StatelessWidget {
                               return AlertDialog(
                                 alignment: Alignment.center,
                                 elevation: 250,
-                                backgroundColor: Colors.white,
+                                backgroundColor: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
                                 title: Text(
                                   '${translation(context).logout}',
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: isDark?Colors.white:Colors.black,
                                     fontFamily: "K2D",
                                     fontSize: 25,
                                     fontWeight: FontWeight.bold,
@@ -115,7 +115,7 @@ class RightDrawer extends StatelessWidget {
                                   child: Text(
                                     '${translation(context).logoutConfirmation}',
                                     style: TextStyle(
-                                      color: Color(0XFF145756),
+                                      color: isDark?Colors.white:Color(0XFF145756),
                                       fontFamily: "K2D",
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -131,7 +131,7 @@ class RightDrawer extends StatelessWidget {
                                           width: 130,
                                           height: 50,
                                           decoration: BoxDecoration(
-                                            color: Color.fromRGBO(255, 107, 53, 1),
+                                            color: isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(255, 107, 53, 1),
                                             borderRadius: BorderRadius.all(Radius.circular(5)),
                                           ),
                                           child: TextButton(

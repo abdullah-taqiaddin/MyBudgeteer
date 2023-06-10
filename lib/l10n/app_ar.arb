@@ -34,7 +34,8 @@
   "no": "لا",
   "outOf": "من أصل",
   "logout": "تسجيل الخروج",
-  "logoutConfirmation": "هل متأكد أنك تريد تسجيل الخروج؟"
+  "logoutConfirmation": "هل متأكد أنك تريد تسجيل الخروج؟",
+  "budgetDeleteMessage": " سيتم حذفها, هل انت موافق؟"
 
 
 

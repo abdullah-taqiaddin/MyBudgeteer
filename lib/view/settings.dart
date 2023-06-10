@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/view/budget_page.dart';
 import 'package:testapp/main.dart';
+import 'package:testapp/viewmodel/currency_provider.dart';
 import 'package:testapp/viewmodel/language_provider.dart';
 
 import 'package:testapp/viewmodel/localization.dart';
@@ -148,7 +149,7 @@ class _settingspageState extends State<settingspage> {
                               child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text('${_selectedCurrency}', style: TextStyle(fontSize: 15,color: Colors.grey)), // Placeholder for selected value
+                                    Text('${Provider.of<CurrencyProvider>(context).currency}', style: TextStyle(fontSize: 15,color: Colors.grey)), // Placeholder for selected value
                                     SizedBox(width: 10,),
                                     Icon(Icons.arrow_forward_ios,size: 20,color: isDark?Colors.white:Colors.black,),
                                   ]),
@@ -191,12 +192,15 @@ class _settingspageState extends State<settingspage> {
                                                 color: isDark?Colors.white:Colors.black,
                                               ),
                                             ),
-                                            trailing: _selectedCurrency == currencyCode
+                                            trailing: Provider.of<CurrencyProvider>(context).currency == currencyCode
                                                 ? Icon(Icons.check, color: Colors.green)
                                                 : null,
                                             onTap: () {
                                               setState(() {
                                                 _selectedCurrency = currencyCode;
+                                                print(_selectedCurrency);
+                                                Provider.of<CurrencyProvider>(context, listen: false).setCurrency(_selectedCurrency);
+                                                MyApp.setCurrency(context, _selectedCurrency);
                                               });
                                               Navigator.pop(context);
                                             },
