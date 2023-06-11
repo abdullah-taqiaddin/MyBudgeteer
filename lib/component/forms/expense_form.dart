@@ -3,6 +3,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/model/budget.dart';
 import 'package:testapp/model/expense.dart';
@@ -49,9 +50,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
   Widget build(BuildContext context) {
 
 
-    print("current month index: ${Provider.of<ExpenseDateProvider>(context).month}");
     return Container(
-      height: MediaQuery.of(context).size.height* 0.6,
+      height: MediaQuery.of(context).size.height* 0.71,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
       decoration: BoxDecoration(
@@ -93,8 +93,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     return const Text("Loading...");
                   }
 
-                  print("current month index from provider: ${Provider.of<ExpenseDateProvider>(context).month}");
-                  return DropdownButtonFormField(
+                   return DropdownButtonFormField(
 
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -142,21 +141,49 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     fontWeight: FontWeight.bold,
                     fontFamily: "K2D"),
               ),
-              IconButton(
-                icon: Icon(Icons.calendar_today),
-                color: isDark?Colors.white:Colors.black,
-                onPressed: () async{
-                  int month =Provider.of<ExpenseDateProvider>(context,listen: false).month + 1;
-                  selectedDate = (await showDatePicker(
-                    context: context,
-                    //the initailDate should be the date of the selected budget
-                    //Provider.of<ExpenseDateProvider>(context).month
-                    initialDate: DateTime.utc(2023,month, 1),
-                    firstDate: DateTime(DateTime.now().year, month, 1),
-                      lastDate: DateTime.utc(2023,month, 1),
-                  ))!;
-                }
-                ,),
+
+              SizedBox(height: 10),
+              Container(
+                //add decoration to the container border radius of 15 and its color is black
+                //add outline color to the container
+
+                decoration: BoxDecoration(
+
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(
+                    color: isDark?Colors.white60:Colors.grey,
+                    width: 1.0,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.calendar_today),
+                      color: isDark?Colors.white:Colors.black,
+                      onPressed: () async{
+                        int month =Provider.of<ExpenseDateProvider>(context,listen: false).month + 1;
+                        DateTime? selection = (await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.utc(2023,month, 1),
+                          firstDate: DateTime(DateTime.now().year, month, 1),
+                            lastDate: DateTime(DateTime.now().year,month + 1, 0),
+                        ))!;
+                        if(selection == null) return;
+                          setState(() {
+                            selectedDate = selection;
+                          });
+                      }
+                      ,),
+                    Text("${DateFormat('dd/MM/yyyy').format(selectedDate)}",
+                      style: TextStyle(
+                          color: isDark?Colors.white:Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "K2D"),),
+                  ],
+                ),
+              ),
+
               SizedBox(height: 10),
               Text(
                 "${translation(context).expenseName}",

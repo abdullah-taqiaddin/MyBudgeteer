@@ -59,69 +59,53 @@ class _ExpenseTabState extends State<ExpenseTab> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Listener(
-                    onPointerMove: (PointerMoveEvent event) {
-                      final dx = event.delta.dx;
-                      if (dx > 0) {
-                        currentMonthIndex = (currentMonthIndex - 1) % 12;
-                        Provider.of<ExpenseDateProvider>(context, listen: false)
-                            .setMonth(currentMonthIndex);
-
-                      } else if (dx < 0) {
-                        currentMonthIndex = (currentMonthIndex + 1) % 12;
-                        Provider.of<ExpenseDateProvider>(context, listen: false)
-                            .setMonth(currentMonthIndex);
-
-                      }
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 170,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1),
-                      ),
-                      child: GestureDetector(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                currentMonthIndex = (currentMonthIndex - 1) % 11;
+                  Container(
+                    height: 40,
+                    width: 170,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1),
+                    ),
+                    child: GestureDetector(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              currentMonthIndex = (currentMonthIndex - 1) % 11;
+                              Provider.of<ExpenseDateProvider>(context,listen: false).setMonth(currentMonthIndex);
+                            },
+                            child: Icon(
+                              Icons.chevron_left,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
+                          Center(
+                            child: Text(
+                              DateFormat.MMMM()
+                                  .format(DateTime(DateTime.now().year, currentMonthIndex + 1, 1))
+                                  .toString(),
+                              style: TextStyle(
+                                fontFamily: "K2D",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                                currentMonthIndex = (currentMonthIndex + 1) % 11;
                                 Provider.of<ExpenseDateProvider>(context,listen: false).setMonth(currentMonthIndex);
-                              },
-                              child: Icon(
-                                Icons.chevron_left,
-                                color: Colors.white,
-                                size: 30,
-                              ),
+                            },
+                            child: Icon(
+                              Icons.chevron_right,
+                              color: Colors.white,
+                              size: 30,
                             ),
-                            Center(
-                              child: Text(
-                                DateFormat.MMMM()
-                                    .format(DateTime(DateTime.now().year, currentMonthIndex + 1))
-                                    .toString(),
-                                style: TextStyle(
-                                  fontFamily: "K2D",
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                  currentMonthIndex = (currentMonthIndex + 1) % 11;
-                                  Provider.of<ExpenseDateProvider>(context,listen: false).setMonth(currentMonthIndex);
-                              },
-                              child: Icon(
-                                Icons.chevron_right,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -220,7 +204,6 @@ class _ExpenseTabState extends State<ExpenseTab> {
                     var expenseList = [];
                     expenseList = snapshot.data![key]!.toList();
 
-                    print(keys);
                     //calculate the total amount of that day
                     for (int i = 0; i < expenseList.length; i++) {
                       totalAmount += expenseList[i]['amount'];
@@ -260,8 +243,10 @@ class _ExpenseTabState extends State<ExpenseTab> {
     );
   }
 
+
   Widget buildExpenseExpansionTile(DateTime dateTime, String total, var expenseList) {
-    print(expenseList);
+    dateTime = DateTime(dateTime.year, dateTime.month - 1, dateTime.day);
+
     var primary = TextStyle(
       fontFamily: "K2D",
       fontWeight: FontWeight.bold,
@@ -276,10 +261,8 @@ class _ExpenseTabState extends State<ExpenseTab> {
     );
     return Container(
       width: 500,
-
       decoration: BoxDecoration(
         color: Color(0xFF34cfb3),
-
         borderRadius: BorderRadius.circular(20),
       ),
       padding: EdgeInsets.all(10),

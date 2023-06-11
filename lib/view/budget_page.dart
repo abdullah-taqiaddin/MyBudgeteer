@@ -425,12 +425,9 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
     budgets = snapshot.hasData ? snapshot.data!.docs : [];
 
-
-    print("budgets: $budgets");
     if(budgets.isNotEmpty){
       hasData = true;
     }
-    print(hasData);
     return
       Column(
       children: [
@@ -476,7 +473,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                 }
               }
               Budget passed = Budget.fromJson(budgets.elementAt(index).data() as Map<String, dynamic>);
-              print(passed);
               //now we need to check if the item is first or second in the row
               return buildBudgetCard(
                   index % 2 != 0 ? firstColor : secondColor,
