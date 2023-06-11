@@ -151,6 +151,9 @@ class DatabaseProvider extends ChangeNotifier{
   Future<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>> getExpensesByDate(int month) async {
     Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>> dateGroupedCollection = {};
 
+    print("input month: $month");
+
+
     var budgets = await getBudgetsByMonthFuture(month, DateTime.now().year);
 
     print(budgets);
@@ -167,6 +170,7 @@ class DatabaseProvider extends ChangeNotifier{
     }
 
     //return a map of date and list of expenses
+    print(dateGroupedCollection);
     return dateGroupedCollection;
   }
 
@@ -259,5 +263,28 @@ class DatabaseProvider extends ChangeNotifier{
     return totalSpent;
   }
 
+  //get the heights totalSpent value of the year
+  Future<double> getTotalSpentPerYear(int year) async{
+    double totalSpent = 0.0;
+    for(int i = 0; i < 12; i++){
+      totalSpent = await getTotalSpentPerMonth(i, year);
+    }
+    return totalSpent;
+  }
+
+  //get the total amount of the year
+  Future<double> getAmountPerYear(int year) async{
+    double amount = 0.0;
+    for(int i = 0; i < 12; i++){
+      amount = await getAmountPerMonth(i, year);
+    }
+    return amount;
+  }
+
+  //get budgets per year as stream
+  Stream<List<Budget>> getBudgetsByYear(int year){
+
+    return budgetCollection.snapshots().map((snapshot) => snapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList());
+  }
 
 }

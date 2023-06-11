@@ -95,6 +95,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
                   print("current month index from provider: ${Provider.of<ExpenseDateProvider>(context).month}");
                   return DropdownButtonFormField(
+
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(50),
@@ -145,11 +146,14 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 icon: Icon(Icons.calendar_today),
                 color: isDark?Colors.white:Colors.black,
                 onPressed: () async{
+                  int month =Provider.of<ExpenseDateProvider>(context,listen: false).month + 1;
                   selectedDate = (await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(DateTime.now().year, DateTime.now().month, 1),
-                    lastDate: DateTime(DateTime.now().year,DateTime.now().month+1, 0),
+                    //the initailDate should be the date of the selected budget
+                    //Provider.of<ExpenseDateProvider>(context).month
+                    initialDate: DateTime.utc(2023,month, 1),
+                    firstDate: DateTime(DateTime.now().year, month, 1),
+                      lastDate: DateTime.utc(2023,month, 1),
                   ))!;
                 }
                 ,),

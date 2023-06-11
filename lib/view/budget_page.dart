@@ -73,7 +73,9 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             if(doOnce != true) {
               doOnce = true;
               return Scaffold(
+                resizeToAvoidBottomInset: false,
                 body: Center(
+
                   child: CircularProgressIndicator(),
                 ),
               );
@@ -123,6 +125,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
                       child: InkWell(
                         onTap: () {
                           showModalBottomSheet(
+
                             isDismissible: true,
                             isScrollControlled: true,
                             shape: RoundedRectangleBorder(
@@ -442,6 +445,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           height: 400,
           child: hasData?
           GridView.builder(
+            addAutomaticKeepAlives: true,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: MediaQuery
@@ -690,7 +694,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   }
 
   Widget evalTabForm(TabController controller, DatabaseProvider provider , BuildContext context) {
-
     switch (controller.index) {
       case 0:
         return BudgetForm();

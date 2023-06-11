@@ -62,7 +62,7 @@ class _BudgetFormState extends State<BudgetForm> {
     int month = Provider.of<DateProvider>(context).month +1;
 
     return Container(
-      height: MediaQuery.of(context).size.height* 0.6,
+      height: MediaQuery.of(context).size.height* 0.7,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
       decoration: BoxDecoration(
