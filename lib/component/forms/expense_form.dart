@@ -32,7 +32,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
   final _expenseName = TextEditingController();
   final _amount = TextEditingController();
   final _date = TextEditingController();
-  DateTime selectedDate = DateTime.now();
+  DateTime? selectedDate = null;
 
   late Budget selectedBudget;
   String selectedBudgetId = "";
@@ -48,8 +48,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
   }
 
   Widget build(BuildContext context) {
-
-
     return Container(
       height: MediaQuery.of(context).size.height* 0.71,
       width: MediaQuery.of(context).size.width,
@@ -174,7 +172,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                           });
                       }
                       ,),
-                    Text("${DateFormat('dd/MM/yyyy').format(selectedDate)}",
+                    Text(selectedDate != null ? "${DateFormat('dd/MM/yyyy').format(selectedDate!)}" : "Please select a date",
                       style: TextStyle(
                           color: isDark?Colors.white:Colors.black,
                           fontSize: 15,

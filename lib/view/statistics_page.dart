@@ -228,7 +228,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
       }
     }
     //we sort the map by the keys (months)
-    //double dots used to sort the map by the keys inplace
     groupedBudgets = Map.fromEntries(
         groupedBudgets.entries.toList()..sort(
                 (e1, e2) => e1.key.compareTo(e2.key)
@@ -243,13 +242,14 @@ class _StatisticsPageState extends State<StatisticsPage> {
       barsSpace: 4,
       x: month,
       barRods: [
-        BarChartRodData(toY: y1, color: Colors.red, width: 10, fromY: 0.0),
-        BarChartRodData(toY: y2, color: Colors.blueGrey, width: 10, fromY: 0.0)
+        BarChartRodData(toY: y1, color: Color(0xFF145756), width: 10, fromY: 0.0),
+        BarChartRodData(toY: y2, color: Color(0xFF4B9EB8), width: 10, fromY: 0.0)
       ]
     );
   }
 
   Widget bottomTitles(double value, TitleMeta meta) {
+
     final titles = <String>['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July','Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
     final Widget text = Text(
       titles[value.toInt() - 1
@@ -271,7 +271,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
   Widget leftTitles(double value,TitleMeta meta){
     return SideTitleWidget(
-        child: Text(value.toInt().toString(),style: TextStyle(color: Colors.white),), axisSide: AxisSide.left
+        child: Text(value.toInt().toString(),style: TextStyle(color: Colors.white, fontFamily: 'K2D',fontSize: 25),), axisSide: AxisSide.left
     );
   }
 
