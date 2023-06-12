@@ -159,7 +159,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                       icon: Icon(Icons.calendar_today),
                       color: isDark?Colors.white:Colors.black,
                       onPressed: () async{
-                        int month =Provider.of<ExpenseDateProvider>(context,listen: false).month + 1;
+                        int month = Provider.of<ExpenseDateProvider>(context,listen: false).month + 1;
                         DateTime? selection = (await showDatePicker(
                           context: context,
                           initialDate: DateTime.utc(2023,month, 1),
@@ -280,8 +280,11 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   elevation: 0,
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
+                      if(selectedDate == null){
+                        //if the user havent entered a value, the value would be the start of the month
+                        selectedDate = DateTime(2023,Provider.of<ExpenseDateProvider>(context,listen: false).month + 1,1);
+                      }
                       // Submit the form data to firestore
-
                       addExpense(_expenseName,_amount,selectedDate,selectedBudgetId);
                       Navigator.pop(context);
                     }

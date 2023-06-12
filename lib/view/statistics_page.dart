@@ -90,7 +90,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
           Container(
                   decoration: BoxDecoration(
-                    color: Color(0xFF34cfb3),
+                    color: Color(0xFF145756),
                     borderRadius: BorderRadius.circular(20),
                   ),
             child: Padding(
@@ -157,6 +157,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
       BarChartData(
 
+
           titlesData: FlTitlesData(
             show: true,
             leftTitles: AxisTitles(
@@ -184,14 +185,53 @@ class _StatisticsPageState extends State<StatisticsPage> {
           maxY: yValue ? highestAmount : highestTotal,
         alignment: BarChartAlignment.spaceEvenly,
 
-          gridData: FlGridData(show: false),
+          gridData: FlGridData(show: true, drawHorizontalLine: true,drawVerticalLine: false),
 
           borderData: FlBorderData(
             show: false,
           ),
         //x values are the months in the Map above (groupedBudgets) or the keys
-         barGroups: groupedBudgetsWithAmounts!.toList()
-        ),
+         barGroups: groupedBudgetsWithAmounts!.toList(),
+        barTouchData: BarTouchData(
+          enabled: true,
+          touchTooltipData: BarTouchTooltipData(
+              getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                String weekDay;
+                print("group x values${rodIndex}");
+                switch (rodIndex) {
+
+                  case 0:
+                    weekDay = 'amount';
+                    break;
+                  case 1:
+                    weekDay = 'Total spent';
+                    break;
+                  default:
+                    weekDay = "not found";
+                }
+                return BarTooltipItem(
+                  '$weekDay\n',
+                  const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: (rod.toY).toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+          )
+            ),
+      ),
 
         swapAnimationDuration: Duration(milliseconds: 300), // Optional
         swapAnimationCurve: Curves.linear, // Optional
@@ -238,13 +278,15 @@ class _StatisticsPageState extends State<StatisticsPage> {
   }
 
   BarChartGroupData makeGroupData(int month, double y1, double y2){
+    List<int> toolTips = [];
     return BarChartGroupData(
       barsSpace: 4,
       x: month,
       barRods: [
-        BarChartRodData(toY: y1, color: Color(0xFF145756), width: 10, fromY: 0.0),
+        BarChartRodData(toY: y1, color: Color(0xFF34cfb3), width: 10, fromY: 0.0),
         BarChartRodData(toY: y2, color: Color(0xFF4B9EB8), width: 10, fromY: 0.0)
-      ]
+      ],
+        showingTooltipIndicators: toolTips
     );
   }
 
@@ -271,7 +313,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
   Widget leftTitles(double value,TitleMeta meta){
     return SideTitleWidget(
-        child: Text(value.toInt().toString(),style: TextStyle(color: Colors.white, fontFamily: 'K2D',fontSize: 25),), axisSide: AxisSide.left
+        child: Text(value.toInt().toString(),style: TextStyle(color: Colors.white, fontFamily: 'K2D',fontSize: 15),), axisSide: AxisSide.left
     );
   }
 
