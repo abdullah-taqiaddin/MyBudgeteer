@@ -238,7 +238,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 40,
+                reservedSize: 55,
                 interval: 200,
                 getTitlesWidget: leftTitles
               ),
