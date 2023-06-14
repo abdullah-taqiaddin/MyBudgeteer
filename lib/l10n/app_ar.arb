@@ -42,5 +42,8 @@
   "totalExpenditure": "المصاريف الكُلية خلال السنة",
   "highestExpenditure": "أعلى إنفاق خلال السنة",
   "totalSpentStat": "الإنفاق الكلي",
-  "budgetQuote": "sd"
+  "budgetQuote": "لا يوجد ميزانية؟\nقم بإضافة واحدة الآن!",
+  "totalExpense": "المجموع",
+  "showExpense": "إظهار المصاريف"
+
 }

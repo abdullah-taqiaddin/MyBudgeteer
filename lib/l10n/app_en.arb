@@ -42,6 +42,9 @@
   "totalExpenditure": "Total expenditure per year",
   "highestExpenditure": "Highest expenditure of the year",
   "totalSpentStat": "Total spent",
-  "budgetQuote": "sd"
+  "budgetQuote": "No Budget?\nAdd up!",
+  "totalExpense": "Total",
+  "showExpense": "Show Expenses"
+
 
 }

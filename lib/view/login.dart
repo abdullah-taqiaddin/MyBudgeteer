@@ -1,8 +1,9 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:testapp/viewmodel/firebase_controller.dart';
 
 import 'budget_page.dart';
@@ -32,8 +33,9 @@ class _loginPageState extends State<loginPage> {
 
     return Container(
       alignment: Alignment.center,
-      decoration: const BoxDecoration(
-        image: DecorationImage(image: AssetImage("assets/images/background.jpg"),fit: BoxFit.cover)
+      decoration: BoxDecoration(
+          color: isDark?Color.fromRGBO(43, 40, 57, 1):Color.fromRGBO(255, 255, 255, 100),
+          image: DecorationImage(image: isDark?AssetImage("assets/images/background-dark.jpg"):AssetImage("assets/images/background.jpg"),fit: BoxFit.fill,opacity: 0.2)
         // gradient: LinearGradient(
         //   colors: [
         //     Color(0xFF3FCFA4), // left color
@@ -56,17 +58,29 @@ class _loginPageState extends State<loginPage> {
               height: 100,
               //Please upload the image when committing :)
               // child: Image.asset("assets/images/PlaceholderLogo.png"),
-              child: Text("My Budgeteer",style: TextStyle(fontSize: 45,color: Colors.black,fontFamily: 'K2D',fontWeight: FontWeight.bold),),
+              child: Text(
+                "My Budgeteer",
+                style: TextStyle(
+                    fontSize: 45,
+                    color: isDark?Colors.white:Colors.black,
+                    fontFamily: 'K2D',
+                    fontWeight: FontWeight.bold),),
             )
           ),
-        Text("Money talks, \n"
-            "but budgeting screams success!\n",style: TextStyle(fontSize: 20,color: Colors.black,fontFamily: 'K2D'),),
+        Text(
+          "Money talks, \n"
+            "but budgeting screams success!\n",
+          style: TextStyle(
+              fontSize: 20,
+              color: isDark?Colors.white:Colors.black,
+              fontFamily: 'K2D'),
+        ),
         SizedBox(height: 70,),
           Expanded(
             child: Container(
               width: 500,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark?Color.fromRGBO(58, 55, 70, 100):Colors.white,
                   border: Border.all(color: Colors.grey,),
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(60),topRight: Radius.circular(60),)
               ),
@@ -91,7 +105,7 @@ class _loginPageState extends State<loginPage> {
       child: ElevatedButton(
 
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
+          backgroundColor: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
           elevation: 0,
           side: BorderSide(color: Colors.grey.shade300),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
         ),
@@ -121,7 +135,13 @@ class _loginPageState extends State<loginPage> {
             Container(
               child: Image.asset("assets/images/google.png",width: 30,height: 30,),
             ),SizedBox(width: 40,),
-            Text("Continue with Google",style: TextStyle(fontSize: 15,color: Colors.black,fontFamily: 'K2D'),)
+            Text(
+              "Continue with Google",
+              style: TextStyle(
+                  fontSize: 15,
+                  color: isDark?Colors.white:Colors.black,
+                  fontFamily: 'K2D'),
+            )
           ],
         ),
       )

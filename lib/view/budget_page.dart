@@ -676,7 +676,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           Positioned(
               top: 100.0,
               child: Text(
-                "No Budgets?\nAdd up!",
+                "${translation(context).budgetQuote}",
                 style: TextStyle(
                   fontSize: 40.0,
                   fontFamily: "K2D",
