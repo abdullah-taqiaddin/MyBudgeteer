@@ -95,6 +95,7 @@ flutter:
     - assets/images/background-cropped-2.jpg
     - assets/images/lightmode.png
     - assets/images/nightmode.jpg
+    - assets/images/background-dark.jpg
 
 
 

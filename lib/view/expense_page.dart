@@ -1,8 +1,9 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
 import 'package:testapp/viewmodel/expense_date_provider.dart';
@@ -262,7 +263,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
     return Container(
       width: 500,
       decoration: BoxDecoration(
-        color: Color(0xFF34cfb3),
+        color: isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1),
         borderRadius: BorderRadius.circular(20),
       ),
       padding: EdgeInsets.all(10),
@@ -274,7 +275,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
             width: 500,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Color.fromRGBO(33, 137, 118, 1),
+              color: isDark?Colors.deepPurple:Color.fromRGBO(33, 137, 118, 1),
             ),
             padding: EdgeInsets.all(10),
             child: Row(
@@ -323,8 +324,8 @@ class _ExpenseTabState extends State<ExpenseTab> {
               textColor: Colors.white,
               iconColor: Colors.white,
               collapsedBackgroundColor:
-              Color(0xFF34cfb3).withOpacity(0.6),
-              backgroundColor: Color(0xFF34cfb3),
+              isDark?Color.fromRGBO(159, 79, 248, 1).withOpacity(0.6):Color.fromRGBO(123, 203, 201, 1).withOpacity(0.6),
+              backgroundColor:isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1),
               title: Text(
                 'Show Expenses',
                 style: TextStyle(fontWeight: FontWeight.bold),
