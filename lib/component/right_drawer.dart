@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:testapp/view/statistics_page.dart';
 import 'package:testapp/view/settings.dart';
 
@@ -11,21 +12,25 @@ import '../view/login.dart';
 
 import 'package:testapp/viewmodel/localization.dart';
 
+import '../viewmodel/language_provider.dart';
+
 class RightDrawer extends StatelessWidget {
   final int selectedIndex;
+  String language = 'en';
   final Function(int) onItemTapped;
 
   RightDrawer({required this.selectedIndex, required this.onItemTapped});
 
   @override
   Widget build(BuildContext context) {
+    language = Provider.of<LanguageProvider>(context).language;
     return Padding(
       padding: const EdgeInsets.only(bottom: 5),
       child: ClipRRect(
         // give it your desired border radius
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(250),
-          topLeft: Radius.circular(250),
+        borderRadius: language == 'en'?
+        BorderRadius.only(bottomLeft: Radius.circular(250), topLeft: Radius.circular(250),):
+        BorderRadius.only(bottomRight: Radius.circular(250), topRight: Radius.circular(250),
         ),
         // wrap with a sizedbox for a custom width [for more flexibility]
         child: SizedBox(

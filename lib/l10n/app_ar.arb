@@ -35,8 +35,6 @@
   "outOf": "من أصل",
   "logout": "تسجيل الخروج",
   "logoutConfirmation": "هل متأكد أنك تريد تسجيل الخروج؟",
-  "budgetDeleteMessage": " سيتم حذفها, هل انت موافق؟"
-
-
-
+  "budgetDeleteMessage": " سيتم حذفها, هل انت موافق؟",
+  "statistics": "الإحصائيات"
 }

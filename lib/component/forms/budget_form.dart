@@ -126,7 +126,7 @@ class _BudgetFormState extends State<BudgetForm> {
                 cursorColor: isDark?Colors.white:Colors.black,
                 cursorHeight: 20,
                 controller: _budgetName,
-                style: TextStyle(color: Colors.black, fontFamily: "K2D"),
+                style: TextStyle(color: isDark?Colors.white:Colors.black, fontFamily: "K2D"),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
@@ -164,7 +164,7 @@ class _BudgetFormState extends State<BudgetForm> {
               ),
               SizedBox(height: 10,),
               TextFormField(
-                style: TextStyle(color: Colors.black, fontFamily: "K2D"),
+                style: TextStyle(color: isDark?Colors.white:Colors.black, fontFamily: "K2D"),
                 cursorColor: isDark?Colors.white:Colors.black,
                 cursorHeight: 20,
                 controller: _amount,

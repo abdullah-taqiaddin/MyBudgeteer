@@ -35,8 +35,6 @@
   "outOf": "out of",
   "logout": "Logout",
   "logoutConfirmation": "Are you sure you want to logout?",
-  "budgetDeleteMessage": "Will Be Deleted, Confirm?"
-
-
-
+  "budgetDeleteMessage": "Will Be Deleted, Confirm?",
+  "statistics": "Statistics"
 }

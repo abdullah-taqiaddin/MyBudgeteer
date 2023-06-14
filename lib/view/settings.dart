@@ -73,11 +73,11 @@ class _settingspageState extends State<settingspage> {
   }
 
   Widget SettingsPage() {
+
     return Container(
       width: double.maxFinite,
       decoration: BoxDecoration(
         color: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
-        image: DecorationImage(image: isDark?AssetImage("assets/images/background-cropped-dark.jpg"):AssetImage("assets/images/background-cropped.jpg"),fit: BoxFit.fill,opacity: 0.3)
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -97,7 +97,7 @@ class _settingspageState extends State<settingspage> {
           ),
           //SizedBox(height: 10,),
           Padding(
-            padding: const EdgeInsets.only(top: 30, bottom: 100, left: 50.0),
+            padding: _selectedLanguage == "en"?EdgeInsets.only(top: 30, bottom: 100, left: 50.0):EdgeInsets.only(top: 30, bottom: 100, right: 50.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

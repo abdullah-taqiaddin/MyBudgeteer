@@ -92,7 +92,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   }
 
                    return DropdownButtonFormField(
-
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(50),
@@ -196,7 +195,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 cursorColor: isDark?Colors.white:Colors.black,
                 cursorHeight: 20,
                 controller: _expenseName,
-                style: TextStyle(color: Colors.black, fontFamily: "K2D"),
+                style: TextStyle(color: isDark?Colors.white:Colors.black, fontFamily: "K2D"),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
