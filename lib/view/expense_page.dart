@@ -39,7 +39,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
 
 
     return StreamBuilder<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>>(
-      stream: Provider.of<DatabaseProvider>(context).getExpensesByDate(currentMonthIndex + 1).asStream(),
+      stream: Provider.of<DatabaseProvider>(context).getExpensesByDate(currentMonthIndex + 1,2023).asStream(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(
@@ -84,7 +84,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
                           Center(
                             child: Text(
                               DateFormat.MMMM()
-                                  .format(DateTime(DateTime.now().year, currentMonthIndex + 1, 1))
+                                  .format(DateTime(int.parse(_selectedYear), currentMonthIndex + 1, 1))
                                   .toString(),
                               style: TextStyle(
                                 fontFamily: "K2D",
@@ -128,43 +128,44 @@ class _ExpenseTabState extends State<ExpenseTab> {
                             children: [
                               Center(
                                 child: DropdownButton<String>(
-                                  dropdownColor: Colors.teal[100],
-                                  value: _selectedYear,
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      hasData = false;
-                                      _selectedYear = newValue!;
-                                    });
-                                  },
-                                  items: <String>[
-                                    DateFormat.y().format(DateTime.now()).toString(),
-                                    (DateTime.now().year + 1).toString(),
-                                  ].map<DropdownMenuItem<String>>((String value) {
+        dropdownColor: Colors.teal[100],
+        value: _selectedYear,
+        onChanged: (String? newValue) {
+        print("newValue: $newValue");
+        setState(() {
+        hasData = false;
+        _selectedYear = newValue!;
+        });
+        },
+        items: <String>[
+        DateFormat.y().format(DateTime.now()).toString(),
+        (DateTime.now().year + 1).toString(),
+        ].map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+        value: value,
+        child: Row(
+        children: [
+        SizedBox(width: 15,),
+        Text(
+        value, // Use the current value, not _selectedYear
+        style: TextStyle(
+        fontFamily: "K2D",
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+        color: Colors.white,
+        ),
+        ),
+        ],
+        ),
+        );
+        }).toList(),
+        icon: Icon(
+        Icons.arrow_drop_down,
+        color: Colors.white,
+        ),
+        ),
 
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Row(
-                                        children: [
-                                          SizedBox(width: 15,),
-                                          Text(
-                                            value,
-                                            style: TextStyle(
-                                              fontFamily: "K2D",
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
-                                  icon: Icon(
-                                    Icons.arrow_drop_down,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
+        ),
                             ],
                           ),
                         ),

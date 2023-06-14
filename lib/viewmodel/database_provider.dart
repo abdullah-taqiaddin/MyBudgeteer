@@ -148,13 +148,13 @@ class DatabaseProvider extends ChangeNotifier{
 
 
 
-  Future<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>> getExpensesByDate(int month) async {
+  Future<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>> getExpensesByDate(int month, int year) async {
     Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>> dateGroupedCollection = {};
 
     print("input month: $month");
 
 
-    var budgets = await getBudgetsByMonthFuture(month, DateTime.now().year);
+    var budgets = await getBudgetsByMonthFuture(month, year);
 
     print(budgets);
 

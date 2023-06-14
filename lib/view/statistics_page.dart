@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_new, sort_child_properties_last
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:testapp/model/budget.dart';
 import 'package:testapp/view/budget_page.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
-
-import '../viewmodel/language_provider.dart';
-import '../viewmodel/localization.dart';
+import 'package:testapp/viewmodel/language_provider.dart';
 
 class DummyObject {
   const DummyObject(this.month, this.y1, this.y2);
@@ -28,84 +25,76 @@ class StatisticsPage extends StatefulWidget {
 }
 
 class _StatisticsPageState extends State<StatisticsPage> {
+
+
   @override
   Widget build(BuildContext context) {
     String language = 'en';
     language = Provider.of<LanguageProvider>(context).language;
 
     return StreamBuilder<List<Budget>>(
-      stream: Provider.of<DatabaseProvider>(context).getBudgetsByYear(2023),
-      builder: (context, snapshot) {
-        if(snapshot.hasError){
-          return Text("Error");
-        }
-        if(snapshot != null){
-          if(snapshot.data != null){
-            hasData = true;
+        stream: Provider.of<DatabaseProvider>(context).getBudgetsByYear(2023),
+        builder: (context, snapshot) {
+          if(snapshot.hasError){
+            return Text("Error");
           }
-        }
-        List<Budget> budgets = snapshot.data == null ? [] : snapshot.data!;
+          if(snapshot != null){
+            if(snapshot.data != null || snapshot.data != [] || snapshot.data!.isEmpty){
+              hasData = true;
+            }
+          }
+          List<Budget> budgets = !hasData ? [] : snapshot.data!.toList();
 
-        return SafeArea(
-          child: Scaffold(
-
-            body: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Container(
-                  width: double.maxFinite,
-                  decoration: BoxDecoration(
-                      color: isDark?Color.fromRGBO(43, 40, 57, 1):Color.fromRGBO(200, 200, 255, 200),
-                      image: DecorationImage(image: isDark?AssetImage("assets/images/background-cropped-dark.jpg"):AssetImage("assets/images/background-cropped.jpg"),fit: BoxFit.fill,opacity: 0.2)
+          return Scaffold(
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              toolbarHeight: 90,
+              backgroundColor: Color(0x00000000),
+              elevation: 0,
+              title: Padding(
+                padding: const EdgeInsets.only(left: 16.0,top: 30),
+                child: Text(
+                  "statistics",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 35,
+                      fontFamily: 'K2D',
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 16.0,top: 35),
+                child: new IconButton(
+                  icon: Icon(
+                    Icons.chevron_left,
+                    size: 40,
                   ),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:
-                      [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 5),
-                          child: IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: Icon(
-                                Icons.arrow_back,
-                                size: 35,
-                                color: isDark?Colors.white:Colors.black,
-                              )),
-                        ),
-                        Padding(
-                          padding:language == 'en'?EdgeInsets.only(left: 60, bottom: 10):EdgeInsets.only(right: 60, bottom: 10),
-                          child: Text(
-                            "${translation(context).statistics}",
-                            style: TextStyle(
-                                color: isDark?Colors.white:Colors.black,
-                                fontSize: 50,
-                                fontFamily: 'K2D',
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10,bottom: 40),
-                            child: Text('${translation(context).statisticsQuote}',
-                              style: TextStyle(
-                                  color: isDark?Colors.white:Colors.black,
-                                  fontSize: 23,
-                                  fontFamily: 'K2D',
-                                fontWeight: FontWeight.bold
-                                  ),
-                            ),
-                          ),
-                        ),
-
-                        Center(child: statisticsPage(budgets)),
-                      ]
-                  )
+                  onPressed: () => Navigator.of(context).pop(),
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
-        );
-      }
+            body: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.topRight,
+                      colors: [
+                        isDark?Color.fromRGBO(200, 79, 248, 50):Color.fromRGBO(34, 165, 162, 1),
+                        isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(59, 202, 163, 1),
+                      ])
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(image: isDark?AssetImage("assets/images/background-cropped-dark.jpg"):AssetImage("assets/images/background-cropped.jpg"),fit: BoxFit.fill,opacity: 0.2)
+                ),
+                child: Center(
+                  child: SafeArea(child: statisticsPage(budgets))
+                ),
+              ),
+            ),
+          );
+        }
     );
   }
 
@@ -113,149 +102,156 @@ class _StatisticsPageState extends State<StatisticsPage> {
     List<Budget> budgets = snapshot;
     Map<DateTime,List<Budget>> groupedBudgets = groupByMonth(budgets);
     print(groupedBudgets);
-      return SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
-          width: double.maxFinite,
-          decoration: BoxDecoration(
-              color: isDark?Color.fromRGBO(53, 50, 67, 100):Color.fromRGBO(245, 245, 245, 100),
-              border: Border.all(color: Colors.grey,),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(60),topRight: Radius.circular(60),)
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 50,
-              ),
-              Container(
-                      decoration: BoxDecoration(
-                        color: isDark?Color.fromRGBO(43, 40, 57, 1):Color.fromRGBO(200, 200, 255, 200),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                child: Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            "${translation(context).totalExpenditure}",
-                            style: TextStyle(
-                              color: isDark?Colors.white:Colors.black,
-                                fontSize: 20,
-                                fontFamily: 'K2D',
-                                fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                        width: 300,
-                        //make height dynamic
-                        height: 300,
-                        child: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: stackedBarChart(budgets),
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Column(
+        children: [
+          SizedBox(height: 20,),
+          Container(
+            width: double.maxFinite,
+            height: MediaQuery.of(context).size.height * 0.9,
+            decoration: BoxDecoration(
+
+                color: isDark?Color.fromRGBO(53, 50, 67, 100):Colors.grey[200],
+                border: Border.all(color: Colors.white,),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(40),topRight: Radius.circular(40),)
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 50,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Total expenditure per year",
+                              style: TextStyle(
+                                  color: isDark?Colors.white:Colors.black,
+                                  fontSize: 20,
+                                  fontFamily: 'K2D',
+                                  fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.left,
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          width: 300,
+                          //make height dynamic
+                          height: 300,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 3.0),
+                            child: stackedBarChart(budgets),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                width: 360,
-                height: 200,
-                decoration: BoxDecoration(
-                  color: isDark?Color.fromRGBO(43, 40, 57, 1):Color.fromRGBO(200, 200, 255, 200),
-                  borderRadius: BorderRadius.circular(20),
+                SizedBox(
+                  height: 20,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("${translation(context).highestExpenditure}: ",style: TextStyle(
-                        fontSize: 20,
-                        fontFamily: 'K2D',
-                        color: isDark?Colors.white:Colors.black,
-                        fontWeight: FontWeight.bold
-                      ),),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-
+                Container(
+                  width: 360,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Highest expanditure of the year: ",style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'K2D',
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold
+                        ),),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Column(
 
-                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+
+                                  Row(
+                                    children: [
+                                      Text(
+                                          "${getHighestTotalSpentBudget(budgets).name.toString()}",style: TextStyle(
+                                          fontSize: 30,
+                                          fontFamily: 'K2D',
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold
+                                      )
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 8.0),
+                                        child: Text(
+                                            " , ${DateTime.now().year}/${DateFormat('MMMM').format(DateTime(0, getHighestTotalSpentBudget(budgets).budgetDate.toDate().month)).toString()}",style: TextStyle(
+                                            fontSize: 15,
+                                            fontFamily: 'K2D',
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w400
+                                        )
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   Text(
-                                      "${getHighestTotalSpentBudget(budgets).name.toString()}",style: TextStyle(
-                                      fontSize: 30,
+                                      "Total spent: ${getHighestTotalSpentBudget(budgets).totalSpent.toString()}",style: TextStyle(
+                                      fontSize: 15,
                                       fontFamily: 'K2D',
-                                      color: isDark?Colors.white:Colors.black,
-                                      fontWeight: FontWeight.bold
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w200
                                   )
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(
-                                        " , ${DateTime.now().year}/${DateFormat('MMMM').format(DateTime(0, getHighestTotalSpentBudget(budgets).budgetDate.toDate().month)).toString()}",style: TextStyle(
-                                        fontSize: 15,
-                                        fontFamily: 'K2D',
-                                        color: isDark?Colors.white:Colors.black,
-                                        fontWeight: FontWeight.w400
-                                    )
-                                    ),
+                                  Text(
+                                      "Budgeted amount: ${getHighestTotalSpentBudget(budgets).amount.toString()}",style: TextStyle(
+                                      fontSize: 15,
+                                      fontFamily: 'K2D',
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w200
+                                  )
                                   ),
                                 ],
-                              ),
-                              Text(
-                                  "${translation(context).totalSpentStat}: ${getHighestTotalSpentBudget(budgets).totalSpent.toString()}",style: TextStyle(
-                                  fontSize: 15,
-                                  fontFamily: 'K2D',
-                                  color: isDark?Colors.white:Colors.black,
-                                  fontWeight: FontWeight.w200
-                              )
-                              ),
-                              Text(
-                                  "${translation(context).budgetedAmount}: ${getHighestTotalSpentBudget(budgets).amount.toString()}",style: TextStyle(
-                                  fontSize: 15,
-                                  fontFamily: 'K2D',
-                                  color: isDark?Colors.white:Colors.black,
-                                  fontWeight: FontWeight.w200
-                              )
-                              ),
-                            ],
 
-                          )
-                          ]
-                      ),
-                    ],
+                              )
+                            ]
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
-        ),
-      );
+        ],
+      ),
+    );
   }
   Widget stackedBarChart(List<Budget> budgets) {
 
@@ -266,6 +262,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
 
     bool yValue = highestAmount > highestTotal;
+    print("highestAmount: $highestAmount");
+    print("highestTotal: $highestTotal");
+    print(yValue);
     Map<DateTime,List<Budget>> groupedBudgets = groupByMonth(budgetsList);
 
     //x axis vals
@@ -276,101 +275,105 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
     return BarChart(
       BarChartData(
-          titlesData: FlTitlesData(
-            show: true,
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
+        gridData: FlGridData(
+          drawVerticalLine: false,
+          horizontalInterval: 200,
+          show: true,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: Colors.blueGrey,
+              strokeWidth: 1,
+            );
+          },
+        ),
+        borderData: FlBorderData(
+          show: false,
+        ),
+        titlesData: FlTitlesData(
+          show: true,
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 55,
+                reservedSize: 63,
                 interval: 200,
                 getTitlesWidget: leftTitles
-              ),
             ),
-            rightTitles:  AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            topTitles:  AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: bottomTitles,
-                  reservedSize: 42,
-                ),
-              ),
           ),
-          maxY: yValue ? highestAmount : highestTotal,
+          rightTitles:  AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles:  AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: bottomTitles,
+              reservedSize: 42,
+            ),
+          ),
+        ),
+        maxY: yValue ? highestAmount : highestTotal,
         alignment: BarChartAlignment.spaceEvenly,
 
-          gridData: FlGridData(show: true, drawHorizontalLine: true,drawVerticalLine: false),
-
-          borderData: FlBorderData(
-            show: false,
-          ),
         //x values are the months in the Map above (groupedBudgets) or the keys
-         barGroups: groupedBudgetsWithAmounts!.toList(),
+        barGroups: groupedBudgetsWithAmounts!.toList(),
         barTouchData: BarTouchData(
-          enabled: true,
-          touchTooltipData: BarTouchTooltipData(
-            tooltipBgColor: isDark?Color.fromRGBO(159, 79, 248, 1):Color(0xFF145756),
-              getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                String weekDay;
-                //rod is an object of type rod that returns all the attributes of a rod
-                //rodIndex returns the number of the rod, in our case we have 0 (amount),1 (totalSpent)
-                switch (rodIndex) {
+            enabled: true,
+            touchTooltipData: BarTouchTooltipData(
+                getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                  String toolTip;
+                  //rod is an object of type rod that returns all the attributes of a rod
+                  //rodIndex returns the number of the rod, in our case we have 0 (amount),1 (totalSpent)
+                  switch (rodIndex) {
 
-                  case 0:
-                    weekDay = 'amount';
-                    break;
-                  case 1:
-                    weekDay = 'Total spent';
-                    break;
-                  default:
-                    weekDay = "not found";
-                }
-                return BarTooltipItem(
-                  '$weekDay\n',
-                   TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: (rod.toY).toString(),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    case 0:
+                      toolTip = 'amount';
+                      break;
+                    case 1:
+                      toolTip = 'Total spent';
+                      break;
+                    default:
+                      toolTip = "not found";
+                  }
+                  return BarTooltipItem(
+                    '$toolTip\n',
+                    const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
                     ),
-                  ],
-                );
-              }
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: (rod.toY).toString(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  );
+                }
 
-          )
-            ),
+            )
+        ),
       ),
 
-        swapAnimationDuration: Duration(milliseconds: 300), // Optional
-        swapAnimationCurve: Curves.linear, // Optional
+      swapAnimationDuration: Duration(milliseconds: 300), // Optional
+      swapAnimationCurve: Curves.linear, // Optional
     );
   }
 
   //utility methods
   double getHighestAmount(List<Budget> budgets){
     double amount = 0.0;
-    for(Budget budget in budgets){
-      amount += budget.amount;
-    }
+    amount = budgets.map((obj) => obj.amount).reduce((a, b) => a > b ? a : b);
     return amount;
   }
   double highestTotalSpent(List<Budget> budgets){
     double totalAmount = 0.0;
-    for(Budget budget in budgets){
-      totalAmount += double.parse(budget!.totalSpent.toString());
-    }
+    totalAmount = budgets.map((obj) => obj.totalSpent!).reduce((a, b) => a > b ? a : b);
     return totalAmount;
   }
   Map<DateTime,List<Budget>> groupByMonth(List<Budget> budgets){
@@ -408,12 +411,13 @@ class _StatisticsPageState extends State<StatisticsPage> {
   BarChartGroupData makeGroupData(int month, double y1, double y2){
     List<int> toolTips = [];
     return BarChartGroupData(
-      barsSpace: 4,
-      x: month,
-      barRods: [
-        BarChartRodData(toY: y1, color: isDark?Color.fromRGBO(200, 70, 200, 1):Color(0xFF34cfb3), width: 10, fromY: 0.0),
-        BarChartRodData(toY: y2, color: isDark?Colors.deepPurple:Color(0xFF4B9EB8), width: 10, fromY: 0.0)
-      ],
+        barsSpace: 4,
+        x: month,
+        barRods: [
+          BarChartRodData(toY: y1, color: Color(0xFF34cfb3), width: 10, fromY: 0.0),
+          BarChartRodData(toY: y2, color: Color(0xFF4B9EB8), width: 10, fromY: 0.0)
+        ],
+
         showingTooltipIndicators: toolTips
     );
   }
@@ -423,32 +427,36 @@ class _StatisticsPageState extends State<StatisticsPage> {
     final Widget text = Text(
       titles[value.toInt() - 1
       ],
-      style: TextStyle(
+      style: const TextStyle(
         fontFamily: 'K2D',
-        color: isDark?Colors.white:Colors.black,
+        color: Colors.black,
         fontWeight: FontWeight.bold,
         fontSize: 14,
       ),
     );
 
     return SideTitleWidget(
+      angle: 80,
       axisSide: meta.axisSide,
       space: 16, //margin top
-      child: text,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 8.0,bottom: 5.0,left: 8.0),
+        child: text,
+      ),
     );
   }
   Widget leftTitles(double value,TitleMeta meta){
+
     return SideTitleWidget(
-        child: Text(
-          value.toInt().toString(),
-          style: TextStyle(
-              color: isDark?Colors.white:Colors.black,
-              fontFamily: 'K2D',fontSize: 15),
-        ),
-        axisSide: AxisSide.left
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(value.toInt().toString(),style: TextStyle(color: Colors.black, fontFamily: 'K2D',fontSize: 15),),
+            SizedBox(width: 5,),
+            Container(width: 7,color: Colors.black, height: 1,)
+          ],
+        ), axisSide: AxisSide.left,
     );
   }
-
-  //create a function that gets the total amount spent per month
 
 }

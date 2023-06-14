@@ -68,6 +68,34 @@ class _settingspageState extends State<settingspage> {
     _selectedLanguage = Provider.of<LanguageProvider>(context).language;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        toolbarHeight: 90,
+        backgroundColor: Color(0x00000000),
+        elevation: 0,
+        title: Padding(
+          padding: const EdgeInsets.only(left: 16.0,top: 30),
+          child: Text(
+            "${translation(context).settings}",
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 35,
+                fontFamily: 'K2D',
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0,top: 30),
+          child: new IconButton(
+            icon: Icon(
+              Icons.chevron_left,
+              size: 40,
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+            color: Colors.black,
+          ),
+        ),
+      ),
       body: SettingsPage(),
     );
   }
@@ -79,38 +107,17 @@ class _settingspageState extends State<settingspage> {
       decoration: BoxDecoration(
         color: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
         image: DecorationImage(image: isDark?AssetImage("assets/images/background-cropped-dark.jpg"):AssetImage("assets/images/background-cropped.jpg"),fit: BoxFit.fill,opacity: 0.2)
-
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 50, left: 20),
-            child: IconButton(
-                onPressed: () {
-                      Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.arrow_back,
-                  size: 40,
-                  color: isDark?Colors.white:Colors.black,
-                )),
-          ),
-          //SizedBox(height: 10,),
+          SizedBox(height: 150,),
           Padding(
             padding: _selectedLanguage == "en"?EdgeInsets.only(top: 30, bottom: 100, left: 50.0):EdgeInsets.only(top: 30, bottom: 100, right: 50.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "${translation(context).settings}",
-                  style: TextStyle(
-                      color: isDark?Colors.white:Colors.black,
-                      fontSize: 50,
-                      fontFamily: 'K2D',
-                      fontWeight: FontWeight.bold),
-                ),
                 SizedBox(
                   height: 50,
                 ),
