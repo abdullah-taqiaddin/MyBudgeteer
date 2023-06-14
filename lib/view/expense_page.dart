@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
 import 'package:testapp/viewmodel/expense_date_provider.dart';
+import 'package:testapp/viewmodel/localization.dart';
 
 
 import 'budget_page.dart';
@@ -295,7 +296,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
                   width: 50,
                 ),
                 Text(
-                  "Total:",
+                  "${translation(context).totalExpense}:",
                   style: TextStyle(
                       fontFamily: "K2D",
                       fontSize: 15,
@@ -327,7 +328,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
               isDark?Color.fromRGBO(159, 79, 248, 1).withOpacity(0.6):Color.fromRGBO(123, 203, 201, 1).withOpacity(0.6),
               backgroundColor:isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1),
               title: Text(
-                'Show Expenses',
+                '${translation(context).showExpense}',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               children: <Widget>[
