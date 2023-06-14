@@ -78,6 +78,8 @@ class _settingspageState extends State<settingspage> {
       width: double.maxFinite,
       decoration: BoxDecoration(
         color: isDark?Color.fromRGBO(43, 40, 57, 1):Colors.white,
+        image: DecorationImage(image: isDark?AssetImage("assets/images/background-cropped-dark.jpg"):AssetImage("assets/images/background-cropped.jpg"),fit: BoxFit.fill,opacity: 0.2)
+
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

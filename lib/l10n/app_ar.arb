@@ -1,6 +1,7 @@
 {
   "hello": "مرحبا",
   "budget": "الميزانية",
+  "budgetedAmount": "قيمة المزانية",
   "expense": "المصاريف",
   "remaining": "المتبقي",
   "spent": "النفقات",
@@ -36,5 +37,10 @@
   "logout": "تسجيل الخروج",
   "logoutConfirmation": "هل متأكد أنك تريد تسجيل الخروج؟",
   "budgetDeleteMessage": " سيتم حذفها, هل انت موافق؟",
-  "statistics": "الإحصائيات"
+  "statistics": "الإحصائيات",
+  "statisticsQuote": "تواجه صعوبة في إدارة مصاريفك؟ \n قم بمراقبة مصاريفك ",
+  "totalExpenditure": "المصاريف الكُلية خلال السنة",
+  "highestExpenditure": "أعلى إنفاق خلال السنة",
+  "totalSpentStat": "الإنفاق الكلي",
+  "budgetQuote": "sd"
 }

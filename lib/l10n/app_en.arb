@@ -1,6 +1,7 @@
 {
   "hello": "Hello",
   "budget": "Budget",
+  "budgetedAmount": "Budgeted amount",
   "expense": "Expense",
   "remaining": "Remaining",
   "spent": "Spent",
@@ -36,5 +37,11 @@
   "logout": "Logout",
   "logoutConfirmation": "Are you sure you want to logout?",
   "budgetDeleteMessage": "Will Be Deleted, Confirm?",
-  "statistics": "Statistics"
+  "statistics": "Statistics",
+  "statisticsQuote": "Having troubles? \nKeep track of your spending",
+  "totalExpenditure": "Total expenditure per year",
+  "highestExpenditure": "Highest expenditure of the year",
+  "totalSpentStat": "Total spent",
+  "budgetQuote": "sd"
+
 }
