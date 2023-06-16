@@ -6,6 +6,7 @@ import 'package:testapp/model/budget.dart';
 import 'package:testapp/view/budget_page.dart';
 import 'package:testapp/viewmodel/database_provider.dart';
 import 'package:testapp/viewmodel/language_provider.dart';
+import 'package:testapp/viewmodel/localization.dart';
 
 class DummyObject {
   const DummyObject(this.month, this.y1, this.y2);
@@ -56,7 +57,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
               title: Padding(
                 padding: const EdgeInsets.only(left: 16.0, top: 30),
                 child: Text(
-                  "statistics",
+                  "${translation(context).statistics}",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 35,
@@ -171,7 +172,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           height: 300,
                           child: Padding(
                             padding: const EdgeInsets.only(top: 3.0),
-                            child: budgets.isNotEmpty ? stackedBarChart(budgets): Center(child: Text("Please add Budgets!",style: TextStyle(
+                            child: budgets.isNotEmpty ? stackedBarChart(budgets): Center(child: Text("${translation(context).statAddBudgetMsg}",style: TextStyle(
                                 fontSize: 40,
                                 fontFamily: 'K2D',
                                 color: Colors.black,
@@ -204,7 +205,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Highest expanditure of the year: ",
+                          "${translation(context).highestExpenditure}: ",
                           style: TextStyle(
                               fontSize: 20,
                               fontFamily: 'K2D',
@@ -246,14 +247,14 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                     ],
                                   ),
                                   Text(
-                                      "Total spent: ${getHighestTotalSpentBudget(budgets).totalSpent.toString()}",
+                                      "${translation(context).totalSpentStat}: ${getHighestTotalSpentBudget(budgets).totalSpent.toString()}",
                                       style: TextStyle(
                                           fontSize: 15,
                                           fontFamily: 'K2D',
                                           color: Colors.black,
                                           fontWeight: FontWeight.w200)),
                                   Text(
-                                      "Budgeted amount: ${getHighestTotalSpentBudget(budgets).amount.toString()}",
+                                      "${translation(context).budgetedAmount}: ${getHighestTotalSpentBudget(budgets).amount.toString()}",
                                       style: TextStyle(
                                           fontSize: 15,
                                           fontFamily: 'K2D',
@@ -261,7 +262,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                           fontWeight: FontWeight.w200)),
                                 ],
                               )
-                            ]) : Row(children: [Text("Please add a budget!")],),
+                            ]) : Row(children: [Text("${translation(context).statAddBudgetMsg}")],),
                       ],
                     ),
                   ),

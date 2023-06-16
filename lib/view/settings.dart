@@ -78,7 +78,7 @@ class _settingspageState extends State<settingspage> {
           child: Text(
             "${translation(context).settings}",
             style: TextStyle(
-                color: Colors.black,
+                color: isDark?Colors.white:Colors.black,
                 fontSize: 35,
                 fontFamily: 'K2D',
                 fontWeight: FontWeight.bold),
@@ -92,7 +92,7 @@ class _settingspageState extends State<settingspage> {
               size: 40,
             ),
             onPressed: () => Navigator.of(context).pop(),
-            color: Colors.black,
+            color: isDark?Colors.white:Colors.black,
           ),
         ),
       ),

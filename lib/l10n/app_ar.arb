@@ -44,6 +44,8 @@
   "totalSpentStat": "الإنفاق الكلي",
   "budgetQuote": "لا يوجد ميزانية؟\nقم بإضافة واحدة الآن!",
   "totalExpense": "المجموع",
-  "showExpense": "إظهار المصاريف"
+  "showExpense": "إظهار المصاريف",
+  "statAddBudgetMsg": "الرجاء إضافة ميزانية!"
+
 
 }

@@ -44,7 +44,8 @@
   "totalSpentStat": "Total spent",
   "budgetQuote": "No Budget?\nAdd up!",
   "totalExpense": "Total",
-  "showExpense": "Show Expenses"
+  "showExpense": "Show Expenses",
+  "statAddBudgetMsg": "Please Add Budgets!"
 
 
 }
