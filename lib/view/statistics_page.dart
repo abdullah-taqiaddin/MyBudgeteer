@@ -31,41 +31,21 @@ class _StatisticsPageState extends State<StatisticsPage> {
     String language = 'en';
     language = Provider.of<LanguageProvider>(context).language;
 
-    /*return StreamBuilder<List<Budget>>(
+    return StreamBuilder<List<Budget>>(
         stream: Provider.of<DatabaseProvider>(context).getBudgetsByYear(2023),
         builder: (context, snapshot) {
           if(snapshot.hasError){
             return Text("Error");
+          }
+          if(snapshot.connectionState == ConnectionState.waiting){
+            return CircularProgressIndicator();
           }
           if(snapshot != null){
             if(snapshot.data != null || snapshot.data != [] || snapshot.data!.isEmpty){
               hasData = true;
             }
           }
-          List<Budget> budgets = !hasData ? [] : snapshot.data!.toList();*/
-    return StreamBuilder<List<Budget>>(
-        stream: Provider.of<DatabaseProvider>(context).getBudgetsByYear(2023),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text("Error");
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
-          }
-          if(snapshot != null) {
-            if (snapshot.data != null || snapshot.data != [] ||
-                snapshot.data!.isEmpty) {
-              hasData = true;
-            }
-          }
-
-          List<Budget> budgets = snapshot.data ?? [];
-          hasData = budgets.isNotEmpty;
-
-          if (!hasData) {
-            return Text("No data");
-          }
+          List<Budget> budgets = !hasData ? [] : snapshot.data!.toList();
 
           return Scaffold(
             extendBodyBehindAppBar: true,
@@ -130,6 +110,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     List<Budget> budgets = snapshot;
     Map<DateTime, List<Budget>> groupedBudgets = groupByMonth(budgets);
     print(groupedBudgets);
+
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
@@ -190,7 +171,14 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           height: 300,
                           child: Padding(
                             padding: const EdgeInsets.only(top: 3.0),
-                            child: stackedBarChart(budgets),
+                            child: budgets.isNotEmpty ? stackedBarChart(budgets): Center(child: Text("Please add Budgets!",style: TextStyle(
+                                fontSize: 40,
+                                fontFamily: 'K2D',
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                            ),
                           ),
                         ),
                       ],
@@ -203,10 +191,12 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 Container(
                   width: 360,
                   height: 200,
-                  decoration: BoxDecoration(
+                  decoration:
+                  BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                   ),
+
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
@@ -224,7 +214,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         SizedBox(
                           height: 20,
                         ),
-                        Row(
+                        budgets.isNotEmpty ? Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -233,9 +223,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
+
                                     children: [
                                       Text(
-                                          "${getHighestTotalSpentBudget(budgets).name.toString()}",
+                                          ( "${getHighestTotalSpentBudget(budgets).name.toString()}"),
                                           style: TextStyle(
                                               fontSize: 30,
                                               fontFamily: 'K2D',
@@ -270,7 +261,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                           fontWeight: FontWeight.w200)),
                                 ],
                               )
-                            ]),
+                            ]) : Row(children: [Text("Please add a budget!")],),
                       ],
                     ),
                   ),
@@ -394,14 +385,18 @@ class _StatisticsPageState extends State<StatisticsPage> {
   //utility methods
   double getHighestAmount(List<Budget> budgets) {
     double amount = 0.0;
-    amount = budgets.map((obj) => obj.amount).reduce((a, b) => a > b ? a : b);
+    if(budgets.isNotEmpty) {
+      amount = budgets.map((obj) => obj.amount).reduce((a, b) => a > b ? a : b);
+    }
     return amount;
   }
 
   double highestTotalSpent(List<Budget> budgets) {
     double totalAmount = 0.0;
-    totalAmount =
-        budgets.map((obj) => obj.totalSpent!).reduce((a, b) => a > b ? a : b);
+    if(budgets.isNotEmpty) {
+      totalAmount =
+          budgets.map((obj) => obj.totalSpent!).reduce((a, b) => a > b ? a : b);
+    }
     return totalAmount;
   }
 
@@ -426,9 +421,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
   Budget getHighestTotalSpentBudget(List<Budget> budgets) {
     double max = 0.0;
     late Budget maxBudget;
-
-    budgets..sort((e1, e2) => e1.totalSpent!.compareTo(e2!.totalSpent!));
-    print(budgets[budgets.length - 1]);
+    if(budgets.isNotEmpty){
+      budgets..sort((e1, e2) => e1.totalSpent!.compareTo(e2!.totalSpent!));
+      print(budgets[budgets.length - 1]);
+    }
 
     return budgets[budgets.length - 1];
   }

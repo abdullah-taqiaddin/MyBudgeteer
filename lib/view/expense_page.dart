@@ -9,7 +9,6 @@ import 'package:testapp/viewmodel/database_provider.dart';
 import 'package:testapp/viewmodel/expense_date_provider.dart';
 import 'package:testapp/viewmodel/localization.dart';
 
-
 import 'budget_page.dart';
 
 class ExpenseTab extends StatefulWidget {
@@ -19,13 +18,9 @@ class ExpenseTab extends StatefulWidget {
   State<ExpenseTab> createState() => _ExpenseTabState();
 }
 
-
-
-
 String _selectedYear = DateFormat.y().format(DateTime.now()).toString();
 
 class _ExpenseTabState extends State<ExpenseTab> {
-
   late int currentMonthIndex;
 
   bool hasData = false;
@@ -37,21 +32,28 @@ class _ExpenseTabState extends State<ExpenseTab> {
   @override
   Widget build(BuildContext context) {
     currentMonthIndex = Provider.of<ExpenseDateProvider>(context).month;
-    _selectedYear =   Provider.of<ExpenseDateProvider>(context).year.toString();
+    _selectedYear = Provider.of<ExpenseDateProvider>(context).year.toString();
 
-
-    return StreamBuilder<Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>>(
-      stream: Provider.of<DatabaseProvider>(context).getExpensesByDate(currentMonthIndex + 1,2023).asStream(),
+    return StreamBuilder<
+        Map<DateTime, List<QueryDocumentSnapshot<Map<String, dynamic>>>>>(
+      stream: Provider.of<DatabaseProvider>(context)
+          .getExpensesByDate(currentMonthIndex + 1, 2023)
+          .asStream(),
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        }
         if (snapshot.hasError) {
           return Center(
             child: Text('Error'),
           );
         }
-        if(snapshot.hasData && snapshot.data != null){
+        if (snapshot.hasData && snapshot.data != null) {
           hasData = true;
         }
+
         print("has data: $hasData");
+        print("expenze data: ${snapshot.data}");
         return Column(
           children: [
             Padding(
@@ -66,7 +68,9 @@ class _ExpenseTabState extends State<ExpenseTab> {
                     width: 170,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      color: isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1),
+                      color: isDark
+                          ? Color.fromRGBO(159, 79, 248, 1)
+                          : Color.fromRGBO(123, 203, 201, 1),
                     ),
                     child: GestureDetector(
                       child: Row(
@@ -75,7 +79,9 @@ class _ExpenseTabState extends State<ExpenseTab> {
                           InkWell(
                             onTap: () {
                               currentMonthIndex = (currentMonthIndex - 1) % 11;
-                              Provider.of<ExpenseDateProvider>(context,listen: false).setMonth(currentMonthIndex);
+                              Provider.of<ExpenseDateProvider>(context,
+                                      listen: false)
+                                  .setMonth(currentMonthIndex);
                             },
                             child: Icon(
                               Icons.chevron_left,
@@ -86,7 +92,8 @@ class _ExpenseTabState extends State<ExpenseTab> {
                           Center(
                             child: Text(
                               DateFormat.MMMM()
-                                  .format(DateTime(int.parse(_selectedYear), currentMonthIndex + 1, 1))
+                                  .format(DateTime(int.parse(_selectedYear),
+                                      currentMonthIndex + 1, 1))
                                   .toString(),
                               style: TextStyle(
                                 fontFamily: "K2D",
@@ -98,8 +105,10 @@ class _ExpenseTabState extends State<ExpenseTab> {
                           ),
                           InkWell(
                             onTap: () {
-                                currentMonthIndex = (currentMonthIndex + 1) % 11;
-                                Provider.of<ExpenseDateProvider>(context,listen: false).setMonth(currentMonthIndex);
+                              currentMonthIndex = (currentMonthIndex + 1) % 11;
+                              Provider.of<ExpenseDateProvider>(context,
+                                      listen: false)
+                                  .setMonth(currentMonthIndex);
                             },
                             child: Icon(
                               Icons.chevron_right,
@@ -124,50 +133,56 @@ class _ExpenseTabState extends State<ExpenseTab> {
                           width: 120,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
-                              color: isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1)),
+                              color: isDark
+                                  ? Color.fromRGBO(159, 79, 248, 1)
+                                  : Color.fromRGBO(123, 203, 201, 1)),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Center(
                                 child: DropdownButton<String>(
-        dropdownColor: Colors.teal[100],
-        value: _selectedYear,
-        onChanged: (String? newValue) {
-        print("newValue: $newValue");
-        setState(() {
-        hasData = false;
-        _selectedYear = newValue!;
-        });
-        },
-        items: <String>[
-        DateFormat.y().format(DateTime.now()).toString(),
-        (DateTime.now().year + 1).toString(),
-        ].map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-        value: value,
-        child: Row(
-        children: [
-        SizedBox(width: 15,),
-        Text(
-        value, // Use the current value, not _selectedYear
-        style: TextStyle(
-        fontFamily: "K2D",
-        fontWeight: FontWeight.bold,
-        fontSize: 18,
-        color: Colors.white,
-        ),
-        ),
-        ],
-        ),
-        );
-        }).toList(),
-        icon: Icon(
-        Icons.arrow_drop_down,
-        color: Colors.white,
-        ),
-        ),
-
-        ),
+                                  dropdownColor: Colors.teal[100],
+                                  value: _selectedYear,
+                                  onChanged: (String? newValue) {
+                                    print("newValue: $newValue");
+                                    setState(() {
+                                      hasData = false;
+                                      _selectedYear = newValue!;
+                                    });
+                                  },
+                                  items: <String>[
+                                    DateFormat.y()
+                                        .format(DateTime.now())
+                                        .toString(),
+                                    (DateTime.now().year + 1).toString(),
+                                  ].map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Text(
+                                            value, // Use the current value, not _selectedYear
+                                            style: TextStyle(
+                                              fontFamily: "K2D",
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -185,56 +200,51 @@ class _ExpenseTabState extends State<ExpenseTab> {
               height: MediaQuery.of(context).size.height * 0.55,
 
               child: SizedBox(
-                child: hasData?
-                ListView.builder(
-                  itemCount: snapshot.data!.keys.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    if(snapshot.data == null){
-                      return Center(
-                        child: Text('No Data',style: TextStyle(
-                          fontFamily: "K2D",
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),),
-                      );
-                    }
-                    var keys = snapshot.data!.keys.toList();
-                    //
-                    DateTime key = keys[index];
+                  child: hasData
+                      ? ListView.builder(
+                          itemCount: snapshot.data!.keys.length,
+                          itemBuilder: (BuildContext context, int index) {
 
-                    double totalAmount = 0.0;
-                    var expenseList = [];
-                    expenseList = snapshot.data![key]!.toList();
+                            var keys = snapshot.data!.keys.toList();
+                            //
+                            print("keys: $keys");
+                            DateTime key = keys[index];
 
-                    //calculate the total amount of that day
-                    for (int i = 0; i < expenseList.length; i++) {
-                      totalAmount += expenseList[i]['amount'];
-                    }
+                            double totalAmount = 0.0;
+                            var expenseList = [];
+                            expenseList = snapshot.data![key]!.toList();
 
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        top: 12,
-                        bottom: 15,
-                        right: 35,
-                        left: 35,
-                      ),
-                      child: buildExpenseExpansionTile(
-                        key,
-                        totalAmount.toString(),
-                        expenseList,
-                      ),
-                    );
-                  },
-                ): Center(
-                  child: Text('No Data',style: TextStyle(
-                    fontFamily: "K2D",
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white,
-                  ),),
-                )
-              ),
+                            //calculate the total amount of that day
+                            for (int i = 0; i < expenseList.length; i++) {
+                              totalAmount += expenseList[i]['amount'];
+                            }
+
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                top: 12,
+                                bottom: 15,
+                                right: 35,
+                                left: 35,
+                              ),
+                              child: buildExpenseExpansionTile(
+                                key,
+                                totalAmount.toString(),
+                                expenseList,
+                              ),
+                            );
+                          },
+                        )
+                      : Center(
+                          child: Text(
+                            'No Data',
+                            style: TextStyle(
+                              fontFamily: "K2D",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )),
             ),
             //add a sizedbox to the footer
             SizedBox(
@@ -246,9 +256,9 @@ class _ExpenseTabState extends State<ExpenseTab> {
     );
   }
 
-
-  Widget buildExpenseExpansionTile(DateTime dateTime, String total, var expenseList) {
-    dateTime = DateTime(dateTime.year, dateTime.month - 1, dateTime.day);
+  Widget buildExpenseExpansionTile(
+      DateTime dateTime, String total, var expenseList) {
+    dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day);
 
     var primary = TextStyle(
       fontFamily: "K2D",
@@ -265,7 +275,9 @@ class _ExpenseTabState extends State<ExpenseTab> {
     return Container(
       width: 500,
       decoration: BoxDecoration(
-        color: isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1),
+        color: isDark
+            ? Color.fromRGBO(159, 79, 248, 1)
+            : Color.fromRGBO(123, 203, 201, 1),
         borderRadius: BorderRadius.circular(20),
       ),
       padding: EdgeInsets.all(10),
@@ -277,7 +289,8 @@ class _ExpenseTabState extends State<ExpenseTab> {
             width: 500,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: isDark?Colors.deepPurple:Color.fromRGBO(33, 137, 118, 1),
+              color:
+                  isDark ? Colors.deepPurple : Color.fromRGBO(33, 137, 118, 1),
             ),
             padding: EdgeInsets.all(10),
             child: Row(
@@ -325,9 +338,12 @@ class _ExpenseTabState extends State<ExpenseTab> {
               collapsedTextColor: Colors.white,
               textColor: Colors.white,
               iconColor: Colors.white,
-              collapsedBackgroundColor:
-              isDark?Color.fromRGBO(159, 79, 248, 1).withOpacity(0.6):Color.fromRGBO(123, 203, 201, 1).withOpacity(0.6),
-              backgroundColor:isDark?Color.fromRGBO(159, 79, 248, 1):Color.fromRGBO(123, 203, 201, 1),
+              collapsedBackgroundColor: isDark
+                  ? Color.fromRGBO(159, 79, 248, 1).withOpacity(0.6)
+                  : Color.fromRGBO(123, 203, 201, 1).withOpacity(0.6),
+              backgroundColor: isDark
+                  ? Color.fromRGBO(159, 79, 248, 1)
+                  : Color.fromRGBO(123, 203, 201, 1),
               title: Text(
                 '${translation(context).showExpense}',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -337,7 +353,7 @@ class _ExpenseTabState extends State<ExpenseTab> {
                     height: 200,
                     child: ListView.builder(
                         itemCount: expenseList.length,
-                        itemBuilder:(BuildContext context,int index){
+                        itemBuilder: (BuildContext context, int index) {
                           bool enditem = index == expenseList.length - 1;
 
                           return Column(
@@ -354,48 +370,73 @@ class _ExpenseTabState extends State<ExpenseTab> {
                                 ),
                               ),*/
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
-
                                   Row(
                                     children: [
                                       Column(
                                         children: [
-                                          SizedBox(width: 15,),
-                                          Text(expenseList[index]['name'].toString(), style: primary),
-                                          SizedBox(width: 15,),
-                                          Text(expenseList[index]['budgetName'].toString(), style: secondary),
-                                          SizedBox(width: 15,),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Text(
+                                              expenseList[index]['name']
+                                                  .toString(),
+                                              style: primary),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Text(
+                                              expenseList[index]['budgetName']
+                                                  .toString(),
+                                              style: secondary),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
                                         ],
                                       )
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(width: 15,),
-                                      Text(expenseList[index]['amount'].toString() , style: primary,),
-                                      SizedBox(width: 15,),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      Text(
+                                        expenseList[index]['amount'].toString(),
+                                        style: primary,
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
                                     ],
-                                  ),IconButton(
-                                      onPressed: () {
-                                        deleteExpense(expenseList[index]['budgetId'],expenseList[index]['id']);
-                                        },
-                                      icon: Icon(Icons.delete, size: 30, color: Colors.white,)
                                   ),
+                                  IconButton(
+                                      onPressed: () {
+                                        deleteExpense(
+                                            expenseList[index]['budgetId'],
+                                            expenseList[index]['id']);
+                                      },
+                                      icon: Icon(
+                                        Icons.delete,
+                                        size: 30,
+                                        color: Colors.white,
+                                      )),
                                 ],
                               ),
-                              !enditem? Divider(
-                                color: Colors.white,
-                                endIndent: 150,
-                                indent: 10,
-                              ):Container(
-                                height: 0,
-                              )
+                              !enditem
+                                  ? Divider(
+                                      color: Colors.white,
+                                      endIndent: 150,
+                                      indent: 10,
+                                    )
+                                  : Container(
+                                      height: 0,
+                                    )
                             ],
                           );
-                        }
-                    )
-                ),
+                        })),
               ],
             ),
           ),
@@ -404,10 +445,8 @@ class _ExpenseTabState extends State<ExpenseTab> {
     );
   }
 
-  void deleteExpense(budgetId,expenseId){
-
-    Provider.of<DatabaseProvider>(context,listen: false).deleteExpense(budgetId, expenseId);
+  void deleteExpense(budgetId, expenseId) {
+    Provider.of<DatabaseProvider>(context, listen: false)
+        .deleteExpense(budgetId, expenseId);
   }
-
 }
-

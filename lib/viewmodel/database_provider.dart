@@ -65,17 +65,19 @@ class DatabaseProvider extends ChangeNotifier{
 
   //doesnt return a stream but a future
   Future<List<Budget>> getBudgetsByMonthFuture(int month, int year) async {
+
     DateTime startDate = DateTime(year, month, 1);
     if(month + 1 > 12){
       month = 1;
       year += 1;
     }
     DateTime endDate = DateTime(year, month + 1, 1);
+    print("start date: $startDate, end date: $endDate");
     var budgetsSnapshot = await budgetCollection
         .where('budgetDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate), isLessThan: Timestamp.fromDate(endDate))
         .get();
+    //map the budgets snapshot documents to budget objects
     var budgets = budgetsSnapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList();
-
     return budgets;
 
   }
@@ -89,6 +91,7 @@ class DatabaseProvider extends ChangeNotifier{
 
 
   Stream<QuerySnapshot> getBudgetsByMonth(int month, int year) {
+    //get Budgets by month is used in the Expense form page drop down
     DateTime startDate = DateTime(year, month, 1);
     DateTime endDate = DateTime(year, month + 1, 1);
     return budgetCollection
@@ -156,21 +159,27 @@ class DatabaseProvider extends ChangeNotifier{
 
     var budgets = await getBudgetsByMonthFuture(month, year);
 
-    print(budgets);
+    print("budgets: $budgets");
 
     //loop through each budget
     for (var budget in budgets) {
       var filteredExpenses = await getBudgetExpense(budget.id);
       var expenses = await filteredExpenses.get();
 
-      dateGroupedCollection = groupBy(expenses.docs, (expense) {
+      var groupedExpenses = groupBy(expenses.docs, (expense) {
         var expenseDate = expense.data()['expenseDate'].toDate();
-        return DateTime(expenseDate.year, expenseDate.month + 1, expenseDate.day);
+        return DateTime(expenseDate.year, expenseDate.month, expenseDate.day);
+      });
+
+      groupedExpenses.forEach((date, expenseList) {
+        if (dateGroupedCollection.containsKey(date)) {
+          dateGroupedCollection[date]!.addAll(expenseList);
+        } else {
+          dateGroupedCollection[date] = expenseList;
+        }
       });
     }
-
     //return a map of date and list of expenses
-    print(dateGroupedCollection);
     return dateGroupedCollection;
   }
 
@@ -229,6 +238,7 @@ class DatabaseProvider extends ChangeNotifier{
     await budgetCollection.doc(budgetId).collection('Expenses').doc(expenseId).delete();
     notifyListeners();
   }
+
   //update an expense
   Future<void> updateExpense(Expense expense) async{
     var budget = await budgetCollection.doc(expense.budgetId).get();
@@ -261,24 +271,6 @@ class DatabaseProvider extends ChangeNotifier{
     }
     print(totalSpent);
     return totalSpent;
-  }
-
-  //get the heights totalSpent value of the year
-  Future<double> getTotalSpentPerYear(int year) async{
-    double totalSpent = 0.0;
-    for(int i = 0; i < 12; i++){
-      totalSpent = await getTotalSpentPerMonth(i, year);
-    }
-    return totalSpent;
-  }
-
-  //get the total amount of the year
-  Future<double> getAmountPerYear(int year) async{
-    double amount = 0.0;
-    for(int i = 0; i < 12; i++){
-      amount = await getAmountPerMonth(i, year);
-    }
-    return amount;
   }
 
   //get budgets per year as stream
